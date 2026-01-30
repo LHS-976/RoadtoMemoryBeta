@@ -1,0 +1,3 @@
+*.cs linguist-language=C#
+*.mat linguist-vendored
+*.meta linguist-vendored
