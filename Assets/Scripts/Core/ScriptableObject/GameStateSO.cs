@@ -12,6 +12,7 @@ namespace Core
         Statshop
 
     }
+    [CreateAssetMenu(fileName = "New GameState", menuName = "InGameState/GameState Data")]
     public class GameStateSO : ScriptableObject
     {
         // Start is called before the first frame update
