@@ -723,9 +723,7 @@ PrefabInstance:
     - target: {fileID: 6847989415144579744, guid: 9ffb5e7e16e5acb4b81e23d60199b76e,
         type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'Right wrist'\n\tFrom animation clip 'Idle'"
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -735,10 +733,6 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 1962774190}
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 190011480737735264, guid: 9ffb5e7e16e5acb4b81e23d60199b76e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2061979603}
     - targetCorrespondingSourceObject: {fileID: 190011480737735264, guid: 9ffb5e7e16e5acb4b81e23d60199b76e,
         type: 3}
       insertIndex: -1
@@ -779,33 +773,6 @@ CapsuleCollider:
   m_Height: 1.4
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!54 &2061979603
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061979599}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 80
-  m_CollisionDetection: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
