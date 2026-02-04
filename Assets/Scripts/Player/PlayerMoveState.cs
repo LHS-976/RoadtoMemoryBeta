@@ -8,10 +8,15 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void OnEnter()
     {
+        player.Animator.SetFloat("Speed", 1);
     }
     public override void OnUpdate()
     {
         handleRotation();
+        if(player.InputVector.sqrMagnitude == 0)
+        {
+            player.ChangeState(player.idleState);
+        }
     }
     public override void OnExit()
     {

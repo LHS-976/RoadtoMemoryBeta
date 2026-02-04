@@ -14,7 +14,7 @@ namespace PlayerControllerScripts
         [Header("Physics Settings")]
         public float gravity;
         public float initialJumpVelocity;
-        public float MoveSpeed = 6f;
+        public float MoveSpeed = 2f;
         public float RotateSpeed = 10f;
 
         public CharacterController Controller { get; private set; }
@@ -38,6 +38,7 @@ namespace PlayerControllerScripts
 
             idleState = new PlayerIdleState(this, Animator);
             moveState = new PlayerMoveState(this, Animator);
+
             setupJumpVariables();
         }
 
@@ -49,8 +50,8 @@ namespace PlayerControllerScripts
         // Update is called once per frame
         void Update()
         {
-            float h = Input.GetAxis("Horizontal");
-            float v = Input.GetAxis("Vertical");
+            float h = Input.GetAxisRaw("Horizontal");
+            float v = Input.GetAxisRaw("Vertical");
             InputVector = new Vector2(h, v);
 
             currentState?.OnUpdate();

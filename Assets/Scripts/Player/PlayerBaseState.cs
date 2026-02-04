@@ -11,7 +11,6 @@ public abstract class PlayerBaseState
         this.player = player;
         this.animator = animator;
     }
-
     public abstract void OnEnter();
     public abstract void OnUpdate();
     public abstract void OnExit();
