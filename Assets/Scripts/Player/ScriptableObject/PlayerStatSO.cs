@@ -4,10 +4,14 @@
 [CreateAssetMenu(fileName = "PlayerStats", menuName = "Stats/PlayerStats")]
 public class PlayerStatSO : ScriptableObject
 {
-    [Header("Movement")]
+    [Header("BaseMovement")]
     public float WalkSpeed = 2f; 
     public float RunSpeed = 6f;
     public float RotateSpeed = 10f;
+
+    [Header("CombatMovement")]
+    public float CombatWalkSpeed = 3f;
+    public float CombatRunSpeed = 5f;
 
     [Header("Jump")]
     public float MaxJumpHeight = 2.0f;

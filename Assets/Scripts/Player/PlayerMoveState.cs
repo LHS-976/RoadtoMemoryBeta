@@ -27,29 +27,9 @@ public class PlayerMoveState : PlayerBaseState
         float targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         player.Animator.SetFloat(player.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
 
-        HandleRotationAndMove();
+        player.HandleMovement(player.InputVector);
     }
     public override void OnExit()
     {
-    }
-    void HandleRotationAndMove()
-    {
-        Vector3 camForward = player.MainCameraTransform.forward;
-        Vector3 camRight = player.MainCameraTransform.right;
-
-        camForward.y = 0;
-        camRight.y = 0;
-
-        camForward.Normalize();
-        camRight.Normalize();
-
-        _targetDirection = (camForward * player.InputVector.y) + (camRight * player.InputVector.x);
-
-        if (_targetDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(_targetDirection);
-            player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetRotation, Time.deltaTime * player.playerStats.RotateSpeed);
-        }
-        player.Controller.Move(_targetDirection * player.MoveSpeed * Time.deltaTime);
     }
 }

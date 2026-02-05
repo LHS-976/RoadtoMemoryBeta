@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace PlayerControllerScripts
 {
@@ -19,20 +20,28 @@ namespace PlayerControllerScripts
         public Vector2 InputVector { get; private set; }
         public Transform MainCameraTransform { get; private set; }
 
-        public bool IsSprint { get; set; }
-        public int AnimIDSpeed { get; private set; }
 
         private PlayerBaseState currentState;
+        [Header("States")]
         public PlayerIdleState idleState;
         public PlayerMoveState moveState;
+        public PlayerCombatState combatState;
+        public bool IsSprint { get; set; }
+        public int AnimIDSpeed { get; private set; }
+        public bool IsCombatMode { get; private set; } = false;
+        public int AnimIDCombat = Animator.StringToHash("IsCombat");
+        public int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
+        public int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
+
 
         private Vector3 velocity;
         [HideInInspector]public float MoveSpeed;
 
-        //private PlayerBattleState battleState;
-
         [Header("Camera")]
         public PlayerCamera playerCamera;
+
+        public WeaponHandler weaponHandler;
+        public event Action<bool> OnCombatStateChanged;
 
 
         private void Awake()
@@ -43,6 +52,7 @@ namespace PlayerControllerScripts
 
             idleState = new PlayerIdleState(this, Animator);
             moveState = new PlayerMoveState(this, Animator);
+            combatState = new PlayerCombatState(this, Animator);
             AnimIDSpeed = Animator.StringToHash("Speed");
 
             if (playerStats != null)
@@ -72,6 +82,14 @@ namespace PlayerControllerScripts
             InputVector = new Vector2(h, v);
             IsSprint = Input.GetKey(KeyCode.LeftShift);
 
+
+            //수정예정
+            if(Input.GetKeyDown(KeyCode.X))
+            {
+                SetCombatMode(!IsCombatMode);
+                if (currentState == idleState) ChangeState(combatState);
+            }
+
             currentState?.OnUpdate();
 
             ApplyGravity();
@@ -96,6 +114,26 @@ namespace PlayerControllerScripts
             currentState = newState;
             currentState.OnEnter();
         }
+        public void SetCombatMode(bool active)
+        {
+            if (IsCombatMode == active) return;
+            IsCombatMode = active;
+
+            if(IsCombatMode)
+            {
+                Animator.SetBool(AnimIDCombat, true);
+                Animator.SetTrigger(AnimIDTriggerDraw);
+                ChangeState(combatState);
+            }
+            else
+            {
+                Animator.SetBool(AnimIDCombat, false);
+                Animator.SetTrigger(AnimIDTriggerSheath);
+                ChangeState(idleState);
+            }
+
+            //OnCombatStateChanged?.Invoke(IsCombatMode);
+        }
         private void ApplyGravity()
         {
             if (Controller.isGrounded && velocity.y <0)
@@ -108,12 +146,42 @@ namespace PlayerControllerScripts
         }
 
         //중력값계산
-        void setupJumpVariables()
+        private void setupJumpVariables()
         {
             float timeToApex = playerStats.MaxJumpTime / 2;
             //"h = 1/2 * g * t^2" (물리 등가속도 공식)을 뒤집은 상태.
             gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
             initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
+        }
+
+        public void HandleMovement(Vector3 inputVector)
+        {
+            Vector3 camForward = MainCameraTransform.forward;
+            Vector3 camRight = MainCameraTransform.right;
+
+            camForward.y = 0;
+            camRight.y = 0;
+
+            camForward.Normalize();
+            camRight.Normalize();
+
+            Vector3 targetDirection = (camForward * InputVector.y) + (camRight * InputVector.x);
+
+            if (targetDirection != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
+            }
+            Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
+        }
+
+        public void AE_DrawWeapon()
+        {
+            if (weaponHandler != null) weaponHandler.DrawWeapon();
+        }
+        public void AE_SheathWeapon()
+        {
+            if (weaponHandler != null) weaponHandler.SheathWeapon();
         }
     }
 }
