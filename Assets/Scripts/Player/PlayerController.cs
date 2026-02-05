@@ -30,6 +30,10 @@ namespace PlayerControllerScripts
 
         //private PlayerBattleState battleState;
 
+        [Header("Camera")]
+        public PlayerCamera playerCamera;
+
+
         private void Awake()
         {
             if (Controller == null) Controller = GetComponent<CharacterController>();
@@ -46,6 +50,9 @@ namespace PlayerControllerScripts
         void Start()
         {
             ChangeState(idleState);
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         // Update is called once per frame
         void Update()
@@ -57,6 +64,16 @@ namespace PlayerControllerScripts
             currentState?.OnUpdate();
 
             ApplyGravity();
+        }
+        private void LateUpdate()
+        {
+            if(playerCamera != null)
+            {
+                float mouseX = Input.GetAxis("Mouse X");
+                float mouseY = Input.GetAxis("Mouse Y");
+
+                playerCamera.RotateCamera(new Vector2(mouseX, mouseY), true);
+            }
         }
 
         public void ChangeState(PlayerBaseState newState)

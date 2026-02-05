@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MainCamera : MonoBehaviour
+public class TestCamera : MonoBehaviour
 {
     [Header("Target & Offset")]
     public Transform targetPlayer;
