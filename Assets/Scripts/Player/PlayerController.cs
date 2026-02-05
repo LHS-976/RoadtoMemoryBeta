@@ -56,7 +56,7 @@ namespace PlayerControllerScripts
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
 
-            //CombatSystem.Initialize(this, Animator);
+            CombatSystem.Initialize(this, Animator);
             if (playerStats != null)
             {
                 MoveSpeed = playerStats.WalkSpeed;

@@ -83,7 +83,7 @@ public class PlayerCombatState : PlayerBaseState
         {
             targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         }
-        player.Animator.SetFloat(PlayerController.AnimIDCombat, targetAnimSpeed, 0.1f, Time.deltaTime);
+        player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
         player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
         player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
 
