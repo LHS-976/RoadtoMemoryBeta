@@ -19,12 +19,12 @@ public class WeaponSwap : MonoBehaviour
         if(isCombat)
         {
             weaponBack.SetActive(false);
-            weaponBack.SetActive(true);
+            weaponHand.SetActive(true);
         }
         else
         {
             weaponHand.SetActive(false);
-            weaponHand.SetActive(true);
+            weaponBack.SetActive(true);
         }
     }
 }
