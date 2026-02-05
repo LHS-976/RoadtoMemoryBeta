@@ -29,9 +29,9 @@ namespace PlayerControllerScripts
         public bool IsSprint { get; set; }
         public int AnimIDSpeed { get; private set; }
         public bool IsCombatMode { get; private set; } = false;
-        public int AnimIDCombat = Animator.StringToHash("IsCombat");
-        public int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
-        public int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
+        [HideInInspector] public int AnimIDCombat = Animator.StringToHash("IsCombat");
+        [HideInInspector] public int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
+        [HideInInspector] public int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
 
 
         private Vector3 velocity;
