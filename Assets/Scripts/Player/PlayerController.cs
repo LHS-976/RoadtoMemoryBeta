@@ -32,7 +32,8 @@ namespace PlayerControllerScripts
         [HideInInspector] public int AnimIDCombat = Animator.StringToHash("IsCombat");
         [HideInInspector] public int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
         [HideInInspector] public int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
-
+        [HideInInspector] public int AnimIDInputX { get; set; }
+        [HideInInspector] public int AnimIDInputY { get; set; }
 
         private Vector3 velocity;
         [HideInInspector]public float MoveSpeed;
@@ -43,11 +44,14 @@ namespace PlayerControllerScripts
         public WeaponHandler weaponHandler;
         public event Action<bool> OnCombatStateChanged;
 
+        [Header("Visuals")]
+        public Transform playerMesh;
+
 
         private void Awake()
         {
             if (Controller == null) Controller = GetComponent<CharacterController>();
-            if (Animator == null) Animator = GetComponent<Animator>();
+            if (Animator == null) Animator = GetComponentInChildren<Animator>();
             if (weaponHandler == null) weaponHandler = GetComponent<WeaponHandler>();
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
 
@@ -55,6 +59,8 @@ namespace PlayerControllerScripts
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
             AnimIDSpeed = Animator.StringToHash("Speed");
+            AnimIDInputX = Animator.StringToHash("InputX");
+            AnimIDInputY = Animator.StringToHash("InputY");
 
             if (playerStats != null)
             {
@@ -168,11 +174,15 @@ namespace PlayerControllerScripts
 
             Vector3 targetDirection = (camForward * InputVector.y) + (camRight * InputVector.x);
 
-            if (targetDirection != Vector3.zero)
+            if (camForward != Vector3.zero)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(camForward);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
+                if (playerMesh != null)
+                {
+                    playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
+                }
             }
+
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
 
