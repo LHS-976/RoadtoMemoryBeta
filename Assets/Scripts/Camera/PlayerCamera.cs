@@ -29,6 +29,21 @@ public class PlayerCamera : MonoBehaviour
             _cinemachineTargetPitch = CinemachineCameraTarget.transform.rotation.eulerAngles.x;
         }
     }
+    private void LateUpdate()
+    {
+        HandleCameraRotation();
+    }
+    private void HandleCameraRotation()
+    {
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        if (Mathf.Abs(mouseX) > 0.01f || Mathf.Abs(mouseY) > 0.01f)
+        {
+            RotateCamera(new Vector2(mouseX, mouseY), true);
+        }
+
+    }
 
     public void RotateCamera(Vector2 lookInput, bool isMouse)
     {

@@ -25,10 +25,10 @@ public class PlayerMoveState : PlayerBaseState
 
         float targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         if (player.InputVector.sqrMagnitude == 0) targetAnimSpeed = 0f;
-        player.Animator.SetFloat(player.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
+        player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
 
-        player.Animator.SetFloat(player.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
-        player.Animator.SetFloat(player.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
+        player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
+        player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
 
         player.HandleMovement(player.InputVector);
     }

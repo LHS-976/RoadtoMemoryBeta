@@ -3,69 +3,64 @@ using UnityEngine;
 
 namespace PlayerControllerScripts
 {
-    /// <summary>
-    /// 유니티 엔진용 CharacterController 컴포넌트 사용
-    /// </summary>
     public class PlayerController : MonoBehaviour
     {
-        [Header("PlayerData Source")]
-        public PlayerStatSO playerStats;
+        [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
 
-        [Header("Physics Settings")]
-        public float gravity;
-        public float initialJumpVelocity;
+        [Header("References")]
+        public PlayerCamera playerCamera;
+        [SerializeField] private Transform playerMesh;
 
         public CharacterController Controller { get; private set; }
         public Animator Animator { get; private set; }
-        public Vector2 InputVector { get; private set; }
         public Transform MainCameraTransform { get; private set; }
+        public PlayerCombatSystem CombatSystem { get; private set; }
+        public WeaponHandler WeaponHandler { get; private set; }
 
-
-        private PlayerBaseState currentState;
-        [Header("States")]
+        private PlayerBaseState _currentState;
         public PlayerIdleState idleState;
         public PlayerMoveState moveState;
         public PlayerCombatState combatState;
-        public bool IsSprint { get; set; }
-        public int AnimIDSpeed { get; private set; }
-        public bool IsCombatMode { get; private set; } = false;
-        [HideInInspector] public int AnimIDCombat = Animator.StringToHash("IsCombat");
-        [HideInInspector] public int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
-        [HideInInspector] public int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
-        [HideInInspector] public int AnimIDInputX { get; set; }
-        [HideInInspector] public int AnimIDInputY { get; set; }
 
-        private Vector3 velocity;
-        [HideInInspector]public float MoveSpeed;
+        public Vector2 InputVector { get; private set; }
+        public bool IsSprint { get; private set; }
+        public bool IsCombatMode { get; private set; }
+        public float MoveSpeed;
 
-        [Header("Camera")]
-        public PlayerCamera playerCamera;
+        [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
+        [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
+        [HideInInspector] public static readonly int AnimIDInputY = Animator.StringToHash("InputY");
+        [HideInInspector] public static readonly int AnimIDCombat = Animator.StringToHash("IsCombat");
+        [HideInInspector] public static readonly int AnimIDTriggerDraw = Animator.StringToHash("TriggerDraw");
+        [HideInInspector] public static readonly int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
+        [HideInInspector] public static readonly int AnimIDAttack = Animator.StringToHash("Attack");
+        [HideInInspector] public static readonly int AnimIDComboCount = Animator.StringToHash("ComboCount");
 
-        public WeaponHandler weaponHandler;
-        public event Action<bool> OnCombatStateChanged;
 
-        [Header("Visuals")]
-        public Transform playerMesh;
+        private Vector3 _velocity;
+        private float _gravity;
+        private float _initialJumpVelocity; //점프 구현
+        public event Action<bool> OnCombatStateChanged; //변경
 
 
         private void Awake()
         {
-            if (Controller == null) Controller = GetComponent<CharacterController>();
-            if (Animator == null) Animator = GetComponentInChildren<Animator>();
-            if (weaponHandler == null) weaponHandler = GetComponent<WeaponHandler>();
+            Controller = GetComponent<CharacterController>();
+            Animator = GetComponentInChildren<Animator>();
+            CombatSystem = GetComponent<PlayerCombatSystem>();
+            WeaponHandler = GetComponent<WeaponHandler>();
+
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
 
             idleState = new PlayerIdleState(this, Animator);
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
-            AnimIDSpeed = Animator.StringToHash("Speed");
-            AnimIDInputX = Animator.StringToHash("InputX");
-            AnimIDInputY = Animator.StringToHash("InputY");
 
+            //CombatSystem.Initialize(this, Animator);
             if (playerStats != null)
             {
                 MoveSpeed = playerStats.WalkSpeed;
-                setupJumpVariables();
+                SetupJumpVariables();
             }
             else
             {
@@ -73,60 +68,49 @@ namespace PlayerControllerScripts
             }
         }
 
-        // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             ChangeState(idleState);
-
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        // Update is called once per frame
-        void Update()
+
+        private void Update()
+        {
+            HandleInput();
+            _currentState?.OnUpdate();
+            ApplyGravity();
+        }
+        private void HandleInput()
         {
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
             InputVector = new Vector2(h, v);
             IsSprint = Input.GetKey(KeyCode.LeftShift);
 
-
-            //수정예정
-            if(Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.X))
             {
-                SetCombatMode(!IsCombatMode);
-                if (currentState == idleState) ChangeState(combatState);
+                ToggleCombatMode();
             }
 
-            currentState?.OnUpdate();
-
-            ApplyGravity();
-        }
-        private void LateUpdate()
-        {
-            if(playerCamera != null)
+            if (IsCombatMode)
             {
-                float mouseX = Input.GetAxis("Mouse X");
-                float mouseY = Input.GetAxis("Mouse Y");
-
-                playerCamera.RotateCamera(new Vector2(mouseX, mouseY), true);
+                if (Input.GetKeyDown(KeyCode.Alpha1)) CombatSystem.ChangeCombatStyle(0);
+                if (Input.GetKeyDown(KeyCode.Alpha2)) CombatSystem.ChangeCombatStyle(1);
             }
         }
 
         public void ChangeState(PlayerBaseState newState)
         {
-            if(currentState != null)
-            {
-                currentState.OnExit();
-            }
-            currentState = newState;
-            currentState.OnEnter();
+            _currentState?.OnExit();
+            _currentState = newState;
+            _currentState.OnEnter();
         }
-        public void SetCombatMode(bool active)
+        private void ToggleCombatMode()
         {
-            if (IsCombatMode == active) return;
-            IsCombatMode = active;
+            IsCombatMode = !IsCombatMode;
 
-            if(IsCombatMode)
+            if (IsCombatMode)
             {
                 Animator.SetBool(AnimIDCombat, true);
                 Animator.SetTrigger(AnimIDTriggerDraw);
@@ -138,61 +122,59 @@ namespace PlayerControllerScripts
                 Animator.SetTrigger(AnimIDTriggerSheath);
                 ChangeState(idleState);
             }
-
-            //OnCombatStateChanged?.Invoke(IsCombatMode);
         }
+
         private void ApplyGravity()
         {
-            if (Controller.isGrounded && velocity.y <0)
+            if (Controller.isGrounded && _velocity.y < 0)
             {
-                velocity.y = -2f;
+                _velocity.y = -2f;
             }
 
-            velocity.y += gravity * Time.deltaTime;
-            Controller.Move(velocity * Time.deltaTime);
+            _velocity.y += _gravity * Time.deltaTime;
+            Controller.Move(_velocity * Time.deltaTime);
         }
 
-        //중력값계산
-        private void setupJumpVariables()
+        private void SetupJumpVariables()
         {
             float timeToApex = playerStats.MaxJumpTime / 2;
-            //"h = 1/2 * g * t^2" (물리 등가속도 공식)을 뒤집은 상태.
-            gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
+            _gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
+            _initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
         }
 
         public void HandleMovement(Vector3 inputVector)
         {
-            //카메라의 앞/옆 방향 가져오기
+            if (MainCameraTransform == null) return;
+
             Vector3 camForward = MainCameraTransform.forward;
             Vector3 camRight = MainCameraTransform.right;
 
             camForward.y = 0;
             camRight.y = 0;
-            camForward.Normalize();
-            camRight.Normalize();
 
-            Vector3 targetDirection = (camForward * InputVector.y) + (camRight * InputVector.x);
+            if (camForward.sqrMagnitude > 0.01f) camForward.Normalize();
+            if (camRight.sqrMagnitude > 0.01f) camRight.Normalize();
 
-            if (camForward != Vector3.zero)
+            Vector3 targetDirection = (camForward * inputVector.y) + (camRight * inputVector.x);
+
+            if (targetDirection != Vector3.zero && playerMesh != null)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(camForward);
-                if (playerMesh != null)
-                {
-                    playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
-                }
+                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+                playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
 
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
 
-        public void AE_DrawWeapon()
+        public void AE_DrawWeapon() => WeaponHandler?.DrawWeapon();
+        public void AE_SheathWeapon() => WeaponHandler?.SheathWeapon();
+
+        public void CheckCombo()
         {
-            if (weaponHandler != null) weaponHandler.DrawWeapon();
-        }
-        public void AE_SheathWeapon()
-        {
-            if (weaponHandler != null) weaponHandler.SheathWeapon();
+            if (_currentState is PlayerCombatState combatState)
+            {
+                combatState.OnComboCheck();
+            }
         }
     }
 }
