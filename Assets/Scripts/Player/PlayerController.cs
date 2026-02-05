@@ -48,6 +48,7 @@ namespace PlayerControllerScripts
         {
             if (Controller == null) Controller = GetComponent<CharacterController>();
             if (Animator == null) Animator = GetComponent<Animator>();
+            if (weaponHandler == null) weaponHandler = GetComponent<WeaponHandler>();
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
 
             idleState = new PlayerIdleState(this, Animator);
