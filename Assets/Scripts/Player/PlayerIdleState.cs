@@ -13,7 +13,7 @@ public class PlayerIdleState : PlayerBaseState
 
     public override void OnUpdate()
     {
-        player.Animator.SetFloat("Speed", 0f, 0.1f, Time.deltaTime);
+        player.Animator.SetFloat(player.AnimIDSpeed, 0f, 0.1f, Time.deltaTime);
         if (player.InputVector.sqrMagnitude > 0.01f)
         {
             player.ChangeState(player.moveState);

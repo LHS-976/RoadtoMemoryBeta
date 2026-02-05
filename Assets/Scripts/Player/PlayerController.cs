@@ -7,26 +7,27 @@ namespace PlayerControllerScripts
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
-        [Header("Jump Settings")]
-        public float maxJumpHeight = 2.0f;
-        public float maxJumpTime = 0.5f;
+        [Header("PlayerData Source")]
+        public PlayerStatSO playerStats;
 
         [Header("Physics Settings")]
         public float gravity;
         public float initialJumpVelocity;
-        public float MoveSpeed = 2f;
-        public float RotateSpeed = 10f;
 
         public CharacterController Controller { get; private set; }
         public Animator Animator { get; private set; }
         public Vector2 InputVector { get; private set; }
         public Transform MainCameraTransform { get; private set; }
 
+        public bool IsSprint { get; set; }
+        public int AnimIDSpeed { get; private set; }
+
         private PlayerBaseState currentState;
         public PlayerIdleState idleState;
         public PlayerMoveState moveState;
 
         private Vector3 velocity;
+        [HideInInspector]public float MoveSpeed;
 
         //private PlayerBattleState battleState;
 
@@ -42,8 +43,17 @@ namespace PlayerControllerScripts
 
             idleState = new PlayerIdleState(this, Animator);
             moveState = new PlayerMoveState(this, Animator);
+            AnimIDSpeed = Animator.StringToHash("Speed");
 
-            setupJumpVariables();
+            if (playerStats != null)
+            {
+                MoveSpeed = playerStats.WalkSpeed;
+                setupJumpVariables();
+            }
+            else
+            {
+                return;
+            }
         }
 
         // Start is called before the first frame update
@@ -60,6 +70,7 @@ namespace PlayerControllerScripts
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
             InputVector = new Vector2(h, v);
+            IsSprint = Input.GetKey(KeyCode.LeftShift);
 
             currentState?.OnUpdate();
 
@@ -99,10 +110,10 @@ namespace PlayerControllerScripts
         //중력값계산
         void setupJumpVariables()
         {
-            float timeToApex = maxJumpTime / 2;
+            float timeToApex = playerStats.MaxJumpTime / 2;
             //"h = 1/2 * g * t^2" (물리 등가속도 공식)을 뒤집은 상태.
-            gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            initialJumpVelocity = (2 * maxJumpHeight) / timeToApex;
+            gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
+            initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
         }
     }
 }
