@@ -157,12 +157,12 @@ namespace PlayerControllerScripts
 
         public void HandleMovement(Vector3 inputVector)
         {
+            //카메라의 앞/옆 방향 가져오기
             Vector3 camForward = MainCameraTransform.forward;
             Vector3 camRight = MainCameraTransform.right;
 
             camForward.y = 0;
             camRight.y = 0;
-
             camForward.Normalize();
             camRight.Normalize();
 
@@ -170,7 +170,7 @@ namespace PlayerControllerScripts
 
             if (targetDirection != Vector3.zero)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+                Quaternion targetRotation = Quaternion.LookRotation(camForward);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
