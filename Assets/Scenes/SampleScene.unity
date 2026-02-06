@@ -1233,7 +1233,7 @@ Transform:
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
   m_LocalRotation: {x: 0.54138577, y: -1.384031e-12, z: 8.9119613e-13, w: 0.8407743}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.00000047683716, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1695,7 +1695,7 @@ Transform:
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
   m_LocalRotation: {x: 0.54138577, y: -1.384031e-12, z: 8.9119613e-13, w: 0.8407743}
-  m_LocalPosition: {x: 0, y: -0.0000019073486, z: 0}
+  m_LocalPosition: {x: 0, y: -0.0000014305115, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1774,7 +1774,7 @@ Transform:
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
   m_LocalRotation: {x: 0.54138577, y: -1.384031e-12, z: 8.9119613e-13, w: 0.8407743}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.00000047683716, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2793,6 +2793,7 @@ MonoBehaviour:
   _controller: {fileID: 189877311}
   _combatSystem: {fileID: 189877315}
   _weaponHandler: {fileID: 189877314}
+  AttackMoveSpeed: 0
 --- !u!1001 &5213274851842709478
 PrefabInstance:
   m_ObjectHideFlags: 0

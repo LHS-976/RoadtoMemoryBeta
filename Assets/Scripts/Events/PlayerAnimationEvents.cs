@@ -7,6 +7,8 @@ public class PlayerAnimationEvents : MonoBehaviour
     [SerializeField] private PlayerCombatSystem _combatSystem;
     [SerializeField] private WeaponHandler _weaponHandler;
 
+    public float AttackMoveSpeed;
+
     private void Awake()
     {
         if(_controller == null) _controller = GetComponentInParent<PlayerController>();
@@ -14,7 +16,7 @@ public class PlayerAnimationEvents : MonoBehaviour
         if (_weaponHandler == null) _weaponHandler = GetComponentInParent<WeaponHandler>();
     }
 
-    private void OnAnimatorMoveManual()
+    private void OnAnimatorMove()
     {
         if (_controller != null)
         {

@@ -199,11 +199,25 @@ namespace PlayerControllerScripts
         {
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
+        /*
+        public void OnAnimatorMoveManual(float speed)
+        {
+            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
+            {
+                Vector3 velocity = transform.forward * speed * Time.deltaTime;
+
+                velocity.y = _velocity.y * Time.deltaTime;
+                Controller.Move(velocity);
+                transform.rotation *= Animator.deltaRotation;
+            }
+        }
+        */
         public void OnAnimatorMoveManual()
         {
             if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
             {
                 Vector3 velocity = Animator.deltaPosition;
+
                 velocity.y = _velocity.y * Time.deltaTime;
                 Controller.Move(velocity);
                 transform.rotation *= Animator.deltaRotation;

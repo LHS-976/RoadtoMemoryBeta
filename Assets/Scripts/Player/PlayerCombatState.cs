@@ -7,7 +7,7 @@ public class PlayerCombatState : PlayerBaseState
     private CombatCommand _lastCommand;
     private bool _gotInput;
     private float _lastInputTime;
-    private float _maxComboDelay = 0.5f;
+    private float _maxComboDelay = 1f;
     private bool _isAttacking;
 
     public bool UseRootMotion { get; private set; }
@@ -49,6 +49,8 @@ public class PlayerCombatState : PlayerBaseState
         {
             player.MoveSpeed = 0f;
             player.Animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
+            player.Animator.SetFloat(PlayerController.AnimIDInputX, 0f);
+            player.Animator.SetFloat(PlayerController.AnimIDInputY, 0f);
         }
         else
         {
@@ -105,8 +107,10 @@ public class PlayerCombatState : PlayerBaseState
 
     private CombatCommand GetCommand(bool isHeavy)
     {
-
-        Vector2 input = player.InputVector;
+        float x = Input.GetAxisRaw("Horizontal");
+        float y = Input.GetAxisRaw("Vertical");
+        Debug.Log($"키보드 입력값: ({x}, {y}) / 플레이어 변수값: {player.InputVector}");
+        Vector2 input = new Vector2(x, y);
         if(input.y > 0.5f)
         {
             return isHeavy ? CombatCommand.Forward_Heavy : CombatCommand.Forward_Light;
@@ -130,7 +134,7 @@ public class PlayerCombatState : PlayerBaseState
             return;
         }
         _isAttacking = true;
-        EnableRootMotion();
+        _gotInput = false;
 
         Vector3 attackDir = player.GetTargetDirection(player.InputVector);
         Transform enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, attackDir);
@@ -144,6 +148,7 @@ public class PlayerCombatState : PlayerBaseState
         {
             player.HandleRotation(attackDir, isInstant: true);
         }
+        EnableRootMotion();
         player.CombatSystem.ExecuteAttack(cmd);
     }
     private void StartAttack()
@@ -175,5 +180,7 @@ public class PlayerCombatState : PlayerBaseState
     {
         _isAttacking = false;
         DisableRootMotion();
+
+        player.CombatSystem.ResetCombo();
     }
 }

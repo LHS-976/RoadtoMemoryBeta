@@ -74,10 +74,6 @@ public class PlayerCombatSystem : MonoBehaviour
         {
             PlayAttack(connection.nextComboIndex);
         }
-        else
-        {
-            PlayAttack(0);
-        }
     }
     public Transform GetNearestEnemy(Vector3 playerPos, Vector3 inputDir)
     {

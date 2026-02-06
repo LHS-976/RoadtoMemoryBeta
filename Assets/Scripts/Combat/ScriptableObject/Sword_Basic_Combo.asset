@@ -45,14 +45,14 @@ MonoBehaviour:
     nextCombos:
     - commandType: 0
       nextComboIndex: 4
+    - commandType: 1
+      nextComboIndex: 4
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Attack_L5
     damageMultiplier: 2.5
-    nextCombos:
-    - commandType: 1
-      nextComboIndex: 5
+    nextCombos: []
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
