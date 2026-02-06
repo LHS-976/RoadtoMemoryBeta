@@ -1,6 +1,16 @@
 ﻿using PlayerControllerScripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum CombatCommand
+{
+    Stand_Light,
+    Forward_Light,
+    Back_Light,
+    Stand_Heavy,
+    Forward_Heavy
+}
 
 public class PlayerCombatSystem : MonoBehaviour
 {
@@ -12,6 +22,15 @@ public class PlayerCombatSystem : MonoBehaviour
     public List<ComboStrategySO> availableStyles;
 
     private int _comboCount;
+    private int _currentActionIndex = -1;
+
+    public bool CanCombo { get; private set; }
+
+    [SerializeField] private float _detectRadius = 5.0f;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private float _autoAimSpeed = 15.0f;
+
+    private Collider[] _enemyBuffer = new Collider[20];
 
     public void Initialize(PlayerController controller, Animator animator)
     {
@@ -20,38 +39,97 @@ public class PlayerCombatSystem : MonoBehaviour
         _comboCount = 0;
     }
 
-    public void ChangeCombatStyle(int index)
+    private void PlayAttack(int index)
     {
-        if (index < 0 || index >= availableStyles.Count) return;
-        if (availableStyles[index] == null) return;
-        if (currentStrategy == availableStyles[index]) return;
+        if (index >= currentStrategy.actions.Count) return;
 
-        currentStrategy = availableStyles[index];
-        ResetCombo();
-        Debug.Log($"[CombatSystem] 스타일 변경: {currentStrategy.name}");
+        _currentActionIndex = index;
+        AttackAction action = currentStrategy.actions[index];
+
+        _animator.SetTrigger(action.attackName);
+        _animator.SetInteger(PlayerController.AnimIDComboCount, index);
     }
 
-    public void ExecuteAttack()
+    public void ExecuteAttack(CombatCommand commandType)
     {
         if (currentStrategy == null) return;
-
-        _comboCount++;
-
-        if (_comboCount > currentStrategy.comboAttacks.Count)
+        if (_currentActionIndex == -1)
         {
-            _comboCount = 1;
+            PlayAttack(0);
+            return;
         }
 
-        AttackInfo info = currentStrategy.comboAttacks[_comboCount - 1];
+        AttackAction currentAction = currentStrategy.actions[_currentActionIndex];
+        ComboConnection connection = null;
 
-        _animator.SetInteger(PlayerController.AnimIDComboCount, info.comboStateIndex);
-        _animator.SetTrigger(PlayerController.AnimIDAttack);
+        for(int i=0; i< currentAction.nextCombos.Count; i++)
+        {
+            if (currentAction.nextCombos[i].commandType == commandType)
+            {
+                connection = currentAction.nextCombos[i];
+                break;
+            }
+        }
+        if (connection != null)
+        {
+            PlayAttack(connection.nextComboIndex);
+        }
+        else
+        {
+            PlayAttack(0);
+        }
+    }
+    public Transform GetNearestEnemy(Vector3 playerPos, Vector3 inputDir)
+    {
+        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer,enemyLayer);
+        Transform nearestTarget = null;
+        float minDistance = float.MaxValue;
 
+        for(int i=0; i< count; i++)
+        {
+            Collider collider = _enemyBuffer[i];
+            Vector3 toEnemy = collider.transform.position - playerPos;
+
+            Vector3 checkDir = inputDir == Vector3.zero ? transform.forward : inputDir;
+            float angle = Vector3.Angle(checkDir, toEnemy);
+
+            if(angle < 60f)
+            {
+                float dist = toEnemy.sqrMagnitude;
+                if(dist < minDistance)
+                {
+                    minDistance = dist;
+                    nearestTarget = collider.transform;
+                }
+            }
+        }
+        return nearestTarget;
+    }
+    public void ApplyHitStop(float duration = 0.1f)
+    {
+        StartCoroutine(HitStopRoutine(duration));
+    }
+    private IEnumerator HitStopRoutine(float duration)
+    {
+        Time.timeScale = 0.05f;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        Time.timeScale = 1.0f;
+    }
+
+    public void SetComboWindow(int state)
+    {
+        CanCombo = (state == 1);
+    }
+    public void ResetComboWindow()
+    {
+        CanCombo = false;
     }
 
     public void ResetCombo()
     {
-        _comboCount = 0;
+        _currentActionIndex = -1;
         _animator.SetInteger(PlayerController.AnimIDComboCount, 0);
     }
 }

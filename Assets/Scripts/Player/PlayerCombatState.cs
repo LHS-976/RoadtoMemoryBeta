@@ -3,11 +3,14 @@ using UnityEngine;
 
 public class PlayerCombatState : PlayerBaseState
 {
+
+    private CombatCommand _lastCommand;
     private bool _gotInput;
     private float _lastInputTime;
-    private float _maxComboDelay = 1.0f;
-
+    private float _maxComboDelay = 0.5f;
     private bool _isAttacking;
+
+    public bool UseRootMotion { get; private set; }
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
     {
     }
@@ -32,44 +35,41 @@ public class PlayerCombatState : PlayerBaseState
 
         if(Input.GetMouseButtonDown(0))
         {
-            _gotInput = true;
-            _lastInputTime = Time.time;
+            CombatCommand cmd = GetCommand(isHeavy: false);
+            ExecuteCommand(cmd);
+        }
+        else if(Input.GetMouseButtonDown(1))
+        {
+            CombatCommand cmd = GetCommand(isHeavy: true);
+            ExecuteCommand(cmd);
         }
         if(_isAttacking)
         {
             player.MoveSpeed = 0f;
+            UseRootMotion = true;
+            player.Animator.applyRootMotion = true;
             player.Animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
         }
         else
         {
-            if (_gotInput && (Time.time - _lastInputTime < _maxComboDelay))
-            {
-                StartAttack();
-            }
-            else
-            {
-                HandleCombatMovement();
-            }
+            HandleStandardCombatMovement();
         }
-
-
     }
     public override void OnExit()
     {
+        UseRootMotion = false;
+        player.Animator.applyRootMotion = false;
         player.Animator.SetBool(PlayerController.AnimIDCombat, false);
     }
-    private void StartAttack()
+    private void HandleStandardCombatMovement()
     {
-        _isAttacking = true;
-        _gotInput = false;
+        Vector3 dir = player.GetTargetDirection(player.InputVector);
+        Vector3 lookDir = player.MainCameraTransform.forward;
+        lookDir.y = 0;
+        if (lookDir.sqrMagnitude > 0.01f) lookDir.Normalize();
 
-        player.CombatSystem.ExecuteAttack();
-    }
-    private void HandleCombatMovement()
-    {
         bool isSprinting = player.IsSprint;
-
-        if (player.InputVector.sqrMagnitude > 0)
+        if(dir.sqrMagnitude >0)
         {
             player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
         }
@@ -87,12 +87,69 @@ public class PlayerCombatState : PlayerBaseState
         player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
         player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
 
-        player.HandleMovement(player.InputVector);
+        if(lookDir != Vector3.zero)
+        {
+            player.HandleRotation(lookDir, isInstant: false);
+        }
+        player.HandlePosition(dir);
+    }
+
+    private CombatCommand GetCommand(bool isHeavy)
+    {
+
+        Vector2 input = player.InputVector;
+        if(input.y > 0.5f)
+        {
+            return isHeavy ? CombatCommand.Forward_Heavy : CombatCommand.Forward_Light;
+        }
+        if(input.y < -0.5f)
+        {
+            return isHeavy ? CombatCommand.Stand_Heavy : CombatCommand.Back_Light;
+        }
+
+        return isHeavy ? CombatCommand.Stand_Heavy : CombatCommand.Stand_Light;
+
+    }
+    private void ExecuteCommand(CombatCommand cmd)
+    {
+        player._lastAttackTime = Time.time; //자동납도기능 테스트용
+        _gotInput = true;
+        _lastCommand = cmd;
+        _lastInputTime = Time.time;
+        if(_isAttacking)
+        {
+            return;
+        }
+        _isAttacking = true;
+        Vector3 attackDir = player.GetTargetDirection(player.InputVector);
+        Transform enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, attackDir);
+        if(enemy != null)
+        {
+            Vector3 toEnemy = enemy.position - player.transform.position;
+            toEnemy.y = 0;
+            attackDir = toEnemy.normalized;
+        }
+        if(attackDir != Vector3.zero)
+        {
+            player.HandleRotation(attackDir, isInstant: true);
+        }
+        player.CombatSystem.ExecuteAttack(cmd);
+    }
+    private void StartAttack()
+    {
+        player.CombatSystem.ResetComboWindow();
+
+        _isAttacking = true;
+        _gotInput = false;
+
+        player.CombatSystem.ExecuteAttack(_lastCommand);
     }
 
     public void OnComboCheck()
     {
-        if(_gotInput && (Time.time - _lastInputTime < _maxComboDelay))
+        player.CombatSystem.SetComboWindow(1);
+
+        if (_gotInput && (Time.time - _lastInputTime < _maxComboDelay))
         {
             StartAttack();
         }
@@ -102,5 +159,11 @@ public class PlayerCombatState : PlayerBaseState
             _gotInput = false;
             player.CombatSystem.ResetCombo();
         }
+    }
+    public void OnAnimationEnd()
+    {
+        _isAttacking = false;
+        UseRootMotion = false;
+        player.Animator.applyRootMotion = false;
     }
 }

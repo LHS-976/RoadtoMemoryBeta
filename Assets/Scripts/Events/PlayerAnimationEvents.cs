@@ -3,20 +3,37 @@ using PlayerControllerScripts;
 
 public class PlayerAnimationEvents : MonoBehaviour
 {
-    private PlayerController _controller;
+    [SerializeField] private PlayerController _controller;
+    [SerializeField] private PlayerCombatSystem _combatSystem;
+    [SerializeField] private WeaponHandler _weaponHandler;
 
     private void Awake()
     {
-        _controller = GetComponentInParent<PlayerController>();
+        if(_controller == null) _controller = GetComponentInParent<PlayerController>();
+        if (_combatSystem == null) _combatSystem = GetComponentInParent<PlayerCombatSystem>();
+        if (_weaponHandler == null) _weaponHandler = GetComponentInParent<WeaponHandler>();
     }
 
+    public void CheckCombo()
+    {
+        _controller?.CheckCombo();
+    }
+    public void OnAnimationEnd()
+    {
+        _controller?.OnAnimationEnd();
+    }
+
+    public void ApplyHitStop()
+    {
+        _combatSystem?.ApplyHitStop();
+    }
     public void AE_DrawWeapon()
     {
-        if (_controller != null) _controller.AE_DrawWeapon();
+        _weaponHandler?.DrawWeapon();
     }
 
     public void AE_SheathWeapon()
     {
-        if (_controller != null) _controller.AE_SheathWeapon();
+        _weaponHandler?.SheathWeapon();
     }
 }

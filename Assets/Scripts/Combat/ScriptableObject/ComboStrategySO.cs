@@ -1,13 +1,23 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-
-public class AttackInfo
+[System.Serializable]
+public class ComboConnection
+{
+    public CombatCommand commandType;
+    public int nextComboIndex;
+}
+[System.Serializable]
+public class AttackAction
 {
     public string attackName;
-    public int comboStateIndex;
     public float damageMultiplier;
-    public float damage;
+    public List<ComboConnection> nextCombos;
+
+    //추가사항
+    public GameObject hitVFX;
+    public float hitStopDuration;
+    public float cameraShakePower;
 }
 
 [CreateAssetMenu(fileName = "NewComboStrategy", menuName = "Combat Strategy")]
@@ -19,5 +29,5 @@ public class ComboStrategySO : ScriptableObject
     public float attackSpeed = 1.0f;
 
     [Header("Combo Chain")]
-    public List<AttackInfo> comboAttacks;
+    public List<AttackAction> actions;
 }

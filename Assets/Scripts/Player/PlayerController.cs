@@ -24,8 +24,9 @@ namespace PlayerControllerScripts
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
-        public bool IsCombatMode { get; private set; }
+        public bool IsCombatMode;
         public float MoveSpeed;
+        public float _lastAttackTime;
 
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
@@ -90,13 +91,18 @@ namespace PlayerControllerScripts
 
             if (Input.GetKeyDown(KeyCode.X))
             {
+                if(!IsCombatMode)
+                {
+                    _lastAttackTime = Time.time;
+                }
                 ToggleCombatMode();
             }
-
-            if (IsCombatMode)
+            if(IsCombatMode)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1)) CombatSystem.ChangeCombatStyle(0);
-                if (Input.GetKeyDown(KeyCode.Alpha2)) CombatSystem.ChangeCombatStyle(1);
+                if(Time.time - _lastAttackTime > 8.0f) //자동 납도기능
+                {
+                    ToggleCombatMode();
+                }
             }
         }
 
@@ -106,10 +112,9 @@ namespace PlayerControllerScripts
             _currentState = newState;
             _currentState.OnEnter();
         }
-        private void ToggleCombatMode()
+        public void ToggleCombatMode()
         {
             IsCombatMode = !IsCombatMode;
-
             if (IsCombatMode)
             {
                 Animator.SetBool(AnimIDCombat, true);
@@ -141,10 +146,25 @@ namespace PlayerControllerScripts
             _gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
             _initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
         }
-
-        public void HandleMovement(Vector3 inputVector)
+        public void CheckCombo()
         {
-            if (MainCameraTransform == null) return;
+            if (_currentState is PlayerCombatState combatState)
+            {
+                combatState.OnComboCheck();
+            }
+        }
+        public void OnAnimationEnd()
+        {
+            if(_currentState is PlayerCombatState combatState)
+            {
+                combatState.OnAnimationEnd();
+            }
+        }
+
+        //카메라 기준 방향으로 변환
+        public Vector3 GetTargetDirection(Vector2 input)
+        {
+            if (MainCameraTransform == null) return Vector3.zero;
 
             Vector3 camForward = MainCameraTransform.forward;
             Vector3 camRight = MainCameraTransform.right;
@@ -155,25 +175,38 @@ namespace PlayerControllerScripts
             if (camForward.sqrMagnitude > 0.01f) camForward.Normalize();
             if (camRight.sqrMagnitude > 0.01f) camRight.Normalize();
 
-            Vector3 targetDirection = (camForward * inputVector.y) + (camRight * inputVector.x);
+            return (camForward * input.y) + (camRight * input.x);
+        }
+        //플레이어 회전
+        public void HandleRotation(Vector3 targetDirection, bool isInstant = false)
+        {
+            if (targetDirection == Vector3.zero || playerMesh == null) return;
 
-            if (targetDirection != Vector3.zero && playerMesh != null)
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
+            if (isInstant)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+                //전투용 회전
+                playerMesh.rotation = targetRotation;
+            }
+            else
+            {
+                //이동용 회전
                 playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
-
+        }
+        public void HandlePosition(Vector3 targetDirection)
+        {
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
-
-        public void AE_DrawWeapon() => WeaponHandler?.DrawWeapon();
-        public void AE_SheathWeapon() => WeaponHandler?.SheathWeapon();
-
-        public void CheckCombo()
+        private void OnAnimatorMove()
         {
-            if (_currentState is PlayerCombatState combatState)
+            if(IsCombatMode && _currentState == combatState && combatState.UseRootMotion)
             {
-                combatState.OnComboCheck();
+                Vector3 velocity = Animator.deltaPosition;
+
+                velocity.y = _velocity.y * Time.deltaTime;
+                Controller.Move(velocity);
             }
         }
     }

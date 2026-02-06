@@ -13,6 +13,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void OnUpdate()
     {
+        Vector3 dir = player.GetTargetDirection(player.InputVector);
         if (player.InputVector.sqrMagnitude <= 0.01f)
         {
             player.ChangeState(player.idleState);
@@ -26,11 +27,8 @@ public class PlayerMoveState : PlayerBaseState
         float targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         if (player.InputVector.sqrMagnitude == 0) targetAnimSpeed = 0f;
         player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
-
-        player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
-        player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
-
-        player.HandleMovement(player.InputVector);
+        player.HandleRotation(dir, isInstant: false);
+        player.HandlePosition(dir);
     }
     public override void OnExit()
     {
