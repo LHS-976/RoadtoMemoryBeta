@@ -21,6 +21,8 @@ public class PlayerCombatState : PlayerBaseState
         _gotInput = false;
         _isAttacking = false;
 
+        DisableRootMotion();
+
         player.Animator.SetBool(PlayerController.AnimIDCombat, true);
         player.MoveSpeed = player.playerStats.CombatWalkSpeed;
 
@@ -46,8 +48,6 @@ public class PlayerCombatState : PlayerBaseState
         if(_isAttacking)
         {
             player.MoveSpeed = 0f;
-            UseRootMotion = true;
-            player.Animator.applyRootMotion = true;
             player.Animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
         }
         else
@@ -57,9 +57,18 @@ public class PlayerCombatState : PlayerBaseState
     }
     public override void OnExit()
     {
+        DisableRootMotion();
+        player.Animator.SetBool(PlayerController.AnimIDCombat, false);
+    }
+    private void EnableRootMotion()
+    {
+        UseRootMotion = true;
+        player.Animator.applyRootMotion = true;
+    }
+    private void DisableRootMotion()
+    {
         UseRootMotion = false;
         player.Animator.applyRootMotion = false;
-        player.Animator.SetBool(PlayerController.AnimIDCombat, false);
     }
     private void HandleStandardCombatMovement()
     {
@@ -121,6 +130,8 @@ public class PlayerCombatState : PlayerBaseState
             return;
         }
         _isAttacking = true;
+        EnableRootMotion();
+
         Vector3 attackDir = player.GetTargetDirection(player.InputVector);
         Transform enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, attackDir);
         if(enemy != null)
@@ -137,11 +148,10 @@ public class PlayerCombatState : PlayerBaseState
     }
     private void StartAttack()
     {
-        player.CombatSystem.ResetComboWindow();
-
+        EnableRootMotion();
         _isAttacking = true;
         _gotInput = false;
-
+        player.CombatSystem.ResetComboWindow();
         player.CombatSystem.ExecuteAttack(_lastCommand);
     }
 
@@ -158,12 +168,12 @@ public class PlayerCombatState : PlayerBaseState
             _isAttacking = false;
             _gotInput = false;
             player.CombatSystem.ResetCombo();
+            DisableRootMotion();
         }
     }
     public void OnAnimationEnd()
     {
         _isAttacking = false;
-        UseRootMotion = false;
-        player.Animator.applyRootMotion = false;
+        DisableRootMotion();
     }
 }

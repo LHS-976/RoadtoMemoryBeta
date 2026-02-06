@@ -14,6 +14,14 @@ public class PlayerAnimationEvents : MonoBehaviour
         if (_weaponHandler == null) _weaponHandler = GetComponentInParent<WeaponHandler>();
     }
 
+    private void OnAnimatorMoveManual()
+    {
+        if (_controller != null)
+        {
+            _controller.OnAnimatorMoveManual();
+        }
+    }
+
     public void CheckCombo()
     {
         _controller?.CheckCombo();

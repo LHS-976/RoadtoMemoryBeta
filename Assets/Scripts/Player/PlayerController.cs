@@ -7,8 +7,7 @@ namespace PlayerControllerScripts
     {
         [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
 
-        [Header("References")]
-        public TestPlayerCamera playerCamera;
+        //public TestPlayerCamera playerCamera;
         [SerializeField] private Transform playerMesh;
 
         public CharacterController Controller { get; private set; }
@@ -72,8 +71,6 @@ namespace PlayerControllerScripts
         private void Start()
         {
             ChangeState(idleState);
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         private void Update()
@@ -135,8 +132,11 @@ namespace PlayerControllerScripts
             {
                 _velocity.y = -2f;
             }
-
             _velocity.y += _gravity * Time.deltaTime;
+            if (IsCombatMode && combatState != null && combatState.UseRootMotion)
+            {
+                return;
+            }
             Controller.Move(_velocity * Time.deltaTime);
         }
 
@@ -199,14 +199,14 @@ namespace PlayerControllerScripts
         {
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
-        private void OnAnimatorMove()
+        public void OnAnimatorMoveManual()
         {
-            if(IsCombatMode && _currentState == combatState && combatState.UseRootMotion)
+            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
             {
                 Vector3 velocity = Animator.deltaPosition;
-
                 velocity.y = _velocity.y * Time.deltaTime;
                 Controller.Move(velocity);
+                transform.rotation *= Animator.deltaRotation;
             }
         }
     }
