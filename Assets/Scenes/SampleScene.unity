@@ -180,7 +180,7 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_YAxis:
-    Value: 0.5
+    Value: 1
     m_SpeedMode: 0
     m_MaxSpeed: 4
     m_AccelTime: 0.2
@@ -254,7 +254,7 @@ Transform:
   m_GameObject: {fileID: 97423962}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.7, z: -5}
+  m_LocalPosition: {x: 0, y: 3.7, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -305,7 +305,6 @@ GameObject:
   - component: {fileID: 189877310}
   - component: {fileID: 189877311}
   - component: {fileID: 189877314}
-  - component: {fileID: 189877313}
   - component: {fileID: 189877315}
   m_Layer: 10
   m_Name: Player
@@ -371,29 +370,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <playerStats>k__BackingField: {fileID: 11400000, guid: 152370a19327e2945a7bf92b25ee7862,
     type: 2}
-  playerCamera: {fileID: 189877313}
+  playerCamera: {fileID: 0}
   playerMesh: {fileID: 4399387973827649000}
   IsCombatMode: 0
   MoveSpeed: 0
   _lastAttackTime: 0
---- !u!114 &189877313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 189877308}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0025663589971b844b1e0dc093760111, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CinemachineCameraTarget: {fileID: 97423962}
-  TopClamp: 80
-  BottomClamp: -20
-  CameraAngleOverride: 0
-  LockCameraPosition: 0
-  sensitivity: 0.8
 --- !u!114 &189877314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,7 +487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 3.5, z: -5}
+  m_FollowOffset: {x: 0, y: 2.5, z: -3}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 0.5
@@ -646,8 +627,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27573875, y: 0.00000002864702, z: -0.00000000821767, w: 0.96123266}
-  m_LocalPosition: {x: 0, y: 4.7, z: -5}
+  m_LocalRotation: {x: 0.33575857, y: 0.000000037428986, z: -0.000000013341608, w: 0.94194806}
+  m_LocalPosition: {x: -0.00000023841456, y: 3.6500006, z: -3.0000029}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1254,8 +1235,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.27573866, y: -0.000000009105074, z: 0.000000002611878, w: 0.96123266}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.3111526, y: 0.00000004838449, z: -0.000000015841323, w: 0.95036}
+  m_LocalPosition: {x: 0, y: 0.00000023841858, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1716,8 +1697,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3006394, y: 0, z: 0, w: 0.9537379}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.3357586, y: 0.00000003888122, z: -0.00000001385926, w: 0.94194806}
+  m_LocalPosition: {x: 0, y: 0.00000023841858, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1795,8 +1776,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3006394, y: 0, z: 0, w: 0.9537379}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.3357586, y: 0.00000003888122, z: -0.00000001385926, w: 0.94194806}
+  m_LocalPosition: {x: 0, y: 0.00000023841858, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2211,7 +2192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 3.5, z: -5}
+  m_FollowOffset: {x: 0, y: 2.5, z: -3}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 0.5
@@ -2645,7 +2626,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 3.5, z: -5}
+  m_FollowOffset: {x: 0, y: 2.5, z: -3}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1

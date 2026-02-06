@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerCamera : MonoBehaviour
+public class TestPlayerCamera : MonoBehaviour
 {
     [Header("Cinemachine Settings")]
     public GameObject CinemachineCameraTarget;

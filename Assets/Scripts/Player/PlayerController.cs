@@ -8,7 +8,7 @@ namespace PlayerControllerScripts
         [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
 
         [Header("References")]
-        public PlayerCamera playerCamera;
+        public TestPlayerCamera playerCamera;
         [SerializeField] private Transform playerMesh;
 
         public CharacterController Controller { get; private set; }
