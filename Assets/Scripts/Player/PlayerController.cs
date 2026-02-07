@@ -111,18 +111,17 @@ namespace PlayerControllerScripts
         }
         public void ToggleCombatMode()
         {
-            IsCombatMode = !IsCombatMode;
             if (IsCombatMode)
             {
-                Animator.SetBool(AnimIDCombat, true);
-                Animator.SetTrigger(AnimIDTriggerDraw);
-                ChangeState(combatState);
+                Animator.SetTrigger(AnimIDTriggerSheath);
             }
             else
             {
-                Animator.SetBool(AnimIDCombat, false);
-                Animator.SetTrigger(AnimIDTriggerSheath);
-                ChangeState(idleState);
+                IsCombatMode = true;
+                _lastAttackTime = Time.time;
+                Animator.SetBool(AnimIDCombat, true);
+                Animator.SetTrigger(AnimIDTriggerDraw);
+                ChangeState(combatState);
             }
         }
 
@@ -161,6 +160,12 @@ namespace PlayerControllerScripts
             }
         }
 
+        public void OnSheathComplete()
+        {
+            IsCombatMode = false;
+            Animator.SetBool(AnimIDCombat, false);
+            ChangeState(idleState);
+        }
         //카메라 기준 방향으로 변환
         public Vector3 GetTargetDirection(Vector2 input)
         {

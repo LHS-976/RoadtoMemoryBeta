@@ -46,4 +46,11 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         _weaponHandler?.SheathWeapon();
     }
+    public void AE_SheathComplete()
+    {
+        if(_controller != null)
+        {
+            _controller.OnSheathComplete();
+        }
+    }
 }

@@ -38,7 +38,8 @@ public class PlayerCombatState : PlayerBaseState
         {
             float x = Input.GetAxisRaw("Horizontal");
             float y = Input.GetAxisRaw("Vertical");
-            if(y < -0.1f)
+            Vector2 input = new Vector2(x, y);
+            if (y < -0.1f)
             {
                 ExecuteCommand(CombatCommand.Evasion_Back);
             }

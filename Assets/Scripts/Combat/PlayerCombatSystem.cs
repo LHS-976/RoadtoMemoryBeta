@@ -64,6 +64,8 @@ public class PlayerCombatSystem : MonoBehaviour
                 PlayAttack(5);
                 return;
             }
+            PlayAttack(0);
+            return;
             /*
             else if(commandType == CombatCommand.Evasion_Forward)
             {
