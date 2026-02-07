@@ -7,7 +7,7 @@ public class PlayerCombatState : PlayerBaseState
     private CombatCommand _lastCommand;
     private bool _gotInput;
     private float _lastInputTime;
-    private float _maxComboDelay = 1f;
+    private float _maxComboDelay = 0.5f;
     private bool _isAttacking;
 
     public bool UseRootMotion { get; private set; }
@@ -109,7 +109,6 @@ public class PlayerCombatState : PlayerBaseState
     {
         float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
-        Debug.Log($"키보드 입력값: ({x}, {y}) / 플레이어 변수값: {player.InputVector}");
         Vector2 input = new Vector2(x, y);
         if(input.y > 0.5f)
         {
