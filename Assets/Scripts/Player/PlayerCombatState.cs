@@ -34,7 +34,31 @@ public class PlayerCombatState : PlayerBaseState
             player.ChangeState(player.idleState);
             return;
         }
-
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            float x = Input.GetAxisRaw("Horizontal");
+            float y = Input.GetAxisRaw("Vertical");
+            if(y < -0.1f)
+            {
+                ExecuteCommand(CombatCommand.Evasion_Back);
+            }
+            else if(y > 0.1f)
+            {
+                ExecuteCommand(CombatCommand.Evasion_Forward);
+            }
+            else if (x > 0.1f)
+            {
+                ExecuteCommand(CombatCommand.Evasion_Right);
+            }
+            else if(x<-0.1f)
+            {
+                ExecuteCommand(CombatCommand.Evasion_Left);
+            }
+            else
+            {
+                ExecuteCommand(CombatCommand.Evasion_Back);
+            }
+        }
         if(Input.GetMouseButtonDown(0))
         {
             CombatCommand cmd = GetCommand(isHeavy: false);
@@ -114,11 +138,6 @@ public class PlayerCombatState : PlayerBaseState
         {
             return isHeavy ? CombatCommand.Forward_Heavy : CombatCommand.Forward_Light;
         }
-        if(input.y < -0.5f)
-        {
-            return isHeavy ? CombatCommand.Stand_Heavy : CombatCommand.Back_Light;
-        }
-
         return isHeavy ? CombatCommand.Stand_Heavy : CombatCommand.Stand_Light;
 
     }

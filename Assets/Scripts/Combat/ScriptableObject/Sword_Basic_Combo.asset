@@ -23,7 +23,7 @@ MonoBehaviour:
       nextComboIndex: 1
     - commandType: 3
       nextComboIndex: 5
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
     nextCombos:
     - commandType: 0
       nextComboIndex: 2
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
     nextCombos:
     - commandType: 0
       nextComboIndex: 3
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -53,7 +53,7 @@ MonoBehaviour:
     nextCombos:
     - commandType: 0
       nextComboIndex: 4
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
     nextCombos:
     - commandType: 3
       nextComboIndex: 9
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -73,8 +73,10 @@ MonoBehaviour:
     nextCombos:
     - commandType: 3
       nextComboIndex: 6
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 6
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -84,6 +86,8 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 7
     - commandType: 2
+      nextComboIndex: 7
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -94,6 +98,8 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 8
     - commandType: 2
+      nextComboIndex: 8
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -104,16 +110,16 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 9
     - commandType: 4
-      nextComboIndex: 9
-    - commandType: 2
       nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 9
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Attack_H5
     damageMultiplier: 2.5
     nextCombos:
-    - commandType: 2
+    - commandType: 4
       nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
@@ -127,10 +133,12 @@ MonoBehaviour:
       nextComboIndex: 11
     - commandType: 2
       nextComboIndex: 11
+    - commandType: 3
+      nextComboIndex: 11
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
-  - attackName: Back_L1
+  - attackName: Dash_L1
     damageMultiplier: 1
     nextCombos:
     - commandType: 0
