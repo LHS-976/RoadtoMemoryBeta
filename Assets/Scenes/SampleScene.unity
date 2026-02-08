@@ -387,6 +387,7 @@ MonoBehaviour:
   IsCombatMode: 0
   MoveSpeed: 0
   _lastAttackTime: 0
+  _isSheathing: 0
 --- !u!114 &189877314
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -29,16 +29,10 @@ public class PlayerCombatState : PlayerBaseState
     }
     public override void OnUpdate()
     {
-        if(!player.IsCombatMode)
-        {
-            player.ChangeState(player.idleState);
-            return;
-        }
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            float x = Input.GetAxisRaw("Horizontal");
-            float y = Input.GetAxisRaw("Vertical");
-            Vector2 input = new Vector2(x, y);
+            float x = player.InputVector.x;
+            float y = player.InputVector.y;
             if (y < -0.1f)
             {
                 ExecuteCommand(CombatCommand.Evasion_Back);
@@ -132,10 +126,7 @@ public class PlayerCombatState : PlayerBaseState
 
     private CombatCommand GetCommand(bool isHeavy)
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
-        Vector2 input = new Vector2(x, y);
-        if(input.y > 0.5f)
+        if(player.InputVector.y > 0.5f)
         {
             return isHeavy ? CombatCommand.Forward_Heavy : CombatCommand.Forward_Light;
         }

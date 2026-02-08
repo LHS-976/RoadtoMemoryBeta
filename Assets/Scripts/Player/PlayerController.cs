@@ -41,6 +41,7 @@ namespace PlayerControllerScripts
         private float _gravity;
         private float _initialJumpVelocity; //점프 구현
         public event Action<bool> OnCombatStateChanged; //변경
+        private bool _isSheathing = false;
 
 
         private void Awake()
@@ -96,8 +97,9 @@ namespace PlayerControllerScripts
             }
             if(IsCombatMode)
             {
-                if(Time.time - _lastAttackTime > 8.0f) //자동 납도기능
+                if(!_isSheathing && Time.time - _lastAttackTime > 8.0f) //자동 납도기능
                 {
+                    _lastAttackTime = Time.time;
                     ToggleCombatMode();
                 }
             }
@@ -111,8 +113,14 @@ namespace PlayerControllerScripts
         }
         public void ToggleCombatMode()
         {
+            if(_isSheathing)
+            {
+                Debug.Log("에러");
+                return;
+            }
             if (IsCombatMode)
             {
+                _isSheathing = true;
                 Animator.SetTrigger(AnimIDTriggerSheath);
             }
             else
@@ -163,6 +171,7 @@ namespace PlayerControllerScripts
         public void OnSheathComplete()
         {
             IsCombatMode = false;
+            _isSheathing = false;
             Animator.SetBool(AnimIDCombat, false);
             ChangeState(idleState);
         }
