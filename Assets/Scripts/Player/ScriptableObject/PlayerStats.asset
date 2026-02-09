@@ -15,5 +15,12 @@ MonoBehaviour:
   WalkSpeed: 2
   RunSpeed: 6
   RotateSpeed: 10
+  CombatWalkSpeed: 3
+  CombatRunSpeed: 5
   MaxJumpHeight: 2
   MaxJumpTime: 0.5
+  playerMaxHp: 100
+  playerMaxStamina: 100
+  staminaRegenrate: 10
+  sprintStaminaCost: 5
+  dashStaminaCost: 20

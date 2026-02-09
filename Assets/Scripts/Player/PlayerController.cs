@@ -6,6 +6,7 @@ namespace PlayerControllerScripts
     public class PlayerController : MonoBehaviour
     {
         [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
+        [field: SerializeField] public PlayerManager playerManager { get; private set; }
 
         //public TestPlayerCamera playerCamera;
         [SerializeField] private Transform playerMesh;
@@ -35,6 +36,8 @@ namespace PlayerControllerScripts
         [HideInInspector] public static readonly int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
         [HideInInspector] public static readonly int AnimIDAttack = Animator.StringToHash("Attack");
         [HideInInspector] public static readonly int AnimIDComboCount = Animator.StringToHash("ComboCount");
+        [HideInInspector] public static readonly int AnimIDHit = Animator.StringToHash("Hit"); //히트 애니메이션 추가.
+        [HideInInspector] public static readonly int AnimIDDie = Animator.StringToHash("Die"); //다이 애니메이션 추가.
 
 
         private Vector3 _velocity;
@@ -46,10 +49,11 @@ namespace PlayerControllerScripts
 
         private void Awake()
         {
-            Controller = GetComponent<CharacterController>();
-            Animator = GetComponentInChildren<Animator>();
-            CombatSystem = GetComponent<PlayerCombatSystem>();
-            WeaponHandler = GetComponent<WeaponHandler>();
+            if(Controller == null) Controller = GetComponent<CharacterController>();
+            if(Animator == null) Animator = GetComponentInChildren<Animator>();
+            if(CombatSystem == null) CombatSystem = GetComponent<PlayerCombatSystem>();
+            if(WeaponHandler == null) WeaponHandler = GetComponent<WeaponHandler>();
+            if(playerManager == null) playerManager = GetComponent<PlayerManager>();
 
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
 
@@ -85,8 +89,17 @@ namespace PlayerControllerScripts
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
             InputVector = new Vector2(h, v);
-            IsSprint = Input.GetKey(KeyCode.LeftShift);
-
+            bool sprintInput = Input.GetKey(KeyCode.LeftShift);
+            
+            if(sprintInput && InputVector.sqrMagnitude > 0 && playerManager.CurrentStamina > 0)
+            {
+                IsSprint = true;
+                playerManager.ConsumeStamina(playerStats.sprintStaminaCost * Time.deltaTime);
+            }
+            else
+            {
+                IsSprint = false;
+            }
             if (Input.GetKeyDown(KeyCode.X))
             {
                 if(!IsCombatMode)

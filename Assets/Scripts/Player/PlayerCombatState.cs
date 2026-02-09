@@ -31,27 +31,34 @@ public class PlayerCombatState : PlayerBaseState
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            float x = player.InputVector.x;
-            float y = player.InputVector.y;
-            if (y < -0.1f)
+            if(player.playerManager.UseStamina(player.playerStats.dashStaminaCost))
             {
-                ExecuteCommand(CombatCommand.Evasion_Back);
-            }
-            else if(y > 0.1f)
-            {
-                ExecuteCommand(CombatCommand.Evasion_Forward);
-            }
-            else if (x > 0.1f)
-            {
-                ExecuteCommand(CombatCommand.Evasion_Right);
-            }
-            else if(x<-0.1f)
-            {
-                ExecuteCommand(CombatCommand.Evasion_Left);
+                float x = player.InputVector.x;
+                float y = player.InputVector.y;
+                if (y < -0.1f)
+                {
+                    ExecuteCommand(CombatCommand.Evasion_Back);
+                }
+                else if (y > 0.1f)
+                {
+                    ExecuteCommand(CombatCommand.Evasion_Forward);
+                }
+                else if (x > 0.1f)
+                {
+                    ExecuteCommand(CombatCommand.Evasion_Right);
+                }
+                else if (x < -0.1f)
+                {
+                    ExecuteCommand(CombatCommand.Evasion_Left);
+                }
+                else
+                {
+                    ExecuteCommand(CombatCommand.Evasion_Back);
+                }
             }
             else
             {
-                ExecuteCommand(CombatCommand.Evasion_Back);
+                Debug.Log("스태미너 부족 UI추가하기.");
             }
         }
         if(Input.GetMouseButtonDown(0))
@@ -158,7 +165,11 @@ public class PlayerCombatState : PlayerBaseState
                           cmd == CombatCommand.Evasion_Forward ||
                           cmd == CombatCommand.Evasion_Right ||
                           cmd == CombatCommand.Evasion_Left);
-
+        if(isEvasion)
+        {
+            player.playerManager.SetInvincible(true);
+            //애니메이션 이벤트로 끄는 기능 추가예정
+        }
         if(!isEvasion && attackDir != Vector3.zero)
         {
             player.HandleRotation(attackDir, isInstant: true);
@@ -198,6 +209,7 @@ public class PlayerCombatState : PlayerBaseState
     public void OnAnimationEnd()
     {
         _isAttacking = false;
+        player.playerManager.SetInvincible(false);
         DisableRootMotion();
 
         player.CombatSystem.ResetCombo();

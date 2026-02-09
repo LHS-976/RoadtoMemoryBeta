@@ -18,8 +18,8 @@ TagManager:
   - Player
   - Enemy
   - PlayerWeapon
-  - 
-  - 
+  - PlayerHurtbox
+  - EnemyWeapon
   - 
   - 
   - 
