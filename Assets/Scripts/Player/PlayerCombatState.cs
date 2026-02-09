@@ -154,7 +154,16 @@ public class PlayerCombatState : PlayerBaseState
             toEnemy.y = 0;
             attackDir = toEnemy.normalized;
         }
-        if(attackDir != Vector3.zero)
+        bool isEvasion = (cmd == CombatCommand.Evasion_Back ||
+                          cmd == CombatCommand.Evasion_Forward ||
+                          cmd == CombatCommand.Evasion_Right ||
+                          cmd == CombatCommand.Evasion_Left);
+
+        if(!isEvasion && attackDir != Vector3.zero)
+        {
+            player.HandleRotation(attackDir, isInstant: true);
+        }
+        else if(isEvasion && enemy != null)
         {
             player.HandleRotation(attackDir, isInstant: true);
         }

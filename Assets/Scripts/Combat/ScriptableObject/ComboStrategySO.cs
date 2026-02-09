@@ -28,6 +28,18 @@ public class ComboStrategySO : ScriptableObject
     public float baseDamage = 10f;
     public float attackSpeed = 1.0f;
 
+    public List<ComboConnection> combos;
+
     [Header("Combo Chain")]
     public List<AttackAction> actions;
+
+    public int GetStartingIndex(CombatCommand command)
+    {
+        foreach(var next in combos)
+        {
+            if (next.commandType == command)
+                return next.nextComboIndex;
+        }
+        return -1;
+    }
 }

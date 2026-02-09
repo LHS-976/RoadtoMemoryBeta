@@ -15,6 +15,23 @@ MonoBehaviour:
   comboName: BaseCombo
   baseDamage: 10
   attackSpeed: 1
+  combos:
+  - commandType: 0
+    nextComboIndex: 0
+  - commandType: 2
+    nextComboIndex: 5
+  - commandType: 4
+    nextComboIndex: 11
+  - commandType: 1
+    nextComboIndex: 0
+  - commandType: 3
+    nextComboIndex: 5
+  - commandType: 5
+    nextComboIndex: 12
+  - commandType: 7
+    nextComboIndex: 13
+  - commandType: 6
+    nextComboIndex: 14
   actions:
   - attackName: Attack_L1
     damageMultiplier: 1
@@ -24,7 +41,15 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 5
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 2
+      nextComboIndex: 5
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -34,7 +59,13 @@ MonoBehaviour:
     - commandType: 0
       nextComboIndex: 2
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 7
+      nextComboIndex: 13
+    - commandType: 6
+      nextComboIndex: 14
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -44,7 +75,13 @@ MonoBehaviour:
     - commandType: 0
       nextComboIndex: 3
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 13
+    - commandType: 7
+      nextComboIndex: 14
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -54,7 +91,13 @@ MonoBehaviour:
     - commandType: 0
       nextComboIndex: 4
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 7
+      nextComboIndex: 13
+    - commandType: 6
+      nextComboIndex: 14
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -64,7 +107,13 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 9
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 7
+      nextComboIndex: 13
+    - commandType: 6
+      nextComboIndex: 14
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -74,9 +123,15 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 6
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
     - commandType: 2
       nextComboIndex: 6
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -88,7 +143,13 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 7
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -100,7 +161,13 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 8
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -110,9 +177,15 @@ MonoBehaviour:
     - commandType: 3
       nextComboIndex: 9
     - commandType: 4
-      nextComboIndex: 10
+      nextComboIndex: 11
     - commandType: 2
       nextComboIndex: 9
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -120,21 +193,13 @@ MonoBehaviour:
     damageMultiplier: 2.5
     nextCombos:
     - commandType: 4
-      nextComboIndex: 10
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
-    cameraShakePower: 0
-  - attackName: Evasion_Back
-    damageMultiplier: 0
-    nextCombos:
-    - commandType: 0
       nextComboIndex: 11
-    - commandType: 1
-      nextComboIndex: 11
-    - commandType: 2
-      nextComboIndex: 11
-    - commandType: 3
-      nextComboIndex: 11
+    - commandType: 5
+      nextComboIndex: 12
+    - commandType: 6
+      nextComboIndex: 14
+    - commandType: 7
+      nextComboIndex: 13
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0
@@ -143,8 +208,68 @@ MonoBehaviour:
     nextCombos:
     - commandType: 0
       nextComboIndex: 0
+    - commandType: 1
+      nextComboIndex: 0
     - commandType: 3
       nextComboIndex: 5
+    - commandType: 2
+      nextComboIndex: 5
+    hitVFX: {fileID: 0}
+    hitStopDuration: 0
+    cameraShakePower: 0
+  - attackName: Evasion_Back
+    damageMultiplier: 0
+    nextCombos:
+    - commandType: 0
+      nextComboIndex: 10
+    - commandType: 1
+      nextComboIndex: 10
+    - commandType: 3
+      nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 10
+    hitVFX: {fileID: 0}
+    hitStopDuration: 0
+    cameraShakePower: 0
+  - attackName: Evasion_Forward
+    damageMultiplier: 0
+    nextCombos:
+    - commandType: 0
+      nextComboIndex: 10
+    - commandType: 1
+      nextComboIndex: 10
+    - commandType: 3
+      nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 10
+    hitVFX: {fileID: 0}
+    hitStopDuration: 0
+    cameraShakePower: 0
+  - attackName: Evasion_Left
+    damageMultiplier: 0
+    nextCombos:
+    - commandType: 0
+      nextComboIndex: 10
+    - commandType: 1
+      nextComboIndex: 10
+    - commandType: 3
+      nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 10
+    hitVFX: {fileID: 0}
+    hitStopDuration: 0
+    cameraShakePower: 0
+  - attackName: Evasion_Right
+    damageMultiplier: 0
+    nextCombos:
+    - commandType: 0
+      nextComboIndex: 10
+    - commandType: 1
+      nextComboIndex: 10
+    - commandType: 3
+      nextComboIndex: 10
+    - commandType: 2
+      nextComboIndex: 10
     hitVFX: {fileID: 0}
     hitStopDuration: 0
     cameraShakePower: 0

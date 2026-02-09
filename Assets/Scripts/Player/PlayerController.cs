@@ -113,11 +113,7 @@ namespace PlayerControllerScripts
         }
         public void ToggleCombatMode()
         {
-            if(_isSheathing)
-            {
-                Debug.Log("에러");
-                return;
-            }
+            if(_isSheathing) return;
             if (IsCombatMode)
             {
                 _isSheathing = true;

@@ -9,7 +9,6 @@ public enum CombatCommand
     Forward_Light,
     Stand_Heavy,
     Forward_Heavy,
-
     Evasion_Back,
     Evasion_Forward,
     Evasion_Right,
@@ -59,20 +58,12 @@ public class PlayerCombatSystem : MonoBehaviour
         if (currentStrategy == null) return;
         if (_currentActionIndex == -1)
         {
-            if(commandType == CombatCommand.Evasion_Back)
+            int startIndex = currentStrategy.GetStartingIndex(commandType);
+            if(startIndex != -1)
             {
-                PlayAttack(5);
-                return;
+                PlayAttack(startIndex);
             }
-            PlayAttack(0);
             return;
-            /*
-            else if(commandType == CombatCommand.Evasion_Forward)
-            {
-                PlayAttack(6);
-                return;
-            }
-            */
         }
         AttackAction currentAction = currentStrategy.actions[_currentActionIndex];
         ComboConnection connection = null;
