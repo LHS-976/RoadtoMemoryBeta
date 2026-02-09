@@ -107,34 +107,69 @@ public class PlayerCombatState : PlayerBaseState
     private void HandleStandardCombatMovement()
     {
         Vector3 dir = player.GetTargetDirection(player.InputVector);
-        Vector3 lookDir = player.MainCameraTransform.forward;
-        lookDir.y = 0;
-        if (lookDir.sqrMagnitude > 0.01f) lookDir.Normalize();
-
-        bool isSprinting = player.IsSprint;
-        if(dir.sqrMagnitude >0)
+        Transform target = player.CombatSystem.CurrentTarget;
+        if(target != null)
         {
-            player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
+            Vector3 dirToTarget = target.position - player.transform.position;
+            dirToTarget.y = 0;
+            
+            //회전튀는현상 방지용.
+            if(dirToTarget.sqrMagnitude > 0.001f)
+            {
+                player.HandleAttackRotation();
+            }
+            bool isSprinting = player.IsSprint;
+            if (dir.sqrMagnitude > 0)
+            {
+                player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
+            }
+            else
+            {
+                player.MoveSpeed = 0f;
+            }
+            player.HandlePosition(dir);
+
+            Vector3 localDir = player.transform.InverseTransformDirection(dir);
+            float targetAnimSpeed = 0f;
+            if (player.InputVector.sqrMagnitude > 0)
+            {
+                targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
+            }
+            player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
+            player.Animator.SetFloat(PlayerController.AnimIDInputX, localDir.x, 0.1f, Time.deltaTime);
+            player.Animator.SetFloat(PlayerController.AnimIDInputY, localDir.z, 0.1f, Time.deltaTime);
         }
         else
         {
-            player.MoveSpeed = 0f;
-        }
+            Vector3 lookDir = player.MainCameraTransform.forward;
+            lookDir.y = 0;
+            if (lookDir.sqrMagnitude > 0.01f) lookDir.Normalize();
 
-        float targetAnimSpeed = 0f;
-        if (player.InputVector.sqrMagnitude > 0)
-        {
-            targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
-        }
-        player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
-        player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
-        player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
+            bool isSprinting = player.IsSprint;
+            if (dir.sqrMagnitude > 0)
+            {
+                player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
+            }
+            else
+            {
+                player.MoveSpeed = 0f;
+            }
 
-        if(lookDir != Vector3.zero)
-        {
-            player.HandleRotation(lookDir, isInstant: false);
+            float targetAnimSpeed = 0f;
+            if (player.InputVector.sqrMagnitude > 0)
+            {
+                targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
+            }
+            player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
+            player.Animator.SetFloat(PlayerController.AnimIDInputX, player.InputVector.x, 0.1f, Time.deltaTime);
+            player.Animator.SetFloat(PlayerController.AnimIDInputY, player.InputVector.y, 0.1f, Time.deltaTime);
+
+            if (lookDir != Vector3.zero)
+            {
+                player.HandleRotation(lookDir, isInstant: false);
+            }
+            player.HandlePosition(dir);
         }
-        player.HandlePosition(dir);
     }
 
     private CombatCommand GetCommand(bool isHeavy)
