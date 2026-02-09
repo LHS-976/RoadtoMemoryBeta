@@ -15,7 +15,6 @@ public class EnemyWeapon : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("피격");
         if((_targetLayer.value & (1<< other.gameObject.layer)) !=0)
         {
             PlayerHurtBox hurtBox = other.GetComponentInParent<PlayerHurtBox>();

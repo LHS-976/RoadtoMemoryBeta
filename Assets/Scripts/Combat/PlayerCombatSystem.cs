@@ -28,6 +28,11 @@ public class PlayerCombatSystem : MonoBehaviour
     private int _currentActionIndex = -1;
 
     public bool CanCombo { get; private set; }
+    public Transform CurrentTarget { get; private set; }
+    public void SetTarget(Transform target)
+    {
+        CurrentTarget = target;
+    }
 
     [SerializeField] private float _detectRadius = 5.0f;
     [SerializeField] private LayerMask enemyLayer;
@@ -134,4 +139,13 @@ public class PlayerCombatSystem : MonoBehaviour
         _currentActionIndex = -1;
         _animator.SetInteger(PlayerController.AnimIDComboCount, 0);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        // 플레이어를 선택했을 때만 감지 범위를 빨간색 구체로 그려줍니다.
+        Gizmos.color = new Color(1, 0, 0, 0.3f); // 반투명 빨강
+        Gizmos.DrawSphere(transform.position, _detectRadius);
+    }
+#endif
 }

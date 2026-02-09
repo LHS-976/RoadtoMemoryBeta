@@ -209,7 +209,7 @@ namespace PlayerControllerScripts
 
             if (isInstant)
             {
-                //전투용 회전
+                //combatmode용 회전
                 playerMesh.rotation = targetRotation;
             }
             else
@@ -218,23 +218,24 @@ namespace PlayerControllerScripts
                 playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
         }
+        //적 감지 회전
+        public void HandleAttackRotation()
+        {
+            if (CombatSystem.CurrentTarget == null) return;
+
+            Vector3 dirTotarget = CombatSystem.CurrentTarget.position - transform.position;
+            dirTotarget.y = 0;
+
+            if(dirTotarget.sqrMagnitude > 0.1f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(dirTotarget.normalized);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15.0f);
+            }
+        }
         public void HandlePosition(Vector3 targetDirection)
         {
             Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
         }
-        /*
-        public void OnAnimatorMoveManual(float speed)
-        {
-            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
-            {
-                Vector3 velocity = transform.forward * speed * Time.deltaTime;
-
-                velocity.y = _velocity.y * Time.deltaTime;
-                Controller.Move(velocity);
-                transform.rotation *= Animator.deltaRotation;
-            }
-        }
-        */
         public void OnAnimatorMoveManual()
         {
             if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
@@ -246,5 +247,26 @@ namespace PlayerControllerScripts
                 transform.rotation *= Animator.deltaRotation;
             }
         }
+        /*
+        public void OnAnimatorMoveManual()
+        {
+            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
+            {
+                Vector3 velocity = Animator.deltaPosition;
+
+                if(CombatSystem.CurrentTarget != null)
+                {
+                    float dist = Vector3.Distance(transform.position, CombatSystem.CurrentTarget.position);
+                    if(dist > 1.5f && dist < 3.0f)
+                    {
+                        velocity *= 1.2f;
+                    }
+                }
+                velocity.y = _velocity.y * Time.deltaTime;
+                Controller.Move(velocity);
+                transform.rotation *= Animator.deltaRotation;
+            }
+        }
+        */
     }
 }

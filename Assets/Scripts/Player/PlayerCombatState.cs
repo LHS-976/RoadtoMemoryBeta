@@ -77,6 +77,12 @@ public class PlayerCombatState : PlayerBaseState
             player.Animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
             player.Animator.SetFloat(PlayerController.AnimIDInputX, 0f);
             player.Animator.SetFloat(PlayerController.AnimIDInputY, 0f);
+
+            if(_lastCommand != CombatCommand.Evasion_Back && _lastCommand != CombatCommand.Evasion_Forward && 
+                _lastCommand != CombatCommand.Evasion_Right && _lastCommand != CombatCommand.Evasion_Left)
+            {
+                player.HandleAttackRotation();
+            }
         }
         else
         {
@@ -155,6 +161,8 @@ public class PlayerCombatState : PlayerBaseState
 
         Vector3 attackDir = player.GetTargetDirection(player.InputVector);
         Transform enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, attackDir);
+
+        player.CombatSystem.SetTarget(enemy);
         if(enemy != null)
         {
             Vector3 toEnemy = enemy.position - player.transform.position;
