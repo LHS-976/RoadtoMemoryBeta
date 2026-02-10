@@ -17,7 +17,7 @@ public class AttackAction
     //추가사항
     public GameObject hitVFX;
     public float hitStopDuration;
-    public float cameraShakePower;
+    public float cameraShakePower; //카메라 흔들림은 추후 추가예정
 }
 
 [CreateAssetMenu(fileName = "NewComboStrategy", menuName = "Combat Strategy")]

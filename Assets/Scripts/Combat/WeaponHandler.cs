@@ -13,6 +13,8 @@ public class WeaponHandler : MonoBehaviour
     public ParticleSystem drawVFX;
     public ParticleSystem sheathVFX;
 
+    [SerializeField] private Collider _currentWeaponCollider; //만들어둔 Hitbox 연결
+
     private void Start()
     {
         SheathWeapon();
@@ -32,5 +34,20 @@ public class WeaponHandler : MonoBehaviour
         if (weaponBack != null) weaponBack.SetActive(true);
 
         if (sheathVFX != null) sheathVFX.Play();
+    }
+
+    public void EnableWeaponCollider()
+    {
+        if(_currentWeaponCollider != null)
+        {
+            _currentWeaponCollider.enabled = true;
+        }
+    }
+    public void DisableWeaponCollider()
+    {
+        if(_currentWeaponCollider != null)
+        {
+            _currentWeaponCollider.enabled = false;
+        }
     }
 }

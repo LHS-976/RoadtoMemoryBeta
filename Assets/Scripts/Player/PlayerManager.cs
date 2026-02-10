@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using PlayerControllerScripts;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, IDamageable
 {
     [SerializeField] private PlayerController _controller;
 
@@ -55,6 +55,16 @@ public class PlayerManager : MonoBehaviour
         CurrentStamina -= amount;
         if (CurrentStamina < 0) CurrentStamina = 0;
     }
+    public void RestoreStamina(float amount)
+    {
+        CurrentStamina += amount;
+
+        if(CurrentStamina > _controller.playerStats.playerMaxStamina)
+        {
+            CurrentStamina = _controller.playerStats.playerMaxStamina;
+        }
+    }
+
 
     public void TakeDamage(float damage)
     {

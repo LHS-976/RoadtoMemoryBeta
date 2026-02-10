@@ -1,4 +1,5 @@
 ﻿using PlayerControllerScripts;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCombatState : PlayerBaseState
@@ -9,6 +10,12 @@ public class PlayerCombatState : PlayerBaseState
     private float _lastInputTime;
     private float _maxComboDelay = 0.5f;
     private bool _isAttacking;
+
+    private float _evasionCooldown = 0.5f;
+    private float _lastEvasionTime = -10f;
+
+    private float _minInputInterval = 0.1f;
+    private float _lastClickTIme;
 
     public bool UseRootMotion { get; private set; }
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
@@ -31,6 +38,10 @@ public class PlayerCombatState : PlayerBaseState
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
+            if(Time.time - _lastEvasionTime < _evasionCooldown)
+            {
+                return;
+            }
             if(player.playerManager.UseStamina(player.playerStats.dashStaminaCost))
             {
                 float x = player.InputVector.x;
@@ -61,14 +72,17 @@ public class PlayerCombatState : PlayerBaseState
                 Debug.Log("스태미너 부족 UI추가하기.");
             }
         }
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
-            CombatCommand cmd = GetCommand(isHeavy: false);
-            ExecuteCommand(cmd);
-        }
-        else if(Input.GetMouseButtonDown(1))
-        {
-            CombatCommand cmd = GetCommand(isHeavy: true);
+            if(Time.time - _lastClickTIme < _minInputInterval)
+            {
+                return;
+            }
+            _lastClickTIme = Time.time;
+
+            bool isRightClick = Input.GetMouseButtonDown(1);
+            CombatCommand cmd = GetCommand(isHeavy: isRightClick);
+
             ExecuteCommand(cmd);
         }
         if(_isAttacking)
@@ -113,7 +127,7 @@ public class PlayerCombatState : PlayerBaseState
             Vector3 dirToTarget = target.position - player.transform.position;
             dirToTarget.y = 0;
             
-            //회전튀는현상 방지용.
+            //회전튀는현상 방지용, 다리꼬임 방지
             if(dirToTarget.sqrMagnitude > 0.001f)
             {
                 player.HandleAttackRotation();
@@ -187,27 +201,67 @@ public class PlayerCombatState : PlayerBaseState
         _gotInput = true;
         _lastCommand = cmd;
         _lastInputTime = Time.time;
+
+        bool isEvasion = (cmd == CombatCommand.Evasion_Back || cmd == CombatCommand.Evasion_Forward ||
+                          cmd == CombatCommand.Evasion_Right || cmd == CombatCommand.Evasion_Left);
+
         if(_isAttacking)
         {
-            return;
+            if(isEvasion)
+            {
+                _isAttacking = false;
+                player.CombatSystem.ResetCombo();
+            }
+            else
+            {
+                if(player.CombatSystem.CanCombo)
+                {
+                    StartAttack();
+                }
+                return;
+            }
         }
         _isAttacking = true;
         _gotInput = false;
 
-        Vector3 attackDir = player.GetTargetDirection(player.InputVector);
-        Transform enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, attackDir);
 
+        Transform enemy = player.CombatSystem.CurrentTarget;
+        Vector3 inputDir = player.GetTargetDirection(player.InputVector);
+        if(inputDir.sqrMagnitude > 0.01f && enemy != null)
+        {
+            Vector3 toEnemy = (enemy.position - player.transform.position).normalized;
+            float angle = Vector3.Angle(inputDir, toEnemy);
+
+            if(angle > 60.0f)
+            {
+                enemy = null;
+            }
+        }
+        if(enemy == null || !enemy.gameObject.activeSelf) //적이 죽었을때 방지추가
+        {
+            Vector3 searchDir = player.GetTargetDirection(player.InputVector);
+            enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, searchDir);
+        }
         player.CombatSystem.SetTarget(enemy);
+        Vector3 attackDir = Vector3.zero;
         if(enemy != null)
         {
             Vector3 toEnemy = enemy.position - player.transform.position;
             toEnemy.y = 0;
             attackDir = toEnemy.normalized;
         }
-        bool isEvasion = (cmd == CombatCommand.Evasion_Back ||
-                          cmd == CombatCommand.Evasion_Forward ||
-                          cmd == CombatCommand.Evasion_Right ||
-                          cmd == CombatCommand.Evasion_Left);
+        else
+        {
+            if(player.InputVector.y < -0.1f)
+            {
+                attackDir = player.transform.forward;
+            }
+            else
+            {
+                attackDir = player.GetTargetDirection(player.InputVector);
+                if (attackDir == Vector3.zero) attackDir = player.transform.forward;
+            }
+        }
         if(isEvasion)
         {
             player.playerManager.SetInvincible(true);
@@ -243,9 +297,7 @@ public class PlayerCombatState : PlayerBaseState
         }
         else
         {
-            _isAttacking = false;
             _gotInput = false;
-            player.CombatSystem.ResetCombo();
             DisableRootMotion();
         }
     }

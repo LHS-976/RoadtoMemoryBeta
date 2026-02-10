@@ -32,11 +32,15 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         _controller?.OnAnimationEnd();
     }
-
-    public void ApplyHitStop()
+    public void AE_EnableDamageCollider()
     {
-        _combatSystem?.ApplyHitStop();
+        _weaponHandler?.EnableWeaponCollider();
     }
+    public void AE_DisableDamageCollider()
+    {
+        _weaponHandler?.DisableWeaponCollider();
+    }
+
     public void AE_DrawWeapon()
     {
         _weaponHandler?.DrawWeapon();
@@ -52,5 +56,9 @@ public class PlayerAnimationEvents : MonoBehaviour
         {
             _controller.OnSheathComplete();
         }
+    }
+    public void AE_PlayFootstep()
+    {
+        //발소리 추가 예정
     }
 }

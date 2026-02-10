@@ -50,8 +50,9 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+      type: 3}
+    hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L2
     damageMultiplier: 1.2
@@ -66,8 +67,9 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+      type: 3}
+    hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L3
     damageMultiplier: 1.5
@@ -82,8 +84,9 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 7
       nextComboIndex: 14
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+      type: 3}
+    hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L4
     damageMultiplier: 2
@@ -98,8 +101,9 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+      type: 3}
+    hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L5
     damageMultiplier: 2.5
@@ -114,8 +118,9 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+      type: 3}
+    hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_H1
     damageMultiplier: 1.5
@@ -133,7 +138,7 @@ MonoBehaviour:
     - commandType: 7
       nextComboIndex: 13
     hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H2
     damageMultiplier: 1.8
@@ -151,7 +156,7 @@ MonoBehaviour:
     - commandType: 7
       nextComboIndex: 13
     hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H3
     damageMultiplier: 2
@@ -169,7 +174,7 @@ MonoBehaviour:
     - commandType: 7
       nextComboIndex: 13
     hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H4
     damageMultiplier: 2.2
@@ -187,7 +192,7 @@ MonoBehaviour:
     - commandType: 7
       nextComboIndex: 13
     hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H5
     damageMultiplier: 2.5
@@ -201,7 +206,7 @@ MonoBehaviour:
     - commandType: 7
       nextComboIndex: 13
     hitVFX: {fileID: 0}
-    hitStopDuration: 0
+    hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Dash_L1
     damageMultiplier: 1

@@ -25,4 +25,5 @@ public class PlayerStatSO : ScriptableObject
     public float staminaRegenrate = 10f;
     public float sprintStaminaCost = 10f;
     public float dashStaminaCost = 20f;
+    public float staminaRecoveryOnHit = 5f;
 }
