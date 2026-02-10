@@ -157,6 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSystem: {fileID: 189877315}
   maxHp: 100
+  IsDead: 0
 --- !u!54 &32575375
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1497,6 +1498,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSystem: {fileID: 189877315}
   maxHp: 100
+  IsDead: 0
 --- !u!54 &446048388
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1559,6 +1561,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSystem: {fileID: 189877315}
   maxHp: 100
+  IsDead: 0
 --- !u!54 &589421983
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2208,7 +2211,7 @@ Transform:
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
   m_LocalRotation: {x: 0.627523, y: 0, z: 0, w: 0.778598}
-  m_LocalPosition: {x: 0, y: 0.0000014305115, z: 0}
+  m_LocalPosition: {x: 0, y: 0.0000009536743, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
