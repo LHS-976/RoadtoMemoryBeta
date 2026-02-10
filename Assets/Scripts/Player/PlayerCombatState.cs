@@ -232,9 +232,9 @@ public class PlayerCombatState : PlayerBaseState
         Vector3 inputDir = player.GetTargetDirection(player.InputVector);
         if(inputDir.sqrMagnitude > 0.01f && enemy != null)
         {
-            Vector3 toEnemy = (enemy.position - player.transform.position).normalized;
+            Vector3 toEnemy = (enemy.position - player.transform.position);
             float dist = toEnemy.magnitude;
-
+            toEnemy.Normalize();
             float angle = Vector3.Angle(inputDir, toEnemy);
 
             if(player.InputVector.y >= 0.1f)
@@ -251,13 +251,22 @@ public class PlayerCombatState : PlayerBaseState
         }
         if(enemy == null || !enemy.gameObject.activeSelf) //적이 죽었을때 방지추가
         {
-            Vector3 searchDir = player.GetTargetDirection(player.InputVector);
+            Vector3 searchDir;
+            if (player.InputVector.y < -0.1f || player.InputVector.sqrMagnitude < 0.01f)
+            {
+                searchDir = player.transform.forward;
+            }
+            else
+            {
+                searchDir = player.GetTargetDirection(player.InputVector);
+            }
             enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, searchDir);
         }
         player.CombatSystem.SetTarget(enemy);
 
 
         Vector3 attackDir = Vector3.zero;
+
         if(enemy != null)
         {
             Vector3 toEnemy = enemy.position - player.transform.position;
@@ -273,7 +282,14 @@ public class PlayerCombatState : PlayerBaseState
             else
             {
                 attackDir = player.GetTargetDirection(player.InputVector);
-                if (attackDir == Vector3.zero) attackDir = player.transform.forward;
+
+                if(attackDir == Vector3.zero)
+                {
+                    //수정예정.
+                    Vector3 camForward = player.MainCameraTransform.forward;
+                    camForward.y = 0;
+                    attackDir = camForward.normalized;
+                }
             }
         }
         if(isEvasion)

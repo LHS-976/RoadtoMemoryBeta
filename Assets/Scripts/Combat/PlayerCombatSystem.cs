@@ -130,7 +130,11 @@ public class PlayerCombatSystem : MonoBehaviour
         {
             Collider collider = _enemyBuffer[i];
             if (!collider.gameObject.activeSelf) continue;
-            
+            //테스트용
+            SandBagEnemy enemyScript = collider.GetComponent<SandBagEnemy>();
+            if (enemyScript != null && enemyScript.IsDead) continue;
+            //
+
             Vector3 toEnemy = collider.transform.position - playerPos;
             Vector3 checkDir = inputDir == Vector3.zero ? transform.forward : inputDir;
             float angle = Vector3.Angle(checkDir, toEnemy);
