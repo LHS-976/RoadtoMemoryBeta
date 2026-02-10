@@ -17,6 +17,9 @@ public class PlayerCombatState : PlayerBaseState
     private float _minInputInterval = 0.1f;
     private float _lastClickTIme;
 
+    private float _fixedMaxTarget = 100.0f;
+    private float _clearMaxDis = 3.0f;
+
     public bool UseRootMotion { get; private set; }
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
     {
@@ -230,11 +233,20 @@ public class PlayerCombatState : PlayerBaseState
         if(inputDir.sqrMagnitude > 0.01f && enemy != null)
         {
             Vector3 toEnemy = (enemy.position - player.transform.position).normalized;
+            float dist = toEnemy.magnitude;
+
             float angle = Vector3.Angle(inputDir, toEnemy);
 
-            if(angle > 60.0f)
+            if(player.InputVector.y >= 0.1f)
             {
-                enemy = null;
+                if (angle > _fixedMaxTarget)
+                {
+                    enemy = null;
+                }
+            }
+            else
+            {
+                if (dist > _clearMaxDis) enemy = null;
             }
         }
         if(enemy == null || !enemy.gameObject.activeSelf) //적이 죽었을때 방지추가
@@ -243,6 +255,8 @@ public class PlayerCombatState : PlayerBaseState
             enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, searchDir);
         }
         player.CombatSystem.SetTarget(enemy);
+
+
         Vector3 attackDir = Vector3.zero;
         if(enemy != null)
         {
