@@ -8,7 +8,6 @@ namespace PlayerControllerScripts
         [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
         [field: SerializeField] public PlayerManager playerManager { get; private set; }
 
-        //public TestPlayerCamera playerCamera;
         [SerializeField] private Transform playerMesh;
 
         public CharacterController Controller { get; private set; }
@@ -141,7 +140,6 @@ namespace PlayerControllerScripts
                 ChangeState(combatState);
             }
         }
-
         private void ApplyGravity()
         {
             if (Controller.isGrounded && _velocity.y < 0)
@@ -176,7 +174,6 @@ namespace PlayerControllerScripts
                 combatState.OnAnimationEnd();
             }
         }
-
         public void OnSheathComplete()
         {
             IsCombatMode = false;
@@ -247,26 +244,5 @@ namespace PlayerControllerScripts
                 transform.rotation *= Animator.deltaRotation;
             }
         }
-        /*
-        public void OnAnimatorMoveManual()
-        {
-            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
-            {
-                Vector3 velocity = Animator.deltaPosition;
-
-                if(CombatSystem.CurrentTarget != null)
-                {
-                    float dist = Vector3.Distance(transform.position, CombatSystem.CurrentTarget.position);
-                    if(dist > 1.5f && dist < 3.0f)
-                    {
-                        velocity *= 1.2f;
-                    }
-                }
-                velocity.y = _velocity.y * Time.deltaTime;
-                Controller.Move(velocity);
-                transform.rotation *= Animator.deltaRotation;
-            }
-        }
-        */
     }
 }

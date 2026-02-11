@@ -57,8 +57,11 @@ public class PlayerAnimationEvents : MonoBehaviour
             _controller.OnSheathComplete();
         }
     }
+
+    /*
     public void AE_PlayFootstep()
     {
         //발소리 추가 예정
     }
+    */
 }
