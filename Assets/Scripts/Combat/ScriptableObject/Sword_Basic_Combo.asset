@@ -212,9 +212,9 @@ MonoBehaviour:
     damageMultiplier: 1
     nextCombos:
     - commandType: 0
-      nextComboIndex: 0
+      nextComboIndex: 1
     - commandType: 1
-      nextComboIndex: 0
+      nextComboIndex: 1
     - commandType: 3
       nextComboIndex: 5
     - commandType: 2

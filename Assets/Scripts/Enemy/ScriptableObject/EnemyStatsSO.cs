@@ -1,0 +1,31 @@
+﻿using UnityEngine;
+
+
+[CreateAssetMenu(fileName = "EnemyStats", menuName = "Enemy/Stats")]
+public class EnemyStatsSO : ScriptableObject
+{
+    [Header("Movement")]
+    public float moveSpeed = 2.5f;
+    public float rotationSpeed = 120f;
+
+    [Header("FOV")]
+    public float viewRadius = 10f;
+    public float viewAngle = 120f;
+
+    [Header("Combat")]
+    public float maxHealth = 100f;
+    public float attackCooldown = 1.5f;
+    public float attackRange = 1.5f;
+    public float defenseArmor = 50f; //깨질때 특수처리할 예정
+
+    [Header("Detection Setting")]
+    public LayerMask playerMask;
+    public LayerMask obstacleLayer;
+
+    [Header("Patrol Settings")]
+    public float patrolRadius = 10f;
+    public float patrolidleTime = 2f;
+
+    [Header("Hurt Settings")]
+    public float hitStunTime = 1.0f;
+}

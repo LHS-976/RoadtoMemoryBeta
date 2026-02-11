@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8761448cb1c225b4482c75716a1d6083, type: 3}
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
-  WalkSpeed: 2
+  WalkSpeed: 3
   RunSpeed: 6
   RotateSpeed: 10
   CombatWalkSpeed: 3
@@ -24,3 +24,4 @@ MonoBehaviour:
   staminaRegenrate: 10
   sprintStaminaCost: 5
   dashStaminaCost: 20
+  staminaRecoveryOnHit: 5
