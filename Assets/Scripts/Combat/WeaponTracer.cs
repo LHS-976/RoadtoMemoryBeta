@@ -103,10 +103,6 @@ public class WeaponTracer : MonoBehaviour
                 {
                     continue;
                 }
-                if(hitCount >0 )
-                {
-                    Debug.Log($"감지된 물체: {_rayHitBuffer[0].collider.name}");
-                }
                 //중복 타격방지
                 int id = hitCollider.gameObject.GetInstanceID();
                 if (_hitVictims.Contains(id)) continue;
