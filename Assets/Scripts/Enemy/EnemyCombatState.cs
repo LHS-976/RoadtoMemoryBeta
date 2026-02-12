@@ -6,29 +6,29 @@ public class EnemyCombatState : EnemyBaseState
 
     public override void OnEnter()
     {
-        _enemyController.agent.isStopped = false;
+        enemyController.Agent.isStopped = false;
     }
     public override void OnUpdate()
     {
-        if(_enemyController.targetTransform == null)
+        if(enemyController.targetTransform == null)
         {
-            _enemyController.ChangeState(_enemyController.patrolState);
+            enemyController.ChangeState(enemyController.patrolState);
             return;
         }
-        float distance = Vector3.Distance(_enemyController.transform.position, _enemyController.targetTransform.position);
+        float distance = Vector3.Distance(enemyController.transform.position, enemyController.targetTransform.position);
 
-        if(distance <= _enemyController.enemyManager.enemyStats.attackRange)
+        if(distance <= enemyController.EnemyManager.EnemyStats.attackRange)
         {
-            _enemyController.ChangeState(_enemyController.attackState);
+            enemyController.ChangeState(enemyController.attackState);
         }
         else
         {
-            _enemyController.agent.SetDestination(_enemyController.targetTransform.position);
-            _animator.SetFloat(EnemyController.AnimIDEnemySpeed, _enemyController.agent.velocity.magnitude);
+            enemyController.Agent.SetDestination(enemyController.targetTransform.position);
+            animator.SetFloat(EnemyController.AnimIDEnemySpeed, enemyController.Agent.velocity.magnitude);
         }
     }
     public override void OnExit()
     {
-        _enemyController.agent.isStopped = true;
+        enemyController.Agent.isStopped = true;
     }
 }

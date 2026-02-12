@@ -14,7 +14,7 @@ namespace PlayerControllerScripts
         public Animator Animator { get; private set; }
         public Transform MainCameraTransform { get; private set; }
         public PlayerCombatSystem CombatSystem { get; private set; }
-        public WeaponHandler WeaponHandler { get; private set; }
+        public WeaponTracer WeaponTracer { get; private set; }
 
         private PlayerBaseState _currentState;
         public PlayerIdleState idleState;
@@ -52,7 +52,7 @@ namespace PlayerControllerScripts
             if(Controller == null) Controller = GetComponent<CharacterController>();
             if(Animator == null) Animator = GetComponentInChildren<Animator>();
             if(CombatSystem == null) CombatSystem = GetComponent<PlayerCombatSystem>();
-            if(WeaponHandler == null) WeaponHandler = GetComponent<WeaponHandler>();
+            if(WeaponTracer == null) WeaponTracer = GetComponentInChildren<WeaponTracer>();
             if(playerManager == null) playerManager = GetComponent<PlayerManager>();
 
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;

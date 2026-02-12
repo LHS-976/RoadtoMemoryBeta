@@ -35,6 +35,8 @@ MonoBehaviour:
   actions:
   - attackName: Attack_L1
     damageMultiplier: 1
+    startFrameHit: 0.108333334
+    endFrameHit: 0.3333333
     nextCombos:
     - commandType: 0
       nextComboIndex: 1
@@ -56,6 +58,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_L2
     damageMultiplier: 1.2
+    startFrameHit: 0.1
+    endFrameHit: 0.41666666
     nextCombos:
     - commandType: 0
       nextComboIndex: 2
@@ -73,6 +77,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_L3
     damageMultiplier: 1.5
+    startFrameHit: 0.0833333
+    endFrameHit: 0.4833333
     nextCombos:
     - commandType: 0
       nextComboIndex: 3
@@ -90,6 +96,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_L4
     damageMultiplier: 2
+    startFrameHit: 0.11666667
+    endFrameHit: 0.5
     nextCombos:
     - commandType: 0
       nextComboIndex: 4
@@ -107,6 +115,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_L5
     damageMultiplier: 2.5
+    startFrameHit: 0.15
+    endFrameHit: 0.5833333
     nextCombos:
     - commandType: 3
       nextComboIndex: 9
@@ -124,6 +134,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_H1
     damageMultiplier: 1.5
+    startFrameHit: 0.1
+    endFrameHit: 0.5416667
     nextCombos:
     - commandType: 3
       nextComboIndex: 6
@@ -142,6 +154,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_H2
     damageMultiplier: 1.8
+    startFrameHit: 0.1
+    endFrameHit: 0.75
     nextCombos:
     - commandType: 3
       nextComboIndex: 7
@@ -160,6 +174,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_H3
     damageMultiplier: 2
+    startFrameHit: 0.1
+    endFrameHit: 0.5833333
     nextCombos:
     - commandType: 3
       nextComboIndex: 8
@@ -178,6 +194,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_H4
     damageMultiplier: 2.2
+    startFrameHit: 0.2083333
+    endFrameHit: 0.625
     nextCombos:
     - commandType: 3
       nextComboIndex: 9
@@ -196,6 +214,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Attack_H5
     damageMultiplier: 2.5
+    startFrameHit: 0.1
+    endFrameHit: 0.566666
     nextCombos:
     - commandType: 4
       nextComboIndex: 11
@@ -210,6 +230,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Dash_L1
     damageMultiplier: 1
+    startFrameHit: 0
+    endFrameHit: 0
     nextCombos:
     - commandType: 0
       nextComboIndex: 1
@@ -224,6 +246,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Evasion_Back
     damageMultiplier: 0
+    startFrameHit: 0
+    endFrameHit: 0
     nextCombos:
     - commandType: 0
       nextComboIndex: 10
@@ -238,6 +262,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Evasion_Forward
     damageMultiplier: 0
+    startFrameHit: 0
+    endFrameHit: 0
     nextCombos:
     - commandType: 0
       nextComboIndex: 10
@@ -252,6 +278,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Evasion_Left
     damageMultiplier: 0
+    startFrameHit: 0
+    endFrameHit: 0
     nextCombos:
     - commandType: 0
       nextComboIndex: 10
@@ -266,6 +294,8 @@ MonoBehaviour:
     cameraShakePower: 0
   - attackName: Evasion_Right
     damageMultiplier: 0
+    startFrameHit: 0
+    endFrameHit: 0
     nextCombos:
     - commandType: 0
       nextComboIndex: 10

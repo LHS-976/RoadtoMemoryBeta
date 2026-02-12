@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// 삭제예정
+/// </summary>
 public class EnemyWeapon : MonoBehaviour
 {
     [SerializeField] private float _damage = 10f; //EnemySO로 바꿀예정

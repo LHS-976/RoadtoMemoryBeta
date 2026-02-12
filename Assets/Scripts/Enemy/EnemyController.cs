@@ -3,9 +3,9 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] public EnemyManager enemyManager { get; private set; }
-    [SerializeField] public NavMeshAgent agent { get; private set; }
-    [SerializeField] public Animator animator { get; private set; }
+    [SerializeField] public EnemyManager EnemyManager { get; private set; }
+    [SerializeField] public NavMeshAgent Agent { get; private set; }
+    [SerializeField] public Animator Animator { get; private set; }
 
     public Transform targetTransform;
 
@@ -25,9 +25,9 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-        if (animator == null) animator = GetComponentInChildren<Animator>();
-        if (enemyManager == null) enemyManager = GetComponent<EnemyManager>();
+        if (Agent == null) Agent = GetComponent<NavMeshAgent>();
+        if (Animator == null) Animator = GetComponentInChildren<Animator>();
+        if (EnemyManager == null) EnemyManager = GetComponent<EnemyManager>();
         spwnPosition = transform.position;
         Initialize();
     }
@@ -37,7 +37,7 @@ public class EnemyController : MonoBehaviour
     }
     private void Update()
     {
-        if (enemyManager.isDead) return;
+        if (EnemyManager.isDead) return;
         currentState?.OnUpdate();
     }
     public void ChangeState(EnemyBaseState newState)
@@ -53,9 +53,9 @@ public class EnemyController : MonoBehaviour
         Vector3 dirToTarget = (target.position - transform.position).normalized;
 
         //시야각
-        if(Vector3.Angle(transform.forward, dirToTarget) < enemyManager.enemyStats.viewAngle / 2f)
+        if(Vector3.Angle(transform.forward, dirToTarget) < EnemyManager.EnemyStats.viewAngle / 2f)
         {
-            if(!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, enemyManager.enemyStats.obstacleLayer))
+            if(!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, EnemyManager.EnemyStats.obstacleLayer))
             {
                 return true;
             }
@@ -64,13 +64,13 @@ public class EnemyController : MonoBehaviour
     }
     private void Initialize()
     {
-        combatState = new EnemyCombatState(this, animator);
-        patrolState = new EnemyPatrolState(this, animator);
-        attackState = new EnemyAttackState(this, animator);
-        hitState = new EnemyHitState(this, animator);
-        agent.speed = enemyManager.enemyStats.moveSpeed;
-        agent.angularSpeed = enemyManager.enemyStats.rotationSpeed;
-        agent.stoppingDistance = enemyManager.enemyStats.attackRange;
+        combatState = new EnemyCombatState(this, Animator);
+        patrolState = new EnemyPatrolState(this, Animator);
+        attackState = new EnemyAttackState(this, Animator);
+        hitState = new EnemyHitState(this, Animator);
+        Agent.speed = EnemyManager.EnemyStats.moveSpeed;
+        Agent.angularSpeed = EnemyManager.EnemyStats.rotationSpeed;
+        Agent.stoppingDistance = EnemyManager.EnemyStats.attackRange;
     }
     public void HandleHit()
     {
@@ -78,13 +78,13 @@ public class EnemyController : MonoBehaviour
     }
     public void HandleInit()
     {
-        agent.isStopped = false;
-        agent.speed = enemyManager.enemyStats.moveSpeed;
-        agent.stoppingDistance = 0f;
+        Agent.isStopped = false;
+        Agent.speed = EnemyManager.EnemyStats.moveSpeed;
+        Agent.stoppingDistance = 0f;
     }
     public void HandleStop()
     {
-        agent.isStopped = true;
-        agent.velocity = Vector3.zero;
+        Agent.isStopped = true;
+        Agent.velocity = Vector3.zero;
     }
 }

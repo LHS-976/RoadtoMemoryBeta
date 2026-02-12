@@ -2,39 +2,39 @@
 
 public class EnemyAttackState : EnemyBaseState
 {
-    private float attackTimer;
+    private float _attackTimer;
     public EnemyAttackState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
     {
     }
 
     public override void OnEnter()
     {
-        attackTimer = 0f;
+        _attackTimer = 0f;
 
-        _enemyController.HandleStop();
+        enemyController.HandleStop();
         LookAtTarget();
 
-        _animator.SetTrigger(EnemyController.AnimIDEnemyAttack);
+        animator.SetTrigger(EnemyController.AnimIDEnemyAttack);
     }
     public override void OnUpdate()
     {
-        attackTimer += Time.deltaTime;
+        _attackTimer += Time.deltaTime;
 
-        if(attackTimer >= _enemyController.enemyManager.enemyStats.attackCooldown)
+        if(_attackTimer >= enemyController.EnemyManager.EnemyStats.attackCooldown)
         {
-            _enemyController.ChangeState(_enemyController.combatState);
+            enemyController.ChangeState(enemyController.combatState);
         }
     }
     public override void OnExit()
     {
-        _enemyController.agent.isStopped = false;
+        enemyController.Agent.isStopped = false;
     }
 
     private void LookAtTarget()
     {
-        if (_enemyController.targetTransform == null) return;
-        Vector3 lookDir = (_enemyController.targetTransform.position - _enemyController.transform.position).normalized;
+        if (enemyController.targetTransform == null) return;
+        Vector3 lookDir = (enemyController.targetTransform.position - enemyController.transform.position).normalized;
         lookDir.y = 0;
-        if (lookDir != Vector3.zero) _enemyController.transform.rotation = Quaternion.LookRotation(lookDir);
+        if (lookDir != Vector3.zero) enemyController.transform.rotation = Quaternion.LookRotation(lookDir);
     }
 }

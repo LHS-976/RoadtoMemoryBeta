@@ -12,6 +12,11 @@ public class AttackAction
 {
     public string attackName;
     public float damageMultiplier;
+
+    [Header("정확한 프레임 계산: 공격 판정이 켜지는 시점 / 120frame")]
+    public float startFrameHit;
+    public float endFrameHit;
+
     public List<ComboConnection> nextCombos;
 
     //추가사항

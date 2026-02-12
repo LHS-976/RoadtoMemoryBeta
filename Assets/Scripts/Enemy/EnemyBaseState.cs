@@ -2,13 +2,13 @@
 
 public abstract class EnemyBaseState
 {
-    protected EnemyController _enemyController;
-    protected Animator _animator;
+    protected EnemyController enemyController;
+    protected Animator animator;
 
-    public EnemyBaseState(EnemyController _enemyController, Animator _animator)
+    public EnemyBaseState(EnemyController enemyController, Animator animator)
     {
-        this._enemyController = _enemyController;
-        this._animator = _animator;
+        this.enemyController = enemyController;
+        this.animator = animator;
     }
     public abstract void OnEnter();
     public abstract void OnUpdate();

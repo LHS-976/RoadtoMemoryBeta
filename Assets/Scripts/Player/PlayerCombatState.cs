@@ -16,8 +16,6 @@ public class PlayerCombatState : PlayerBaseState
     private float _minInputInterval = 0.1f;
     private float _lastClickTIme;
 
-    private float _fixedMaxTarget = 100.0f;
-    private float _clearMaxDis = 3.0f;
 
     public bool UseRootMotion { get; private set; }
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
@@ -293,17 +291,12 @@ public class PlayerCombatState : PlayerBaseState
             toTarget.y = 0;
             return toTarget.normalized;
         }
-        if(player.InputVector.y < 0.1f)
+        Vector3 camForward = player.MainCameraTransform.forward;
+        camForward.y = 0;
+        if(camForward.sqrMagnitude < 0.01f)
         {
             return player.transform.forward;
         }
-        if(searchDir.sqrMagnitude > 0.01f)
-        {
-            return searchDir;
-        }
-
-        Vector3 camForward = player.MainCameraTransform.forward;
-        camForward.y = 0;
         return camForward.normalized;
     }
 }

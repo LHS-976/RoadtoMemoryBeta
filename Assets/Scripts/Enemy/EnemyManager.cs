@@ -2,7 +2,7 @@
 
 public class EnemyManager : MonoBehaviour, IDamageable
 {
-    public EnemyStatsSO enemyStats;
+    [SerializeField] public EnemyStatsSO EnemyStats { get; private set; }
     [SerializeField] private EnemyController _enemyController;
 
     private float _currentHealth;
@@ -13,7 +13,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     private void Awake()
     {
         if(_enemyController) _enemyController = GetComponent<EnemyController>();
-        if(enemyStats != null) _currentHealth = enemyStats.maxHealth;
+        if(EnemyStats != null) _currentHealth = EnemyStats.maxHealth;
     }
 
     public void TakeDamage(float damage)

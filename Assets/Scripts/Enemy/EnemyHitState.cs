@@ -2,30 +2,30 @@
 
 public class EnemyHitState : EnemyBaseState
 {
-    private float afterHitTime;
+    private float _afterHitTime;
     public EnemyHitState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
     {
     }
 
     public override void OnEnter()
     {
-        afterHitTime = 0f;
+        _afterHitTime = 0f;
 
-        _enemyController.HandleStop();
-        _animator.SetTrigger(EnemyController.AnimIDEnemyHit);
+        enemyController.HandleStop();
+        animator.SetTrigger(EnemyController.AnimIDEnemyHit);
 
     }
     public override void OnUpdate()
     {
-        afterHitTime += Time.deltaTime;
+        _afterHitTime += Time.deltaTime;
 
-        if(afterHitTime >= _enemyController.enemyManager.enemyStats.hitStunTime)
+        if(_afterHitTime >= enemyController.EnemyManager.EnemyStats.hitStunTime)
         {
-            _enemyController.ChangeState(_enemyController.combatState);
+            enemyController.ChangeState(enemyController.combatState);
         }
     }
     public override void OnExit()
     {
-        _enemyController.agent.isStopped = false;
+        enemyController.Agent.isStopped = false;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using PlayerControllerScripts;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,16 +18,18 @@ public class PlayerCombatSystem : MonoBehaviour
 {
     [SerializeField] private PlayerController _controller;
     [SerializeField] private Animator _animator;
-    [SerializeField] private WeaponHandler _weaponHandler;
+
+    [SerializeField] private WeaponTracer _weaponTracer;
+    [SerializeField] private HitTimerController _hitTimer;
 
     [Header("Strategy Data")]
     public ComboStrategySO currentStrategy;
     public List<ComboStrategySO> availableStyles;
 
     private int _currentActionIndex = -1;
+    private AttackAction _activeAttackAction;
     public bool CanCombo { get; private set; }
     public Transform CurrentTarget { get; private set; }
-    private Coroutine _currentHitStop;
 
     public void SetTarget(Transform target)
     {
@@ -42,18 +43,113 @@ public class PlayerCombatSystem : MonoBehaviour
     [SerializeField] private LayerMask _enemyLayer;
 
     [SerializeField] private float _hitStopTimeScale = 0.05f;
+    [SerializeField] private bool _useHitTimer = true;
     private Collider[] _enemyBuffer = new Collider[20];
+
+    public bool IsDamageActive { get; private set; }
+
+    private Dictionary<int, AttackAction> _actionMap = new Dictionary<int, AttackAction>();
 
     public void Initialize(PlayerController controller, Animator animator)
     {
         _controller = controller;
         _animator = animator;
 
-        if(_weaponHandler == null)
+        if (_weaponTracer == null) _weaponTracer = GetComponentInChildren<WeaponTracer>();
+        if (_hitTimer == null) _hitTimer = GetComponent<HitTimerController>();
+        if (_weaponTracer != null) _weaponTracer.Initialize(this);
+        if (currentStrategy != null) UpdateActionMap();
+    }
+    public void UpdateActionMap()
+    {
+        _actionMap.Clear();
+        if (currentStrategy == null) return;
+
+        foreach(var action in currentStrategy.actions)
         {
-            _weaponHandler = GetComponent<WeaponHandler>();
+            int hash = Animator.StringToHash(action.attackName);
+            if (!_actionMap.ContainsKey(hash))
+            {
+                _actionMap.Add(hash, action);
+            }
         }
     }
+    private void Update()
+    {
+        CheckAttackHitWindow();
+    }
+
+    private void CheckAttackHitWindow()
+    {
+        if(currentStrategy == null || _actionMap.Count == 0)
+        {
+            IsDamageActive = false;
+            return;
+        }
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+        AnimatorStateInfo nextInfo = _animator.GetNextAnimatorStateInfo(0);
+        bool isTransitioning = _animator.IsInTransition(0);
+
+        int targetHash = 0;
+        float currentNormalizedTime = 0f;
+        bool isAttackState = false;
+
+        if (isTransitioning)
+        {
+            targetHash = nextInfo.shortNameHash;
+            currentNormalizedTime = nextInfo.normalizedTime;
+        }
+        else
+        {
+            targetHash = stateInfo.shortNameHash;
+            currentNormalizedTime = stateInfo.normalizedTime;
+        }    
+        if (_actionMap.TryGetValue(targetHash, out AttackAction currentAction))
+        {
+            isAttackState = true;
+            float time = currentNormalizedTime % 1.0f;
+
+            if(time >= currentAction.startFrameHit && time <= currentAction.endFrameHit)
+            {
+                _activeAttackAction = currentAction;
+                EnableDamage();
+            }
+            else
+            {
+                DisableDamage();
+                _activeAttackAction = null;
+            }
+        }
+        if(!isAttackState)
+        {
+            DisableDamage();
+        }
+    }
+    private void EnableDamage()
+    {
+        if(!IsDamageActive)
+        {
+            IsDamageActive = true;
+            _weaponTracer.EnableTrace();
+        }
+    }
+    private void DisableDamage()
+    {
+        if(IsDamageActive)
+        {
+            IsDamageActive = false;
+            _weaponTracer.DisableTrace();
+        }
+    }
+
+    //피격, 회피등으로 캔슬될 때 외부에서 호출
+    public void ForceStopAttack()
+    {
+        DisableDamage();
+        ResetCombo();
+        _currentActionIndex = -1;
+    }
+
     //타겟 갱신. 기존 타겟이 유효하면 유지하고 아니면 새로찾는다.
     public void UpdateTarget(Vector3 playerPos, Vector3 searchDir)
     {
@@ -67,6 +163,11 @@ public class PlayerCombatSystem : MonoBehaviour
     {
         if (target == null || !target.gameObject.activeSelf) return false;
 
+        SandBagEnemy enemy = target.GetComponent<SandBagEnemy>();
+        if(enemy != null && enemy.IsDead)
+        {
+            return false;
+        }
         float distance = Vector3.Distance(playerPos, target.position);
         return distance <= _detectRadius * _targetLostMultiplier;
     }
@@ -83,10 +184,6 @@ public class PlayerCombatSystem : MonoBehaviour
         {
             Collider collider = _enemyBuffer[i];
             if (!collider.gameObject.activeSelf) continue;
-            //테스트용
-            SandBagEnemy enemyScript = collider.GetComponent<SandBagEnemy>();
-            if (enemyScript != null && enemyScript.IsDead) continue;
-            //
 
             Vector3 toEnemy = collider.transform.position - playerPos;
             toEnemy.y = 0;
@@ -110,26 +207,46 @@ public class PlayerCombatSystem : MonoBehaviour
         CurrentTarget = null;
     }
 
-    private void PlayAttack(int index)
+    public void OnAttackHit(IDamageable target, Vector3 hitPoint)
+    {
+
+        if(_controller != null)
+        {
+            _controller.playerManager.RestoreStamina(_controller.playerStats.staminaRecoveryOnHit);
+        }
+
+        AttackAction action = _activeAttackAction;
+        if (action == null) action = GetCurrentAttackAction();
+        if (action == null) return;
+        float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
+        target.TakeDamage(finalDamage);
+        Debug.Log($"데미지 적용 : {finalDamage} -> {target}");
+
+        if(action.hitStopDuration > 0 && _hitTimer != null)
+        {
+            //GetComponentInChildren<Animator>();
+            Animator enemyAnim = (target as Component)?.GetComponent<Animator>();
+            _hitTimer.StartHitStop(action.hitStopDuration, enemyAnim);
+        }
+        if (action.hitVFX != null)
+        {
+            VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
+        }
+    }
+    private void PlayAttackAnim(int index)
     {
         if (index >= currentStrategy.actions.Count) return;
 
         _currentActionIndex = index;
         AttackAction action = currentStrategy.actions[index];
 
-        float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
-
-        var hitBox = _weaponHandler.GetComponentInChildren<WeaponHitBox>();
-        if (hitBox != null)
-        {
-            hitBox.SetDamage(finalDamage);
-        }
         _animator.ResetTrigger(action.attackName);
         _animator.SetTrigger(action.attackName);
         _animator.SetInteger(PlayerController.AnimIDComboCount, index);
 
         CanCombo = false;
     }
+
 
     public void ExecuteAttack(CombatCommand commandType)
     {
@@ -139,7 +256,7 @@ public class PlayerCombatSystem : MonoBehaviour
             int startIndex = currentStrategy.GetStartingIndex(commandType);
             if(startIndex != -1)
             {
-                PlayAttack(startIndex);
+                PlayAttackAnim(startIndex);
             }
             return;
         }
@@ -148,33 +265,28 @@ public class PlayerCombatSystem : MonoBehaviour
 
         if (connection != null)
         {
-            PlayAttack(connection.nextComboIndex);
+            PlayAttackAnim(connection.nextComboIndex);
         }
     }
 
     public AttackAction GetCurrentAttackAction()
     {
-        if (currentStrategy == null || _currentActionIndex == -1) return null;
-        if (_currentActionIndex >= currentStrategy.actions.Count) return null;
-        return currentStrategy.actions[_currentActionIndex];
-    }
-    public void OnHit(Vector3 hitPoint)
-    {
-        if(_controller != null && _controller.playerManager != null)
+        int currentHash = 0;
+        if (_animator.IsInTransition(0))
         {
-            _controller.playerManager.RestoreStamina(_controller.playerStats.staminaRecoveryOnHit);
+            currentHash = _animator.GetNextAnimatorStateInfo(0).shortNameHash;
         }
-        AttackAction action = GetCurrentAttackAction();
-        if (action == null) return;
+        else
+        {
+            currentHash = _animator.GetCurrentAnimatorStateInfo(0).shortNameHash;
+        }
 
-        if (action.hitStopDuration > 0)
+        if(_actionMap.TryGetValue(currentHash, out AttackAction action))
         {
-            _currentHitStop = StartCoroutine(HitStopRoutine(action.hitStopDuration));
+            return action;
         }
-        if (action.hitVFX != null)
-        {
-            VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
-        }
+        return null;
+
     }
     private ComboConnection FindNextCombo(AttackAction action, CombatCommand commandType)
     {
@@ -187,30 +299,6 @@ public class PlayerCombatSystem : MonoBehaviour
         }
         return null;
     }
-    private IEnumerator HitStopRoutine(float duration)
-    {
-        if(_currentHitStop != null)
-        {
-            StopCoroutine(_currentHitStop);
-        }
-
-        float originalTimeScale = Time.timeScale;
-        Time.timeScale = _hitStopTimeScale;
-
-        yield return new WaitForSecondsRealtime(duration);
-
-        Time.timeScale = originalTimeScale;
-        _currentHitStop = null;
-    }
-    private void OnDisable()
-    {
-        if(_currentHitStop != null)
-        {
-            StopCoroutine(_currentHitStop);
-            Time.timeScale = 1f;
-        }
-    }
-
     public void SetComboWindow(int state) => CanCombo = (state == 1);
     public void ResetComboWindow() => CanCombo = false;
 

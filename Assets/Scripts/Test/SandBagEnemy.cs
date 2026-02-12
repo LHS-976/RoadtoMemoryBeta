@@ -4,7 +4,7 @@
 
 public class SandBagEnemy : MonoBehaviour, IDamageable
 {
-    [SerializeField] PlayerCombatSystem playerSystem;
+    [SerializeField] private PlayerCombatSystem playerSystem;
     public float maxHp = 100;
     public bool IsDead { get; private set; }
 
@@ -33,6 +33,7 @@ public class SandBagEnemy : MonoBehaviour, IDamageable
         {
             playerSystem.SetTarget(null);
         }
-        gameObject.SetActive(false);
+        gameObject.layer = LayerMask.NameToLayer("Dead");
+        Destroy(gameObject);
     }
 }

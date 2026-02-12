@@ -5,7 +5,7 @@ public class PlayerAnimationEvents : MonoBehaviour
 {
     [SerializeField] private PlayerController _controller;
     [SerializeField] private PlayerCombatSystem _combatSystem;
-    [SerializeField] private WeaponHandler _weaponHandler;
+    [SerializeField] private WeaponTracer _weaponTracer;
 
     public float AttackMoveSpeed;
 
@@ -13,7 +13,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         if(_controller == null) _controller = GetComponentInParent<PlayerController>();
         if (_combatSystem == null) _combatSystem = GetComponentInParent<PlayerCombatSystem>();
-        if (_weaponHandler == null) _weaponHandler = GetComponentInParent<WeaponHandler>();
+        if (_weaponTracer == null) _weaponTracer = GetComponent<WeaponTracer>();
     }
 
     private void OnAnimatorMove()
@@ -32,6 +32,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         _controller?.OnAnimationEnd();
     }
+    /*
     public void AE_EnableDamageCollider()
     {
         _weaponHandler?.EnableWeaponCollider();
@@ -40,15 +41,16 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         _weaponHandler?.DisableWeaponCollider();
     }
+    */
 
     public void AE_DrawWeapon()
     {
-        _weaponHandler?.DrawWeapon();
+        _weaponTracer?.DrawWeapon();
     }
 
     public void AE_SheathWeapon()
     {
-        _weaponHandler?.SheathWeapon();
+        _weaponTracer?.SheathWeapon();
     }
     public void AE_SheathComplete()
     {
