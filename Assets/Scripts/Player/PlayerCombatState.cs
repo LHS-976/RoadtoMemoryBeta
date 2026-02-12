@@ -33,7 +33,7 @@ public class PlayerCombatState : PlayerBaseState
         DisableRootMotion();
 
         player.Animator.SetBool(PlayerController.AnimIDCombat, true);
-        player.MoveSpeed = player.playerStats.CombatWalkSpeed;
+        player.moveSpeed = player.playerStats.CombatWalkSpeed;
 
     }
     public override void OnUpdate()
@@ -64,14 +64,10 @@ public class PlayerCombatState : PlayerBaseState
                 {
                     ExecuteCommand(CombatCommand.Evasion_Left);
                 }
-                else
+                else if(player.playerManager.CurrentStamina <= 0)
                 {
-                    ExecuteCommand(CombatCommand.Evasion_Back);
+                    Debug.Log("스태미나 부족, 추후 UI추가");
                 }
-            }
-            else
-            {
-                Debug.Log("스태미너 부족 UI추가하기.");
             }
         }
         if(Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
@@ -89,7 +85,7 @@ public class PlayerCombatState : PlayerBaseState
         }
         if(_isAttacking)
         {
-            player.MoveSpeed = 0f;
+            player.moveSpeed = 0f;
             player.Animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
             player.Animator.SetFloat(PlayerController.AnimIDInputX, 0f);
             player.Animator.SetFloat(PlayerController.AnimIDInputY, 0f);
@@ -137,11 +133,11 @@ public class PlayerCombatState : PlayerBaseState
             bool isSprinting = player.IsSprint;
             if (dir.sqrMagnitude > 0)
             {
-                player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
+                player.moveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
             }
             else
             {
-                player.MoveSpeed = 0f;
+                player.moveSpeed = 0f;
             }
             player.HandlePosition(dir);
 
@@ -164,11 +160,11 @@ public class PlayerCombatState : PlayerBaseState
             bool isSprinting = player.IsSprint;
             if (dir.sqrMagnitude > 0)
             {
-                player.MoveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
+                player.moveSpeed = isSprinting ? player.playerStats.CombatRunSpeed : player.playerStats.CombatWalkSpeed;
             }
             else
             {
-                player.MoveSpeed = 0f;
+                player.moveSpeed = 0f;
             }
 
             float targetAnimSpeed = 0f;
@@ -199,7 +195,7 @@ public class PlayerCombatState : PlayerBaseState
     }
     private void ExecuteCommand(CombatCommand cmd)
     {
-        player._lastAttackTime = Time.time; //자동납도기능 테스트용
+        player.UpdateLastAttackTime();//자동납도기능 테스트용
         _gotInput = true;
         _lastCommand = cmd;
         _lastInputTime = Time.time;

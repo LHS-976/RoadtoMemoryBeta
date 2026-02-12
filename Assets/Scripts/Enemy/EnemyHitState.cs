@@ -19,7 +19,7 @@ public class EnemyHitState : EnemyBaseState
     {
         afterHitTime += Time.deltaTime;
 
-        if(afterHitTime >= _enemyController.enemyManager._enemyStats.hitStunTime)
+        if(afterHitTime >= _enemyController.enemyManager.enemyStats.hitStunTime)
         {
             _enemyController.ChangeState(_enemyController.combatState);
         }

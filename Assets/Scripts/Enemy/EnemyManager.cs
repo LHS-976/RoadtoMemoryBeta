@@ -2,28 +2,28 @@
 
 public class EnemyManager : MonoBehaviour, IDamageable
 {
-    public EnemyStatsSO _enemyStats;
+    public EnemyStatsSO enemyStats;
     [SerializeField] private EnemyController _enemyController;
 
-    private float currentHealth;
+    private float _currentHealth;
     public bool isDead = false;
-    private float destroyCollider = 5f; //죽는 애니메이션 추가시 활용
+    private float _destroyCollider = 5f; //죽는 애니메이션 추가시 활용
 
     private void Awake()
     {
         if(_enemyController) _enemyController = GetComponent<EnemyController>();
-        if(_enemyStats != null) currentHealth = _enemyStats.maxHealth;
+        if(enemyStats != null) _currentHealth = enemyStats.maxHealth;
     }
 
     public void TakeDamage(float damage)
     {
         if (isDead) return;
 
-        currentHealth -= damage;
+        _currentHealth -= damage;
 
         if (_enemyController != null) _enemyController.HandleHit();
 
-        if(currentHealth <= 0)
+        if(_currentHealth <= 0)
         {
             Die();
         }

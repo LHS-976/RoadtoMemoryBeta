@@ -7,7 +7,7 @@ public class WeaponHitBox : MonoBehaviour
     private float _currentDamage;
 
     private List<GameObject> _hitList = new List<GameObject>();
-    public LayerMask _targetLayer;
+    public LayerMask targetLayer;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class WeaponHitBox : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if ((_targetLayer.value & (1 << other.gameObject.layer)) != 0)
+        if ((targetLayer.value & (1 << other.gameObject.layer)) != 0)
         {
             if (_hitList.Contains(other.gameObject)) return;
 

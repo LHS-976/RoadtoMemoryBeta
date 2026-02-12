@@ -9,7 +9,7 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void OnEnter()
     {
-        player.MoveSpeed = player.playerStats.WalkSpeed;
+        player.moveSpeed = player.playerStats.WalkSpeed;
     }
     public override void OnUpdate()
     {
@@ -22,7 +22,7 @@ public class PlayerMoveState : PlayerBaseState
 
         bool isSprinting = player.IsSprint;
 
-        player.MoveSpeed = isSprinting ? player.playerStats.RunSpeed : player.playerStats.WalkSpeed;
+        player.moveSpeed = isSprinting ? player.playerStats.RunSpeed : player.playerStats.WalkSpeed;
 
         float targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         if (player.InputVector.sqrMagnitude == 0) targetAnimSpeed = 0f;

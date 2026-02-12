@@ -17,7 +17,7 @@ public class EnemyCombatState : EnemyBaseState
         }
         float distance = Vector3.Distance(_enemyController.transform.position, _enemyController.targetTransform.position);
 
-        if(distance <= _enemyController.enemyManager._enemyStats.attackRange)
+        if(distance <= _enemyController.enemyManager.enemyStats.attackRange)
         {
             _enemyController.ChangeState(_enemyController.attackState);
         }

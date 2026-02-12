@@ -8,7 +8,7 @@ namespace PlayerControllerScripts
         [field: SerializeField] public PlayerStatSO playerStats { get; private set; }
         [field: SerializeField] public PlayerManager playerManager { get; private set; }
 
-        [SerializeField] private Transform playerMesh;
+        [SerializeField] private Transform _playerMesh;
 
         public CharacterController Controller { get; private set; }
         public Animator Animator { get; private set; }
@@ -23,9 +23,9 @@ namespace PlayerControllerScripts
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
-        public bool IsCombatMode;
-        public float MoveSpeed;
-        public float _lastAttackTime;
+        public bool isCombatMode;
+        public float moveSpeed;
+        public float LastAttackTime { get; private set; }
 
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
@@ -63,11 +63,12 @@ namespace PlayerControllerScripts
             CombatSystem.Initialize(this, Animator);
             if (playerStats != null)
             {
-                MoveSpeed = playerStats.WalkSpeed;
+                moveSpeed = playerStats.WalkSpeed;
                 SetupJumpVariables();
             }
-            else
+            if (playerStats == null)
             {
+                Debug.LogError("playerStats가 할당되지 않았습니다!!");
                 return;
             }
         }
@@ -101,17 +102,17 @@ namespace PlayerControllerScripts
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
-                if(!IsCombatMode)
+                if(!isCombatMode)
                 {
-                    _lastAttackTime = Time.time;
+                    LastAttackTime = Time.time;
                 }
                 ToggleCombatMode();
             }
-            if(IsCombatMode)
+            if(isCombatMode)
             {
-                if(!_isSheathing && Time.time - _lastAttackTime > 8.0f) //자동 납도기능
+                if(!_isSheathing && Time.time - LastAttackTime > 8.0f) //자동 납도기능
                 {
-                    _lastAttackTime = Time.time;
+                    LastAttackTime = Time.time;
                     ToggleCombatMode();
                 }
             }
@@ -126,15 +127,15 @@ namespace PlayerControllerScripts
         public void ToggleCombatMode()
         {
             if(_isSheathing) return;
-            if (IsCombatMode)
+            if (isCombatMode)
             {
                 _isSheathing = true;
                 Animator.SetTrigger(AnimIDTriggerSheath);
             }
             else
             {
-                IsCombatMode = true;
-                _lastAttackTime = Time.time;
+                isCombatMode = true;
+                LastAttackTime = Time.time;
                 Animator.SetBool(AnimIDCombat, true);
                 Animator.SetTrigger(AnimIDTriggerDraw);
                 ChangeState(combatState);
@@ -147,7 +148,7 @@ namespace PlayerControllerScripts
                 _velocity.y = -2f;
             }
             _velocity.y += _gravity * Time.deltaTime;
-            if (IsCombatMode && combatState != null && combatState.UseRootMotion)
+            if (isCombatMode && combatState != null && combatState.UseRootMotion)
             {
                 return;
             }
@@ -176,7 +177,7 @@ namespace PlayerControllerScripts
         }
         public void OnSheathComplete()
         {
-            IsCombatMode = false;
+            isCombatMode = false;
             _isSheathing = false;
             Animator.SetBool(AnimIDCombat, false);
             ChangeState(idleState);
@@ -200,19 +201,19 @@ namespace PlayerControllerScripts
         //플레이어 회전
         public void HandleRotation(Vector3 targetDirection, bool isInstant = false)
         {
-            if (targetDirection == Vector3.zero || playerMesh == null) return;
+            if (targetDirection == Vector3.zero || _playerMesh == null) return;
 
             Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
 
             if (isInstant)
             {
                 //combatmode용 회전
-                playerMesh.rotation = targetRotation;
+                _playerMesh.rotation = targetRotation;
             }
             else
             {
                 //이동용 회전
-                playerMesh.rotation = Quaternion.Slerp(playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
+                _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
         }
         //적 감지 회전
@@ -231,7 +232,7 @@ namespace PlayerControllerScripts
         }
         public void HandlePosition(Vector3 targetDirection)
         {
-            Controller.Move(targetDirection * MoveSpeed * Time.deltaTime);
+            Controller.Move(targetDirection * moveSpeed * Time.deltaTime);
         }
         public void OnAnimatorMoveManual()
         {
@@ -243,6 +244,10 @@ namespace PlayerControllerScripts
                 Controller.Move(velocity);
                 transform.rotation *= Animator.deltaRotation;
             }
+        }
+        public void UpdateLastAttackTime()
+        {
+            LastAttackTime = Time.time;
         }
     }
 }

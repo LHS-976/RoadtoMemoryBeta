@@ -53,9 +53,9 @@ public class EnemyController : MonoBehaviour
         Vector3 dirToTarget = (target.position - transform.position).normalized;
 
         //시야각
-        if(Vector3.Angle(transform.forward, dirToTarget) < enemyManager._enemyStats.viewAngle / 2f)
+        if(Vector3.Angle(transform.forward, dirToTarget) < enemyManager.enemyStats.viewAngle / 2f)
         {
-            if(!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, enemyManager._enemyStats.obstacleLayer))
+            if(!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, enemyManager.enemyStats.obstacleLayer))
             {
                 return true;
             }
@@ -68,9 +68,9 @@ public class EnemyController : MonoBehaviour
         patrolState = new EnemyPatrolState(this, animator);
         attackState = new EnemyAttackState(this, animator);
         hitState = new EnemyHitState(this, animator);
-        agent.speed = enemyManager._enemyStats.moveSpeed;
-        agent.angularSpeed = enemyManager._enemyStats.rotationSpeed;
-        agent.stoppingDistance = enemyManager._enemyStats.attackRange;
+        agent.speed = enemyManager.enemyStats.moveSpeed;
+        agent.angularSpeed = enemyManager.enemyStats.rotationSpeed;
+        agent.stoppingDistance = enemyManager.enemyStats.attackRange;
     }
     public void HandleHit()
     {
@@ -79,7 +79,7 @@ public class EnemyController : MonoBehaviour
     public void HandleInit()
     {
         agent.isStopped = false;
-        agent.speed = enemyManager._enemyStats.moveSpeed;
+        agent.speed = enemyManager.enemyStats.moveSpeed;
         agent.stoppingDistance = 0f;
     }
     public void HandleStop()

@@ -583,7 +583,6 @@ MonoBehaviour:
   playerMesh: {fileID: 4399387973827649000}
   IsCombatMode: 0
   MoveSpeed: 0
-  _lastAttackTime: 0
 --- !u!114 &189877314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2060,7 +2059,7 @@ Transform:
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
   m_LocalRotation: {x: 0.627523, y: 0, z: 0, w: 0.778598}
-  m_LocalPosition: {x: 0, y: 0.0000014305115, z: 0}
+  m_LocalPosition: {x: 0, y: 0.0000019073486, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -6,9 +6,4 @@ public class DataManager : MonoBehaviour
     {
         
     }
-
-    void Update()
-    {
-        
-    }
 }

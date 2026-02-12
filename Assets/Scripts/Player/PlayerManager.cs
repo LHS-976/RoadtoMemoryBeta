@@ -18,7 +18,6 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         Initialize();
     }
-    // Update is called once per frame
     void Update()
     {
         HandleStaminaRegenrate();

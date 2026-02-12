@@ -20,7 +20,7 @@ public class EnemyAttackState : EnemyBaseState
     {
         attackTimer += Time.deltaTime;
 
-        if(attackTimer >= _enemyController.enemyManager._enemyStats.attackCooldown)
+        if(attackTimer >= _enemyController.enemyManager.enemyStats.attackCooldown)
         {
             _enemyController.ChangeState(_enemyController.combatState);
         }

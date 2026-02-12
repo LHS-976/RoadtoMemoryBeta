@@ -35,8 +35,7 @@ public class PlayerCombatSystem : MonoBehaviour
     }
 
     [SerializeField] private float _detectRadius = 5.5f;
-    [SerializeField] private LayerMask enemyLayer;
-    [SerializeField] private float _autoAimSpeed = 15.0f;
+    [SerializeField] private LayerMask _enemyLayer;
 
     private Collider[] _enemyBuffer = new Collider[20];
 
@@ -122,7 +121,7 @@ public class PlayerCombatSystem : MonoBehaviour
     //
     public Transform GetNearestEnemy(Vector3 playerPos, Vector3 inputDir)
     {
-        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer,enemyLayer);
+        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer,_enemyLayer);
         Transform nearestTarget = null;
         float minDistance = float.MaxValue;
 
@@ -152,11 +151,12 @@ public class PlayerCombatSystem : MonoBehaviour
     }
     private IEnumerator HitStopRoutine(float duration)
     {
+        float origialTimeScale = Time.timeScale;
         Time.timeScale = 0.05f;
 
         yield return new WaitForSecondsRealtime(duration);
 
-        Time.timeScale = 1.0f;
+        Time.timeScale = origialTimeScale;
     }
 
     public void SetComboWindow(int state) => CanCombo = (state == 1);

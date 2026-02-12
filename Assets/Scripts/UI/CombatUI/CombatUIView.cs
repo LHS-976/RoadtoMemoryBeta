@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// crosshair 추가예정
+/// crosshair 추가, 추후 이벤트 연결예정
 /// </summary>
 public class CombatUIView : MonoBehaviour
 {
@@ -16,13 +16,12 @@ public class CombatUIView : MonoBehaviour
         if (player != null)
         {
             player.OnCombatStateChanged += UpdateUI;
-            UpdateUI(player.IsCombatMode);
+            UpdateUI(player.isCombatMode);
         }
     }
     void UpdateUI(bool isCombat)
     {
         if (Crosshair != null) Crosshair.SetActive(isCombat);
-        if (WeaponIcon != null) WeaponIcon.SetActive(isCombat);
     }
 
     void OnDisable()

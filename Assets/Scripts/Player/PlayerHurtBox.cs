@@ -2,13 +2,13 @@
 
 public class PlayerHurtBox : MonoBehaviour
 {
-    [SerializeField] private PlayerManager playerManager;
+    [SerializeField] private PlayerManager _playerManager;
     private void Awake()
     {
-        if (playerManager == null) playerManager = GetComponentInParent<PlayerManager>();
+        if (_playerManager == null) _playerManager = GetComponentInParent<PlayerManager>();
     }
     public void OnHit(float damage)
     {
-        playerManager.TakeDamage(damage);
+        _playerManager.TakeDamage(damage);
     }
 }
