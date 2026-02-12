@@ -9,6 +9,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     public bool isDead = false;
     private float _destroyCollider = 5f; //죽는 애니메이션 추가시 활용
 
+
     private void Awake()
     {
         if(_enemyController) _enemyController = GetComponent<EnemyController>();

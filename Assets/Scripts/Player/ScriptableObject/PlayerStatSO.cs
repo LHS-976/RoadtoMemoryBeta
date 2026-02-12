@@ -13,6 +13,7 @@ public class PlayerStatSO : ScriptableObject
     [Header("CombatMovement")]
     public float CombatWalkSpeed = 3f;
     public float CombatRunSpeed = 5f;
+    public float AttackRotationSpeed = 15f;
 
     [Header("Jump")]
     public float MaxJumpHeight = 2.0f;

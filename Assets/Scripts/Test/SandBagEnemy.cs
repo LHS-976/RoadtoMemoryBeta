@@ -6,7 +6,7 @@ public class SandBagEnemy : MonoBehaviour, IDamageable
 {
     [SerializeField] PlayerCombatSystem playerSystem;
     public float maxHp = 100;
-    public bool IsDead;
+    public bool IsDead { get; private set; }
 
     private void Start()
     {

@@ -195,13 +195,11 @@ public class PlayerCombatState : PlayerBaseState
     }
     private void ExecuteCommand(CombatCommand cmd)
     {
-        player.UpdateLastAttackTime();//자동납도기능 테스트용
         _gotInput = true;
         _lastCommand = cmd;
         _lastInputTime = Time.time;
 
-        bool isEvasion = (cmd == CombatCommand.Evasion_Back || cmd == CombatCommand.Evasion_Forward ||
-                          cmd == CombatCommand.Evasion_Right || cmd == CombatCommand.Evasion_Left);
+        bool isEvasion = IsEvasionCommand(cmd);
 
         if(_isAttacking)
         {
@@ -222,83 +220,23 @@ public class PlayerCombatState : PlayerBaseState
         _isAttacking = true;
         _gotInput = false;
 
+        Vector3 searchDir = GetSearchDirection();
+        player.CombatSystem.UpdateTarget(player.transform.position, searchDir);
+        Transform target = player.CombatSystem.CurrentTarget;
 
-        Transform enemy = player.CombatSystem.CurrentTarget;
-        Vector3 inputDir = player.GetTargetDirection(player.InputVector);
-        if(inputDir.sqrMagnitude > 0.01f && enemy != null)
+        Vector3 attackDir = GetAttackDirection(target, searchDir);
+        if(!isEvasion && attackDir != Vector3.zero)
         {
-            Vector3 toEnemy = (enemy.position - player.transform.position);
-            float dist = toEnemy.magnitude;
-            toEnemy.Normalize();
-            float angle = Vector3.Angle(inputDir, toEnemy);
-
-            if(player.InputVector.y >= 0.1f)
-            {
-                if (angle > _fixedMaxTarget)
-                {
-                    enemy = null;
-                }
-            }
-            else
-            {
-                if (dist > _clearMaxDis) enemy = null;
-            }
+            player.HandleRotation(attackDir, isInstant: true);
         }
-        if(enemy == null || !enemy.gameObject.activeSelf) //적이 죽었을때 방지추가
+        else if(isEvasion && target != null)
         {
-            Vector3 searchDir;
-            if (player.InputVector.y < -0.1f || player.InputVector.sqrMagnitude < 0.01f)
-            {
-                searchDir = player.transform.forward;
-            }
-            else
-            {
-                searchDir = player.GetTargetDirection(player.InputVector);
-            }
-            enemy = player.CombatSystem.GetNearestEnemy(player.transform.position, searchDir);
-        }
-        player.CombatSystem.SetTarget(enemy);
-
-
-        Vector3 attackDir = Vector3.zero;
-
-        if(enemy != null)
-        {
-            Vector3 toEnemy = enemy.position - player.transform.position;
-            toEnemy.y = 0;
-            attackDir = toEnemy.normalized;
-        }
-        else
-        {
-            if(player.InputVector.y < -0.1f)
-            {
-                attackDir = player.transform.forward;
-            }
-            else
-            {
-                attackDir = player.GetTargetDirection(player.InputVector);
-
-                if(attackDir == Vector3.zero)
-                {
-                    //수정예정.
-                    Vector3 camForward = player.MainCameraTransform.forward;
-                    camForward.y = 0;
-                    attackDir = camForward.normalized;
-                }
-            }
+            player.HandleRotation(attackDir, isInstant: true);
         }
         if(isEvasion)
         {
             player.playerManager.SetInvincible(true);
             //애니메이션 이벤트로 끄는 기능 추가예정
-        }
-        if(!isEvasion && attackDir != Vector3.zero)
-        {
-            player.HandleRotation(attackDir, isInstant: true);
-        }
-        else if(isEvasion && enemy != null)
-        {
-            player.HandleRotation(attackDir, isInstant: true);
         }
         EnableRootMotion();
         player.CombatSystem.ExecuteAttack(cmd);
@@ -333,5 +271,39 @@ public class PlayerCombatState : PlayerBaseState
         DisableRootMotion();
 
         player.CombatSystem.ResetCombo();
+    }
+    private bool IsEvasionCommand(CombatCommand cmd)
+    {
+        return cmd == CombatCommand.Evasion_Back || cmd == CombatCommand.Evasion_Forward || cmd == CombatCommand.Evasion_Right || cmd == CombatCommand.Evasion_Left;
+    }
+
+    private Vector3 GetSearchDirection()
+    {
+        if (player.InputVector.y < -0.1f || player.InputVector.sqrMagnitude < 0.01f)
+        {
+            return player.transform.forward;
+        }
+        return player.GetTargetDirection(player.InputVector);
+    }
+    private Vector3 GetAttackDirection(Transform target, Vector3 searchDir)
+    {
+        if(target != null)
+        {
+            Vector3 toTarget = target.position - player.transform.position;
+            toTarget.y = 0;
+            return toTarget.normalized;
+        }
+        if(player.InputVector.y < 0.1f)
+        {
+            return player.transform.forward;
+        }
+        if(searchDir.sqrMagnitude > 0.01f)
+        {
+            return searchDir;
+        }
+
+        Vector3 camForward = player.MainCameraTransform.forward;
+        camForward.y = 0;
+        return camForward.normalized;
     }
 }

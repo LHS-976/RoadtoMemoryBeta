@@ -67,13 +67,6 @@ public class PlayerManager : MonoBehaviour, IDamageable
 
     public void TakeDamage(float damage)
     {
-
-        /*
-        if(IsInvincible)
-        {
-            return;
-        }
-        */
         CurrentHp -= damage;
         if (CurrentHp <= 0)
         {

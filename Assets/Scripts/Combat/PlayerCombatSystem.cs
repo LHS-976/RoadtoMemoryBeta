@@ -28,21 +28,86 @@ public class PlayerCombatSystem : MonoBehaviour
     private int _currentActionIndex = -1;
     public bool CanCombo { get; private set; }
     public Transform CurrentTarget { get; private set; }
+    private Coroutine _currentHitStop;
 
     public void SetTarget(Transform target)
     {
         CurrentTarget = target;
     }
 
-    [SerializeField] private float _detectRadius = 5.5f;
+    [Header("Target Detect")]
+    [SerializeField] private float _detectRadius = 5.5f; //적 탐지 반경
+    [SerializeField] private float _targetLockAngle = 60f; //적을 인식하는 각도범위
+    [SerializeField] private float _targetLostMultiplier = 1.2f; //타겟을 잃는 거리배율
     [SerializeField] private LayerMask _enemyLayer;
 
+    [SerializeField] private float _hitStopTimeScale = 0.05f;
     private Collider[] _enemyBuffer = new Collider[20];
 
     public void Initialize(PlayerController controller, Animator animator)
     {
         _controller = controller;
         _animator = animator;
+
+        if(_weaponHandler == null)
+        {
+            _weaponHandler = GetComponent<WeaponHandler>();
+        }
+    }
+    //타겟 갱신. 기존 타겟이 유효하면 유지하고 아니면 새로찾는다.
+    public void UpdateTarget(Vector3 playerPos, Vector3 searchDir)
+    {
+        if (IsValidTarget(CurrentTarget, playerPos))
+        {
+            return;
+        }
+        CurrentTarget = GetNearestEnemy(playerPos, searchDir);
+    }
+    private bool IsValidTarget(Transform target, Vector3 playerPos)
+    {
+        if (target == null || !target.gameObject.activeSelf) return false;
+
+        float distance = Vector3.Distance(playerPos, target.position);
+        return distance <= _detectRadius * _targetLostMultiplier;
+    }
+    public Transform GetNearestEnemy(Vector3 playerPos, Vector3 searchDir)
+    {
+        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer, _enemyLayer);
+        Transform nearestTarget = null;
+        float minDistance = float.MaxValue;
+
+        //탐색방향 결정
+        Vector3 checkDir = searchDir.sqrMagnitude > 0.01f ? searchDir : transform.forward;
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider collider = _enemyBuffer[i];
+            if (!collider.gameObject.activeSelf) continue;
+            //테스트용
+            SandBagEnemy enemyScript = collider.GetComponent<SandBagEnemy>();
+            if (enemyScript != null && enemyScript.IsDead) continue;
+            //
+
+            Vector3 toEnemy = collider.transform.position - playerPos;
+            toEnemy.y = 0;
+
+            float angle = Vector3.Angle(checkDir, toEnemy);
+            if (angle > _targetLockAngle) continue;
+
+
+            //근접한 적 선택
+            float dist = toEnemy.sqrMagnitude;
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                nearestTarget = collider.transform;
+            }
+        }
+        return nearestTarget;
+    }
+    public void ClearTarget()
+    {
+        CurrentTarget = null;
     }
 
     private void PlayAttack(int index)
@@ -69,7 +134,6 @@ public class PlayerCombatSystem : MonoBehaviour
     public void ExecuteAttack(CombatCommand commandType)
     {
         if (currentStrategy == null) return;
-
         if (_currentActionIndex == -1)
         {
             int startIndex = currentStrategy.GetStartingIndex(commandType);
@@ -80,15 +144,8 @@ public class PlayerCombatSystem : MonoBehaviour
             return;
         }
         AttackAction currentAction = currentStrategy.actions[_currentActionIndex];
-        ComboConnection connection = null;
-        for (int i=0; i< currentAction.nextCombos.Count; i++)
-        {
-            if (currentAction.nextCombos[i].commandType == commandType)
-            {
-                connection = currentAction.nextCombos[i];
-                break;
-            }
-        }
+        ComboConnection connection = FindNextCombo(currentAction, commandType);
+
         if (connection != null)
         {
             PlayAttack(connection.nextComboIndex);
@@ -110,53 +167,48 @@ public class PlayerCombatSystem : MonoBehaviour
         AttackAction action = GetCurrentAttackAction();
         if (action == null) return;
 
-        //
-        if (action.hitStopDuration > 0) StartCoroutine(HitStopRoutine(action.hitStopDuration));
-
+        if (action.hitStopDuration > 0)
+        {
+            _currentHitStop = StartCoroutine(HitStopRoutine(action.hitStopDuration));
+        }
         if (action.hitVFX != null)
         {
             VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
         }
     }
-    //
-    public Transform GetNearestEnemy(Vector3 playerPos, Vector3 inputDir)
+    private ComboConnection FindNextCombo(AttackAction action, CombatCommand commandType)
     {
-        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer,_enemyLayer);
-        Transform nearestTarget = null;
-        float minDistance = float.MaxValue;
-
-        for (int i=0; i< count; i++)
+        foreach (var combo in action.nextCombos)
         {
-            Collider collider = _enemyBuffer[i];
-            if (!collider.gameObject.activeSelf) continue;
-            //테스트용
-            SandBagEnemy enemyScript = collider.GetComponent<SandBagEnemy>();
-            if (enemyScript != null && enemyScript.IsDead) continue;
-            //
-
-            Vector3 toEnemy = collider.transform.position - playerPos;
-            Vector3 checkDir = inputDir == Vector3.zero ? transform.forward : inputDir;
-            float angle = Vector3.Angle(checkDir, toEnemy);
-            if(angle < 60f)
+            if (combo.commandType == commandType)
             {
-                float dist = toEnemy.sqrMagnitude;
-                if(dist < minDistance)
-                {
-                    minDistance = dist;
-                    nearestTarget = collider.transform;
-                }
+                return combo;
             }
         }
-        return nearestTarget;
+        return null;
     }
     private IEnumerator HitStopRoutine(float duration)
     {
-        float origialTimeScale = Time.timeScale;
-        Time.timeScale = 0.05f;
+        if(_currentHitStop != null)
+        {
+            StopCoroutine(_currentHitStop);
+        }
+
+        float originalTimeScale = Time.timeScale;
+        Time.timeScale = _hitStopTimeScale;
 
         yield return new WaitForSecondsRealtime(duration);
 
-        Time.timeScale = origialTimeScale;
+        Time.timeScale = originalTimeScale;
+        _currentHitStop = null;
+    }
+    private void OnDisable()
+    {
+        if(_currentHitStop != null)
+        {
+            StopCoroutine(_currentHitStop);
+            Time.timeScale = 1f;
+        }
     }
 
     public void SetComboWindow(int state) => CanCombo = (state == 1);
@@ -166,15 +218,5 @@ public class PlayerCombatSystem : MonoBehaviour
     {
         _currentActionIndex = -1;
         _animator.SetInteger(PlayerController.AnimIDComboCount, 0);
-    }
-    private void Update()
-    {
-        if (CurrentTarget == null) return;
-
-        if(!CurrentTarget.gameObject.activeSelf || Vector3.Distance(transform.position, CurrentTarget.position) > _detectRadius * 1.2f)
-        {
-            CurrentTarget = null;
-            return;
-        }
     }
 }

@@ -25,7 +25,6 @@ namespace PlayerControllerScripts
         public bool IsSprint { get; private set; }
         public bool isCombatMode;
         public float moveSpeed;
-        public float LastAttackTime { get; private set; }
 
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
@@ -45,6 +44,8 @@ namespace PlayerControllerScripts
         public event Action<bool> OnCombatStateChanged; //변경
         private bool _isSheathing = false;
 
+        private const float Grounded_Velocity = -2f;
+
 
         private void Awake()
         {
@@ -55,12 +56,6 @@ namespace PlayerControllerScripts
             if(playerManager == null) playerManager = GetComponent<PlayerManager>();
 
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
-
-            idleState = new PlayerIdleState(this, Animator);
-            moveState = new PlayerMoveState(this, Animator);
-            combatState = new PlayerCombatState(this, Animator);
-
-            CombatSystem.Initialize(this, Animator);
             if (playerStats != null)
             {
                 moveSpeed = playerStats.WalkSpeed;
@@ -69,8 +64,23 @@ namespace PlayerControllerScripts
             if (playerStats == null)
             {
                 Debug.LogError("playerStats가 할당되지 않았습니다!!");
+                enabled = false;
                 return;
             }
+            InitializeStates();
+            InitializeStats();
+        }
+        private void InitializeStates()
+        {
+            idleState = new PlayerIdleState(this, Animator);
+            moveState = new PlayerMoveState(this, Animator);
+            combatState = new PlayerCombatState(this, Animator);
+        }
+        private void InitializeStats()
+        {
+            moveSpeed = playerStats.WalkSpeed;
+            SetupJumpVariables();
+            CombatSystem.Initialize(this, Animator);
         }
 
         private void Start()
@@ -88,13 +98,14 @@ namespace PlayerControllerScripts
         {
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
+            float staminaRequired = playerStats.sprintStaminaCost * Time.deltaTime;
             InputVector = new Vector2(h, v);
             bool sprintInput = Input.GetKey(KeyCode.LeftShift);
             
-            if(sprintInput && InputVector.sqrMagnitude > 0 && playerManager.CurrentStamina > 0)
+            if(sprintInput && InputVector.sqrMagnitude > 0 && playerManager.CurrentStamina >= staminaRequired)
             {
                 IsSprint = true;
-                playerManager.ConsumeStamina(playerStats.sprintStaminaCost * Time.deltaTime);
+                playerManager.ConsumeStamina(staminaRequired);
             }
             else
             {
@@ -102,24 +113,18 @@ namespace PlayerControllerScripts
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
-                if(!isCombatMode)
-                {
-                    LastAttackTime = Time.time;
-                }
                 ToggleCombatMode();
-            }
-            if(isCombatMode)
-            {
-                if(!_isSheathing && Time.time - LastAttackTime > 8.0f) //자동 납도기능
-                {
-                    LastAttackTime = Time.time;
-                    ToggleCombatMode();
-                }
             }
         }
 
         public void ChangeState(PlayerBaseState newState)
         {
+            if(newState == null)
+            {
+                Debug.LogError("null 상태로 전환시도");
+                return;
+            }
+
             _currentState?.OnExit();
             _currentState = newState;
             _currentState.OnEnter();
@@ -135,7 +140,6 @@ namespace PlayerControllerScripts
             else
             {
                 isCombatMode = true;
-                LastAttackTime = Time.time;
                 Animator.SetBool(AnimIDCombat, true);
                 Animator.SetTrigger(AnimIDTriggerDraw);
                 ChangeState(combatState);
@@ -145,14 +149,17 @@ namespace PlayerControllerScripts
         {
             if (Controller.isGrounded && _velocity.y < 0)
             {
-                _velocity.y = -2f;
+                _velocity.y = Grounded_Velocity;
             }
             _velocity.y += _gravity * Time.deltaTime;
-            if (isCombatMode && combatState != null && combatState.UseRootMotion)
+            if(!ShouldUseRootMotion())
             {
-                return;
+                Controller.Move(_velocity * Time.deltaTime);
             }
-            Controller.Move(_velocity * Time.deltaTime);
+        }
+        private bool ShouldUseRootMotion()
+        {
+            return isCombatMode && combatState != null && combatState.UseRootMotion;
         }
 
         private void SetupJumpVariables()
@@ -216,7 +223,7 @@ namespace PlayerControllerScripts
                 _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
             }
         }
-        //적 감지 회전
+        //적 감지 회전, 에임고정을 위한 회전
         public void HandleAttackRotation()
         {
             if (CombatSystem.CurrentTarget == null) return;
@@ -227,7 +234,7 @@ namespace PlayerControllerScripts
             if(dirTotarget.sqrMagnitude > 0.1f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(dirTotarget.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15.0f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * playerStats.AttackRotationSpeed);
             }
         }
         public void HandlePosition(Vector3 targetDirection)
@@ -244,10 +251,6 @@ namespace PlayerControllerScripts
                 Controller.Move(velocity);
                 transform.rotation *= Animator.deltaRotation;
             }
-        }
-        public void UpdateLastAttackTime()
-        {
-            LastAttackTime = Time.time;
         }
     }
 }
