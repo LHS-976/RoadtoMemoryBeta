@@ -3,7 +3,7 @@
 public class HitTimerController : MonoBehaviour
 {
     [SerializeField] private Animator _myAnimator;
-    private Animator _enemyAnimator;
+    [SerializeField] private Animator _enemyAnimator;
 
     private float _stopTimer;
     private bool _isStopped;

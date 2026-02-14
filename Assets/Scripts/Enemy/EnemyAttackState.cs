@@ -12,8 +12,11 @@ public class EnemyAttackState : EnemyBaseState
         _attackTimer = 0f;
 
         enemyController.HandleStop();
-        LookAtTarget();
-
+        if(enemyController.Agent != null)
+        {
+            enemyController.Agent.velocity = Vector3.zero;
+        }
+        animator.SetFloat(EnemyController.AnimIDEnemySpeed, 0f);
         animator.SetTrigger(EnemyController.AnimIDEnemyAttack);
     }
     public override void OnUpdate()
@@ -27,14 +30,5 @@ public class EnemyAttackState : EnemyBaseState
     }
     public override void OnExit()
     {
-        enemyController.Agent.isStopped = false;
-    }
-
-    private void LookAtTarget()
-    {
-        if (enemyController.targetTransform == null) return;
-        Vector3 lookDir = (enemyController.targetTransform.position - enemyController.transform.position).normalized;
-        lookDir.y = 0;
-        if (lookDir != Vector3.zero) enemyController.transform.rotation = Quaternion.LookRotation(lookDir);
     }
 }

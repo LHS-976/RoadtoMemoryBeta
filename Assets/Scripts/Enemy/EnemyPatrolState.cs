@@ -20,6 +20,7 @@ public class EnemyPatrolState : EnemyBaseState
         _patrolRadius = enemyController.EnemyManager.EnemyStats.patrolRadius;
         _viewRadius = enemyController.EnemyManager.EnemyStats.viewRadius;
         enemyController.HandleInit();
+
         SetRandomDestination();
     }
     public override void OnUpdate()
@@ -52,7 +53,7 @@ public class EnemyPatrolState : EnemyBaseState
 
     private void SetRandomDestination()
     {
-        Vector3 randomPoint = enemyController.spwnPosition + Random.insideUnitSphere * _patrolRadius;
+        Vector3 randomPoint = enemyController.spawnPosition + Random.insideUnitSphere * _patrolRadius;
 
         NavMeshHit hit;
         if(NavMesh.SamplePosition(randomPoint, out hit, _patrolRadius, NavMesh.AllAreas))

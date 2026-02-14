@@ -17,9 +17,10 @@ MonoBehaviour:
   viewRadius: 10
   viewAngle: 120
   maxHealth: 100
-  attackCooldown: 1.5
+  attackCooldown: 3
   attackRange: 1.5
   defenseArmor: 50
+  damageMultiplier: 1
   playerMask:
     serializedVersion: 2
     m_Bits: 1024

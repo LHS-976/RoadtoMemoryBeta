@@ -7,6 +7,11 @@ public class EnemyCombatState : EnemyBaseState
 
     public override void OnEnter()
     {
+        if (enemyController.Agent != null)
+        {
+            enemyController.Agent.updateRotation = false;
+            enemyController.Agent.updateUpAxis = false;
+        }
         enemyController.Agent.isStopped = false;
     }
     public override void OnUpdate()

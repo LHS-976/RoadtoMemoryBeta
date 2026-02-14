@@ -18,7 +18,7 @@ public class EnemyController : MonoBehaviour, IWeaponHitRange
     public EnemyAttackState attackState;
     public EnemyHitState hitState;
 
-    public Vector3 spwnPosition;
+    public Vector3 spawnPosition;
 
     [HideInInspector] public static readonly int AnimIDEnemySpeed = Animator.StringToHash("Speed");
     [HideInInspector] public static readonly int AnimIDEnemyAttack = Animator.StringToHash("Attack");
@@ -36,7 +36,7 @@ public class EnemyController : MonoBehaviour, IWeaponHitRange
         {
             _weaponTracer.Initialize(this);
         }
-        spwnPosition = transform.position;
+        spawnPosition = transform.position;
         Initialize();
     }
     private void Start()
@@ -65,10 +65,23 @@ public class EnemyController : MonoBehaviour, IWeaponHitRange
         {
             if(!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, EnemyManager.EnemyStats.obstacleLayer))
             {
+                RotateToTarget();
                 return true;
             }
         }
         return false;
+    }
+    public void RotateToTarget()
+    {
+        if (targetTransform == null) return;
+
+        Vector3 direction = (targetTransform.position - transform.position).normalized;
+        direction.y = 0;
+
+        if (direction.sqrMagnitude < 0.001f) return;
+        Quaternion lookRot = Quaternion.LookRotation(direction);
+
+        transform.rotation = lookRot;
     }
     public void OnWeaponHit(IDamageable target, Vector3 hitPoint, Vector3 hitDirection)
     {
@@ -110,6 +123,11 @@ public class EnemyController : MonoBehaviour, IWeaponHitRange
         Agent.isStopped = false;
         Agent.speed = EnemyManager.EnemyStats.moveSpeed;
         Agent.stoppingDistance = 0f;
+        if(Agent != null)
+        {
+            Agent.updateRotation = true;
+            Agent.updateUpAxis = true;
+        }
     }
     public void HandleStop()
     {
