@@ -14,7 +14,7 @@ public enum CombatCommand
     Evasion_Left
 }
 
-public class PlayerCombatSystem : MonoBehaviour
+public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
 {
     [SerializeField] private PlayerController _controller;
     [SerializeField] private Animator _animator;
@@ -207,7 +207,7 @@ public class PlayerCombatSystem : MonoBehaviour
         CurrentTarget = null;
     }
 
-    public void OnAttackHit(IDamageable target, Vector3 hitPoint)
+    public void OnWeaponHit(IDamageable target, Vector3 hitPoint, Vector3 hitDirection)
     {
 
         if(_controller != null)
@@ -218,8 +218,13 @@ public class PlayerCombatSystem : MonoBehaviour
         AttackAction action = _activeAttackAction;
         if (action == null) action = GetCurrentAttackAction();
         if (action == null) return;
+
+        Vector3 targetPos = target.GetTransform().position;
+        Vector3 knockBackDir = (targetPos - transform.position).normalized;
+        knockBackDir.y = 0;
+
         float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
-        target.TakeDamage(finalDamage);
+        target.TakeDamage(finalDamage, knockBackDir);
         Debug.Log($"데미지 적용 : {finalDamage} -> {target}");
 
         if(action.hitStopDuration > 0 && _hitTimer != null)

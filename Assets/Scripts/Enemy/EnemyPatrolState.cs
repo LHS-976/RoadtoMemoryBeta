@@ -4,12 +4,21 @@ using UnityEngine.AI;
 public class EnemyPatrolState : EnemyBaseState
 {
     private float _waitTimer;
+
+    [Header ("Caching")]
+    private float _patrolidleTime;
+    private float _attackRange;
+    private float _patrolRadius;
+    private float _viewRadius;
     public EnemyPatrolState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
     {
     }
-
     public override void OnEnter()
     {
+        _patrolidleTime = enemyController.EnemyManager.EnemyStats.patrolidleTime;
+        _attackRange = enemyController.EnemyManager.EnemyStats.attackRange;
+        _patrolRadius = enemyController.EnemyManager.EnemyStats.patrolRadius;
+        _viewRadius = enemyController.EnemyManager.EnemyStats.viewRadius;
         enemyController.HandleInit();
         SetRandomDestination();
     }
@@ -25,7 +34,7 @@ public class EnemyPatrolState : EnemyBaseState
             animator.SetFloat(EnemyController.AnimIDEnemySpeed, 0);
 
             _waitTimer += Time.deltaTime;
-            if(_waitTimer >= enemyController.EnemyManager.EnemyStats.patrolidleTime)
+            if(_waitTimer >= _patrolidleTime)
             {
                 SetRandomDestination();
                 _waitTimer = 0;
@@ -38,22 +47,22 @@ public class EnemyPatrolState : EnemyBaseState
     }
     public override void OnExit()
     {
-        enemyController.Agent.stoppingDistance = enemyController.EnemyManager.EnemyStats.attackRange;
+        enemyController.Agent.stoppingDistance = _attackRange;
     }
 
     private void SetRandomDestination()
     {
-        Vector3 randomPoint = enemyController.spwnPosition + Random.insideUnitSphere * enemyController.EnemyManager.EnemyStats.patrolRadius;
+        Vector3 randomPoint = enemyController.spwnPosition + Random.insideUnitSphere * _patrolRadius;
 
         NavMeshHit hit;
-        if(NavMesh.SamplePosition(randomPoint, out hit, enemyController.EnemyManager.EnemyStats.patrolRadius, NavMesh.AllAreas))
+        if(NavMesh.SamplePosition(randomPoint, out hit, _patrolRadius, NavMesh.AllAreas))
         {
             enemyController.Agent.SetDestination(hit.position);
         }
     }
     private bool CheckForPlayer()
     {
-        Collider[] colliders = Physics.OverlapSphere(enemyController.transform.position, enemyController.EnemyManager.EnemyStats.viewRadius,
+        Collider[] colliders = Physics.OverlapSphere(enemyController.transform.position, _viewRadius,
             enemyController.EnemyManager.EnemyStats.playerMask);
 
         if(colliders.Length > 0)

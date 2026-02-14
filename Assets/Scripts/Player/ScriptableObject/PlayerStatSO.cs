@@ -27,4 +27,8 @@ public class PlayerStatSO : ScriptableObject
     public float sprintStaminaCost = 10f;
     public float dashStaminaCost = 20f;
     public float staminaRecoveryOnHit = 5f;
+
+    [Header("Hurt Settings")]
+    public float knockbackDuration = 0.2f;
+    public float knockbackPower = 10f;
 }

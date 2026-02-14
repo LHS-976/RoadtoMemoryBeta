@@ -3,14 +3,17 @@ using UnityEngine;
 
 public class WeaponTracer : MonoBehaviour
 {
+
+    private IWeaponHitRange _weaponHitRange;
+
     [Header("Setup")]
     [SerializeField] private Transform[] _tracePoints;
     [SerializeField] private LayerMask _hitLayer;
 
     private bool _isTracing = false;
     private Vector3[] _prevPositions;
+
     private HashSet<int> _hitVictims = new HashSet<int>(); //중복을 허용하지 않는 컬렉션(집합)
-    private PlayerCombatSystem _combatSystem;
     private RaycastHit[] _rayHitBuffer = new RaycastHit[10];
 
 
@@ -23,9 +26,9 @@ public class WeaponTracer : MonoBehaviour
     public ParticleSystem sheathVFX;
 
 
-    public void Initialize(PlayerCombatSystem system)
+    public void Initialize(IWeaponHitRange weaponHitRange)
     {
-        _combatSystem = system;
+        _weaponHitRange = weaponHitRange;
 
         if (_tracePoints == null || _tracePoints.Length == 0)
         {
@@ -34,19 +37,15 @@ public class WeaponTracer : MonoBehaviour
             return;
         }
         _prevPositions = new Vector3[_tracePoints.Length];
-
-        if(_tracePoints != null)
+        for (int i = 0; i < _tracePoints.Length; i++)
         {
-            for(int i = 0; i < _tracePoints.Length; i++)
+            if (_tracePoints[i] != null)
             {
-                if (_tracePoints[i] != null )
-                {
-                    _prevPositions[i] = _tracePoints[i].position;
-                }
-                else
-                {
-                    Debug.LogWarning($"[WeaponTracer] TracePoint[{i}]가 null입니다!", this);
-                }
+                _prevPositions[i] = _tracePoints[i].position;
+            }
+            else
+            {
+                Debug.LogWarning($"[WeaponTracer] TracePoint[{i}]가 null입니다!", this);
             }
         }
     }
@@ -75,11 +74,7 @@ public class WeaponTracer : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (!_isTracing || _combatSystem == null) return;
-        if (!_combatSystem.IsDamageActive)
-        {
-            return;
-        }
+        if (!_isTracing || _weaponHitRange == null) return;
         PerformTrace();
     }
     private void PerformTrace()
@@ -103,16 +98,22 @@ public class WeaponTracer : MonoBehaviour
                 {
                     continue;
                 }
-                //중복 타격방지
-                int id = hitCollider.gameObject.GetInstanceID();
-                if (_hitVictims.Contains(id)) continue;
 
-                _hitVictims.Add(id);
                 IDamageable damageable = hitCollider.GetComponent<IDamageable>();
+
                 if (damageable != null)
                 {
-                    //CombatSystem에 보고(적, 어느 TracePoint에서)
-                    _combatSystem.OnAttackHit(damageable, _rayHitBuffer[j].point);
+                    int rootID = damageable.GetTransform().root.GetInstanceID();
+
+                    if (_hitVictims.Contains(rootID)) continue;
+                    _hitVictims.Add(rootID);
+
+                    if(_weaponHitRange != null)
+                    {
+                        Vector3 hitPoint = _rayHitBuffer[j].point;
+                        Vector3 hitDir = direction.normalized;
+                        _weaponHitRange.OnWeaponHit(damageable, hitPoint, hitDir);
+                    }
                 }
             }
             _prevPositions[i] = endPos;
@@ -141,6 +142,8 @@ public class WeaponTracer : MonoBehaviour
 
     }
 
+
+    /*
     private void OnDrawGizmos()
     {
         if (_tracePoints == null || _tracePoints.Length == 0) return;
@@ -159,4 +162,5 @@ public class WeaponTracer : MonoBehaviour
             }
         }
     }
+    */
 }

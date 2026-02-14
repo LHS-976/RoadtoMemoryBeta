@@ -8,6 +8,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     private float _currentHealth;
     public bool isDead = false;
     private float _destroyCollider = 5f; //죽는 애니메이션 추가시 활용
+    [HideInInspector] public float baseDamage = 10f;
 
 
     private void Awake()
@@ -16,13 +17,17 @@ public class EnemyManager : MonoBehaviour, IDamageable
         if(EnemyStats != null) _currentHealth = EnemyStats.maxHealth;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector3 knockBackDir)
     {
         if (isDead) return;
 
         _currentHealth -= damage;
 
-        if (_enemyController != null) _enemyController.HandleHit();
+        if (_enemyController != null)
+        {
+            _enemyController.KnockbackForce = knockBackDir;
+            _enemyController.HandleHit();
+        }
 
         if(_currentHealth <= 0)
         {
@@ -37,5 +42,11 @@ public class EnemyManager : MonoBehaviour, IDamageable
         if (col != null) col.enabled = false;
 
         Destroy(gameObject);
+    }
+
+    //내 위치 넘기기
+    public Transform GetTransform()
+    {
+        return transform;
     }
 }

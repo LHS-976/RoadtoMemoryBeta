@@ -3,16 +3,16 @@ using PlayerControllerScripts;
 
 public class PlayerManager : MonoBehaviour, IDamageable
 {
-    [SerializeField] private PlayerController _controller;
+    [SerializeField] private PlayerController _playerController;
 
-    [field: SerializeField] public float CurrentHp { get; private set; }
+    [field: SerializeField] private float _currentHp;
     [field: SerializeField] public float CurrentStamina { get; private set; }
 
     public bool IsInvincible { get; private set; }
-
+    private bool isDead;
     private void Awake()
     {
-        if (_controller == null) _controller = GetComponent<PlayerController>();
+        if (_playerController == null) _playerController = GetComponent<PlayerController>();
     }
     private void Start()
     {
@@ -24,20 +24,21 @@ public class PlayerManager : MonoBehaviour, IDamageable
     }
     private void Initialize()
     {
-        if (_controller.playerStats != null)
+        if (_playerController.playerStats != null)
         {
-            CurrentHp = _controller.playerStats.playerMaxHp;
-            CurrentStamina = _controller.playerStats.playerMaxStamina;
+            _currentHp = _playerController.playerStats.playerMaxHp;
+            CurrentStamina = _playerController.playerStats.playerMaxStamina;
+            isDead = false;
         }
     }
     private void HandleStaminaRegenrate()
     {
-        if (!_controller.IsSprint && CurrentStamina < _controller.playerStats.playerMaxStamina)
+        if (!_playerController.IsSprint && CurrentStamina < _playerController.playerStats.playerMaxStamina)
         {
-            CurrentStamina += _controller.playerStats.staminaRegenrate * Time.deltaTime;
+            CurrentStamina += _playerController.playerStats.staminaRegenrate * Time.deltaTime;
 
-            if (CurrentStamina > _controller.playerStats.playerMaxStamina)
-                CurrentStamina = _controller.playerStats.playerMaxStamina;
+            if (CurrentStamina > _playerController.playerStats.playerMaxStamina)
+                CurrentStamina = _playerController.playerStats.playerMaxStamina;
         }
     }
     public bool UseStamina(float amount)
@@ -58,30 +59,41 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         CurrentStamina += amount;
 
-        if(CurrentStamina > _controller.playerStats.playerMaxStamina)
+        if(CurrentStamina > _playerController.playerStats.playerMaxStamina)
         {
-            CurrentStamina = _controller.playerStats.playerMaxStamina;
+            CurrentStamina = _playerController.playerStats.playerMaxStamina;
         }
     }
 
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector3 knockBackDir)
     {
-        CurrentHp -= damage;
-        if (CurrentHp <= 0)
+        if (isDead) return;
+
+        _currentHp -= damage;
+        if(_playerController != null)
         {
-            CurrentHp = 0;
-            //Die();
+            _playerController.OnHit(knockBackDir);
         }
-        else
+
+        if (_currentHp <= 0)
         {
-            //_controller.Animator.SetTrigger(PlayerController.AnimIDHit);
-            Debug.Log($"피격! 남은 체력: {CurrentHp}");
+            _currentHp = 0;
+            //Die();
         }
     }
 
     public void SetInvincible(bool state)
     {
         IsInvincible = state;
+    }
+
+    public Transform GetTransform()
+    {
+        return transform;
+    }
+    private void Die()
+    {
+
     }
 }

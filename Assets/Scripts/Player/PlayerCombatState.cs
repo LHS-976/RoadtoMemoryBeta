@@ -109,7 +109,7 @@ public class PlayerCombatState : PlayerBaseState
         UseRootMotion = true;
         player.Animator.applyRootMotion = true;
     }
-    private void DisableRootMotion()
+    public void DisableRootMotion()
     {
         UseRootMotion = false;
         player.Animator.applyRootMotion = false;
@@ -218,17 +218,14 @@ public class PlayerCombatState : PlayerBaseState
         _isAttacking = true;
         _gotInput = false;
 
-        Vector3 searchDir = GetSearchDirection();
-        player.CombatSystem.UpdateTarget(player.transform.position, searchDir);
-        Transform target = player.CombatSystem.CurrentTarget;
-
-        Vector3 attackDir = GetAttackDirection(target, searchDir);
-        if(!isEvasion && attackDir != Vector3.zero)
+        if(!isEvasion)
         {
-            player.HandleRotation(attackDir, isInstant: true);
+            AutoAimAndRotate();
         }
-        else if(isEvasion && target != null)
+        else
         {
+            Vector3 searchDir = GetSearchDirection();
+            Vector3 attackDir = GetAttackDirection(player.CombatSystem.CurrentTarget, searchDir);
             player.HandleRotation(attackDir, isInstant: true);
         }
         if(isEvasion)
@@ -241,6 +238,7 @@ public class PlayerCombatState : PlayerBaseState
     }
     private void StartAttack()
     {
+        AutoAimAndRotate();
         EnableRootMotion();
         _isAttacking = true;
         _gotInput = false;
@@ -298,5 +296,18 @@ public class PlayerCombatState : PlayerBaseState
             return player.transform.forward;
         }
         return camForward.normalized;
+    }
+    private void AutoAimAndRotate()
+    {
+        Vector3 searchDir = GetSearchDirection();
+        player.CombatSystem.UpdateTarget(player.transform.position, searchDir);
+
+        Transform target = player.CombatSystem.CurrentTarget;
+        Vector3 attackDir = GetAttackDirection(target, searchDir);
+
+        if (attackDir != Vector3.zero)
+        {
+            player.HandleRotation(attackDir, isInstant: true);
+        }
     }
 }

@@ -12,11 +12,12 @@ public class EnemyStatsSO : ScriptableObject
     public float viewRadius = 10f;
     public float viewAngle = 120f;
 
-    [Header("Combat")]
+    [Header("Combat Setting")]
     public float maxHealth = 100f;
-    public float attackCooldown = 1.5f;
+    public float attackCooldown = 2.5f;
     public float attackRange = 1.5f;
     public float defenseArmor = 50f; //깨질때 특수처리할 예정
+    public float damageMultiplier = 1.0f;
 
     [Header("Detection Setting")]
     public LayerMask playerMask;
@@ -27,5 +28,6 @@ public class EnemyStatsSO : ScriptableObject
     public float patrolidleTime = 2f;
 
     [Header("Hurt Settings")]
-    public float hitStunTime = 1.0f;
+    public float knockbackDuration = 0.2f;
+    public float knockbackPower = 10f;
 }

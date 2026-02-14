@@ -2,6 +2,7 @@
 
 public class EnemyCombatState : EnemyBaseState
 {
+
     public EnemyCombatState(EnemyController _enemyController, Animator _animator) : base(_enemyController,_animator) { }
 
     public override void OnEnter()

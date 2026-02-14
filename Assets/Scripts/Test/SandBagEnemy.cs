@@ -15,7 +15,7 @@ public class SandBagEnemy : MonoBehaviour, IDamageable
             playerSystem = FindObjectOfType<PlayerCombatSystem>();
         }
     }
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, Vector3 knockBackDir)
     {
         if (IsDead) return;
         maxHp -= damage;
@@ -35,5 +35,9 @@ public class SandBagEnemy : MonoBehaviour, IDamageable
         }
         gameObject.layer = LayerMask.NameToLayer("Dead");
         Destroy(gameObject);
+    }
+    public Transform GetTransform()
+    {
+        return transform;
     }
 }

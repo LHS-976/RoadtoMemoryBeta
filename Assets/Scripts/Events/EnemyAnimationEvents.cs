@@ -2,19 +2,18 @@
 
 public class EnemyAnimationEvents : MonoBehaviour
 {
-    [SerializeField] private EnemyWeapon _enemyWeapon;
-
+    [SerializeField] private EnemyController _enemyController;
     private void Awake()
     {
-        if(_enemyWeapon == null) _enemyWeapon = GetComponent<EnemyWeapon>();
+        if(_enemyController == null) _enemyController = GetComponentInParent<EnemyController>();
     }
-    public void AE_EnableHitbox()
+    public void EnableWeaponTrace()
     {
-        _enemyWeapon.EnableHitbox();
+        if (_enemyController != null) _enemyController.EnableWeaponTrace();
     }
 
-    public void AE_DisableHitbox()
+    public void DisableWeaponTrace()
     {
-        _enemyWeapon.DisableHitbox();
+        if (_enemyController != null) _enemyController.DisableWeaponTrace();
     }
 }

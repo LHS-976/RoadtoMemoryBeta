@@ -20,11 +20,13 @@ namespace PlayerControllerScripts
         public PlayerIdleState idleState;
         public PlayerMoveState moveState;
         public PlayerCombatState combatState;
+        public PlayerHitState hitState;
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
         public bool isCombatMode;
         public float moveSpeed;
+        [HideInInspector] public Vector3 KnockBackForce;
 
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
@@ -75,6 +77,7 @@ namespace PlayerControllerScripts
             idleState = new PlayerIdleState(this, Animator);
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
+            hitState = new PlayerHitState(this, Animator);
         }
         private void InitializeStats()
         {
@@ -189,6 +192,15 @@ namespace PlayerControllerScripts
             Animator.SetBool(AnimIDCombat, false);
             ChangeState(idleState);
         }
+        public void OnHit(Vector3 knockBackDir)
+        {
+            if (playerManager.IsInvincible) return;
+
+            KnockBackForce = knockBackDir;
+
+            ChangeState(hitState);
+        }
+
         //카메라 기준 방향으로 변환
         public Vector3 GetTargetDirection(Vector2 input)
         {
