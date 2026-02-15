@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using EnemyControllerScripts;
 
 public class EnemyManager : MonoBehaviour, IDamageable
 {
@@ -7,7 +8,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     private float _currentHealth;
     public bool isDead = false;
-    private float _destroyCollider = 5f; //죽는 애니메이션 추가시 활용
+    private float _destroyCollider = 4.5f;
     [HideInInspector] public float baseDamage = 10f;
 
 
@@ -36,12 +37,18 @@ public class EnemyManager : MonoBehaviour, IDamageable
     }
     private void Die()
     {
+        if (isDead) return;
+
         isDead = true;
+        if(_enemyController != null)
+        {
+            _enemyController.HandleDie();
+        }
 
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
-        Destroy(gameObject);
+        Destroy(gameObject, _destroyCollider);
     }
 
     //내 위치 넘기기

@@ -1557,7 +1557,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.00000003310992, z: -0.0000000037358174, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119325, y: -0.000000012999857, z: 0.0000000014667837,
+    w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2075,7 +2076,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.00000003310992, z: -0.0000000037358174, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119325, y: -0.000000012999857, z: 0.0000000014667837,
+    w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2154,7 +2156,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.000000030525836, z: -0.0000000034442533, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119325, y: 0.00000003052584, z: -0.0000000034442529, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13718,6 +13720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105cb4483731f0e48ad19a8f392e0173, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 1991037856802833098}
   _enemyController: {fileID: 8311655636658629870}
 --- !u!137 &5601762691848072490
 SkinnedMeshRenderer:
@@ -19379,6 +19382,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3897278703879714740, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
+        type: 3}
+      propertyPath: <PlayerStats>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: 152370a19327e2945a7bf92b25ee7862,
+        type: 2}
+    - target: {fileID: 3897278703879714740, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
+        type: 3}
+      propertyPath: <PlayerManager>k__BackingField
+      value: 
+      objectReference: {fileID: 887683959}
+    - target: {fileID: 4163686318063732683, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
+        type: 3}
+      propertyPath: _enemyAnimator
+      value: 
+      objectReference: {fileID: 1991037856802833098}
     - target: {fileID: 4741161066663697619, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
         type: 3}
       propertyPath: _playerManager
@@ -19424,6 +19443,11 @@ PrefabInstance:
       propertyPath: _playerManager
       value: 
       objectReference: {fileID: 887683959}
+    - target: {fileID: 8470486441232675899, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
+        type: 3}
+      propertyPath: _playerAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8932753793364704962, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
         type: 3}
       propertyPath: _playerManager

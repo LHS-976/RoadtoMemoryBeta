@@ -29,5 +29,5 @@ MonoBehaviour:
     m_Bits: 72
   patrolRadius: 10
   patrolidleTime: 2
-  knockbackDuration: 0.2
+  knockbackDuration: 0.25
   knockbackPower: 10

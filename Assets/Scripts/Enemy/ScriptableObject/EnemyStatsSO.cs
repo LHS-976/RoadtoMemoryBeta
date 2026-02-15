@@ -15,7 +15,8 @@ public class EnemyStatsSO : ScriptableObject
     [Header("Combat Setting")]
     public float maxHealth = 100f;
     public float attackCooldown = 3f;
-    public float attackRange = 1.5f;
+    public float attackRange = 2.5f;
+    public float attackTriggerRange = 1.8f;
     public float defenseArmor = 50f; //깨질때 특수처리할 예정
     public float damageMultiplier = 1.0f;
 

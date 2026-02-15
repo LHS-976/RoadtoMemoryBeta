@@ -15,6 +15,7 @@ public class PlayerCombatState : PlayerBaseState
 
     private float _minInputInterval = 0.1f;
     private float _lastClickTIme;
+    private float _lastActionStartTime;
 
 
     public bool UseRootMotion { get; private set; }
@@ -38,6 +39,10 @@ public class PlayerCombatState : PlayerBaseState
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
+            if(_isAttacking && IsEvasionCommand(_lastCommand))
+            {
+                return;
+            }
             if(Time.time - _lastEvasionTime < _evasionCooldown)
             {
                 return;
@@ -215,10 +220,15 @@ public class PlayerCombatState : PlayerBaseState
                 return;
             }
         }
+        _lastActionStartTime = Time.time;
         _isAttacking = true;
         _gotInput = false;
 
-        if(!isEvasion)
+        player.moveSpeed = 0f;
+        animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputX, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputY, 0f);
+        if (!isEvasion)
         {
             AutoAimAndRotate();
         }
@@ -239,7 +249,14 @@ public class PlayerCombatState : PlayerBaseState
     private void StartAttack()
     {
         AutoAimAndRotate();
+        player.moveSpeed = 0f;
+        animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputX, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputY, 0f);
         EnableRootMotion();
+
+        _lastActionStartTime = Time.time;
+
         _isAttacking = true;
         _gotInput = false;
         player.CombatSystem.ResetComboWindow();
@@ -262,6 +279,11 @@ public class PlayerCombatState : PlayerBaseState
     }
     public void OnAnimationEnd()
     {
+
+        if (Time.time - _lastActionStartTime < 0.15f)
+        {
+            return;
+        }
         _isAttacking = false;
         player.playerManager.SetInvincible(false);
         DisableRootMotion();

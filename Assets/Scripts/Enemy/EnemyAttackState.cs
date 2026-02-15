@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-
+using EnemyControllerScripts;
 public class EnemyAttackState : EnemyBaseState
 {
     private float _attackTimer;
-    public EnemyAttackState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
+    public EnemyAttackState(EnemyController _enemyController, EnemyAnimation _enemyAnimation) : base(_enemyController, _enemyAnimation)
     {
     }
 
@@ -12,12 +12,9 @@ public class EnemyAttackState : EnemyBaseState
         _attackTimer = 0f;
 
         enemyController.HandleStop();
-        if(enemyController.Agent != null)
-        {
-            enemyController.Agent.velocity = Vector3.zero;
-        }
-        animator.SetFloat(EnemyController.AnimIDEnemySpeed, 0f);
-        animator.SetTrigger(EnemyController.AnimIDEnemyAttack);
+        enemyAnimation.UpdateMoveSpeed(0f);
+        enemyController.RotateToTargetImmediate();
+        enemyAnimation.PlayAttack();
     }
     public override void OnUpdate()
     {
@@ -26,6 +23,12 @@ public class EnemyAttackState : EnemyBaseState
         if(_attackTimer >= enemyController.EnemyManager.EnemyStats.attackCooldown)
         {
             enemyController.ChangeState(enemyController.combatState);
+            return;
+        }
+        float distance = Vector3.Distance(enemyController.transform.position, enemyController.targetTransform.position);
+        if(distance <= enemyController.EnemyManager.EnemyStats.attackRange)
+        {
+            enemyController.RotateToTarget();
         }
     }
     public override void OnExit()

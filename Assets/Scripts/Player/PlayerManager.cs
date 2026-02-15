@@ -79,7 +79,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
         if (_currentHp <= 0)
         {
             _currentHp = 0;
-            //Die();
+            Die();
         }
     }
 
@@ -94,6 +94,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
     }
     private void Die()
     {
-
+        isDead = true;
+        _playerController.HandleDie();
     }
 }

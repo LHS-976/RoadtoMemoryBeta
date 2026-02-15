@@ -141,26 +141,4 @@ public class WeaponTracer : MonoBehaviour
         if (sheathVFX != null) sheathVFX.Play();
 
     }
-
-
-    /*
-    private void OnDrawGizmos()
-    {
-        if (_tracePoints == null || _tracePoints.Length == 0) return;
-
-        Gizmos.color = _isTracing ? Color.red : Color.yellow;
-
-        for (int i = 0; i < _tracePoints.Length; i++)
-        {
-            if (_tracePoints[i] == null) continue;
-
-            Gizmos.DrawWireSphere(_tracePoints[i].position, 0.05f);
-
-            if (i > 0 && _tracePoints[i - 1] != null)
-            {
-                Gizmos.DrawLine(_tracePoints[i - 1].position, _tracePoints[i].position);
-            }
-        }
-    }
-    */
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using EnemyControllerScripts;
 
 public class EnemyPatrolState : EnemyBaseState
 {
@@ -10,7 +11,7 @@ public class EnemyPatrolState : EnemyBaseState
     private float _attackRange;
     private float _patrolRadius;
     private float _viewRadius;
-    public EnemyPatrolState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
+    public EnemyPatrolState(EnemyController _enemyController, EnemyAnimation _enemyAnimation) : base(_enemyController, _enemyAnimation)
     {
     }
     public override void OnEnter()
@@ -19,7 +20,8 @@ public class EnemyPatrolState : EnemyBaseState
         _attackRange = enemyController.EnemyManager.EnemyStats.attackRange;
         _patrolRadius = enemyController.EnemyManager.EnemyStats.patrolRadius;
         _viewRadius = enemyController.EnemyManager.EnemyStats.viewRadius;
-        enemyController.HandleInit();
+
+        enemyController.HandleNavRotationEnable();
 
         SetRandomDestination();
     }
@@ -32,7 +34,7 @@ public class EnemyPatrolState : EnemyBaseState
         }
         if(!enemyController.Agent.pathPending && enemyController.Agent.remainingDistance <= enemyController.Agent.stoppingDistance + 0.1f)
         {
-            animator.SetFloat(EnemyController.AnimIDEnemySpeed, 0);
+            enemyAnimation.UpdateMoveSpeed(0);
 
             _waitTimer += Time.deltaTime;
             if(_waitTimer >= _patrolidleTime)
@@ -43,7 +45,7 @@ public class EnemyPatrolState : EnemyBaseState
         }
         else
         {
-            animator.SetFloat(EnemyController.AnimIDEnemySpeed, enemyController.Agent.velocity.magnitude);
+            enemyAnimation.UpdateMoveSpeed(enemyController.Agent.velocity.magnitude);
         }
     }
     public override void OnExit()
@@ -73,6 +75,7 @@ public class EnemyPatrolState : EnemyBaseState
             if(enemyController.CanSeePlayer(target))
             {
                 enemyController.targetTransform = target;
+                enemyController.RotateToTargetImmediate();
                 return true;
             }
         }

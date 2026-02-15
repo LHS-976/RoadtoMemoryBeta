@@ -32,16 +32,6 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         _controller?.OnAnimationEnd();
     }
-    /*
-    public void AE_EnableDamageCollider()
-    {
-        _weaponHandler?.EnableWeaponCollider();
-    }
-    public void AE_DisableDamageCollider()
-    {
-        _weaponHandler?.DisableWeaponCollider();
-    }
-    */
 
     public void AE_DrawWeapon()
     {

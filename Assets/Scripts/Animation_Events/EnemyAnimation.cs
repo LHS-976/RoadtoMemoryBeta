@@ -1,0 +1,52 @@
+﻿using UnityEngine;
+using EnemyControllerScripts;
+
+public class EnemyAnimation : MonoBehaviour
+{
+    [Header("Reference")]
+    [SerializeField] private Animator _animator;
+    [SerializeField] private EnemyController _enemyController;
+
+    private static readonly int AnimIDEnemySpeed = Animator.StringToHash("Speed");
+    private static readonly int AnimIDEnemyAttack = Animator.StringToHash("Attack");
+    private static readonly int AnimIDEnemyDie = Animator.StringToHash("Die");
+    private static readonly int AnimIDEnemyHit = Animator.StringToHash("Hit");
+    private void Awake()
+    {
+        if (_animator == null) _animator = GetComponent<Animator>();
+        if(_enemyController == null) _enemyController = GetComponentInParent<EnemyController>();
+    }
+
+    public void UpdateMoveSpeed(float speed)
+    {
+        _animator.SetFloat(AnimIDEnemySpeed, speed);
+    }
+    public void PlayAttack()
+    {
+        _animator.SetTrigger(AnimIDEnemyAttack);
+    }
+    public void PlayHit()
+    {
+        _animator.SetTrigger(AnimIDEnemyHit);
+    }
+    public void PlayDie()
+    {
+        _animator.SetTrigger(AnimIDEnemyDie);
+    }
+    public void ResetAllTriggers()
+    {
+        _animator.ResetTrigger(AnimIDEnemyAttack);
+        _animator.ResetTrigger(AnimIDEnemyHit);
+    }
+
+    //애니메이션 Events
+    public void EnableWeaponTrace()
+    {
+        if (_enemyController != null) _enemyController.EnableWeaponTrace();
+    }
+
+    public void DisableWeaponTrace()
+    {
+        if (_enemyController != null) _enemyController.DisableWeaponTrace();
+    }
+}

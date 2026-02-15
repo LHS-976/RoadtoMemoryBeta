@@ -1,14 +1,14 @@
-﻿using UnityEngine;
+﻿using EnemyControllerScripts;
 
 public abstract class EnemyBaseState
 {
     protected EnemyController enemyController;
-    protected Animator animator;
+    protected EnemyAnimation enemyAnimation;
 
-    public EnemyBaseState(EnemyController enemyController, Animator animator)
+    public EnemyBaseState(EnemyController enemyController, EnemyAnimation enemyAnimation)
     {
         this.enemyController = enemyController;
-        this.animator = animator;
+        this.enemyAnimation = enemyAnimation;
     }
     public abstract void OnEnter();
     public abstract void OnUpdate();

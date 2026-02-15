@@ -245,8 +245,7 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         _currentActionIndex = index;
         AttackAction action = currentStrategy.actions[index];
 
-        _animator.ResetTrigger(action.attackName);
-        _animator.SetTrigger(action.attackName);
+        _animator.CrossFadeInFixedTime(action.attackName, 0.1f);
         _animator.SetInteger(PlayerController.AnimIDComboCount, index);
 
         CanCombo = false;

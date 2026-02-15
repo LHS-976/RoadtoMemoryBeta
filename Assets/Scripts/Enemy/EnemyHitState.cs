@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
-
+using EnemyControllerScripts;
 public class EnemyHitState : EnemyBaseState
 {
     private float _afterHitTime;
 
     private float _knockbackDuration;
     private float _knockbackForce;
-    public EnemyHitState(EnemyController _enemyController, Animator _animator) : base(_enemyController, _animator)
+    public EnemyHitState(EnemyController _enemyController, EnemyAnimation _enemyAnimation) : base(_enemyController, _enemyAnimation)
     {
     }
 
@@ -17,8 +17,7 @@ public class EnemyHitState : EnemyBaseState
         _knockbackForce = enemyController.EnemyManager.EnemyStats.knockbackPower;
 
         enemyController.HandleStop();
-        animator.SetTrigger(EnemyController.AnimIDEnemyHit);
-
+        enemyAnimation.PlayHit();
         enemyController.Agent.updatePosition = false;
     }
     public override void OnUpdate()

@@ -200,6 +200,27 @@ namespace PlayerControllerScripts
 
             ChangeState(hitState);
         }
+        public void HandleDie()
+        {
+            if (!enabled) return;
+
+            moveSpeed = 0f;
+            _velocity = Vector3.zero;
+            InputVector = Vector2.zero;
+
+            if (Controller != null) Controller.enabled = false;
+            this.enabled = false;
+
+            if(Animator != null)
+            {
+                Animator.applyRootMotion = false;
+                Animator.SetTrigger(AnimIDDie);
+            }
+            if (WeaponTracer != null) WeaponTracer.DisableTrace();
+
+            Debug.Log("플레이어 사망");
+            //UI 이벤트 호출 추가.
+        }
 
         //카메라 기준 방향으로 변환
         public Vector3 GetTargetDirection(Vector2 input)
