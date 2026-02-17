@@ -12,8 +12,8 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     public float CurrentHealth { get; private set; }
     public float CurrentArmor { get; private set; }
-    public bool isParryTime { get; private set; }
-    public bool isGroggy { get; private set; }
+    public bool IsParryTime { get; private set; }
+    public bool IsGroggy { get; private set; }
     public bool isDead = false;
 
     private const float DestroyDelay = 4.5f;
@@ -23,11 +23,20 @@ public class EnemyManager : MonoBehaviour, IDamageable
         if (_enemyController == null) _enemyController = GetComponent<EnemyController>();
         if (_enemyAnim == null) _enemyAnim = GetComponentInChildren<EnemyAnimation>();
 
+        if (_headParryUITransform != null)
+        {
+            Animator anim = GetComponentInChildren<Animator>();
+            if (anim != null)
+            {
+                _headParryUITransform = anim.GetBoneTransform(HumanBodyBones.Head);
+            }
+        }
+
         if (EnemyStats != null)
         {
             CurrentHealth = EnemyStats.maxHealth;
             CurrentArmor = EnemyStats.defenseArmor;
-        }
+        }   
     }
 
     public void TakeDamage(float damage, Vector3 knockBackDir)
@@ -38,7 +47,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
         float finalHealthDamage = damage;
 
-        if (isGroggy)
+        if (IsGroggy)
         {
             finalHealthDamage *= EnemyStats.groggyDamageMultiplier;
         }
@@ -49,7 +58,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
         CurrentHealth -= finalHealthDamage;
 
-        if (!isGroggy)
+        if (!IsGroggy)
         {
             _enemyController.KnockbackForce = knockBackDir;
             _enemyController.HandleHit();
@@ -63,7 +72,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     public void TakeArmorDamage(float amount)
     {
-        if (isGroggy || isParryTime) return;
+        if (IsGroggy || IsParryTime) return;
 
         CurrentArmor -= amount;
 
@@ -78,7 +87,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     private void TriggerParryPossible()
     {
-        isParryTime = true;
+        IsParryTime = true;
         GameEventManager.TriggerParryWindowOpen(_headParryUITransform);
         StartCoroutine(ParryPossibleTime());
     }
@@ -87,7 +96,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(EnemyStats.canParryDuration);
 
-        if (isParryTime && !isGroggy)
+        if (IsParryTime && !IsGroggy)
         {
             ParryFailure();
         }
@@ -96,7 +105,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     private void ParryFailure()
     {
         GameEventManager.TriggerParryWindowClose(_headParryUITransform);
-        isParryTime = false;
+        IsParryTime = false;
         CurrentArmor = EnemyStats.defenseArmor;
     }
 
@@ -109,8 +118,8 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     private void TriggerGroggy()
     {
-        isGroggy = true;
-        isParryTime = false;
+        IsGroggy = true;
+        IsParryTime = false;
         CurrentArmor = 0;
 
         _enemyController.HandleGroggy();
@@ -118,7 +127,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     public void RecoverFromGroggy()
     {
-        isGroggy = false;
+        IsGroggy = false;
         CurrentArmor = EnemyStats.defenseArmor;
     }
 

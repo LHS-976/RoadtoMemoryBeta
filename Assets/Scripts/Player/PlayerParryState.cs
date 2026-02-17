@@ -6,8 +6,12 @@ public class PlayerParryState : PlayerBaseState
 {
     private float _timer;
     public bool IsParryActive { get; private set; }
+
+    private float _executionRange = 3.0f;
+    private LayerMask _enemyLayer;
     public PlayerParryState(PlayerController player, Animator animator) : base(player, animator)
     {
+        _enemyLayer = LayerMask.GetMask("Enemy");
     }
 
     public override void OnEnter()
@@ -17,6 +21,7 @@ public class PlayerParryState : PlayerBaseState
         player.moveSpeed = 0f;
 
         animator.CrossFadeInFixedTime(PlayerController.AnimIDParry, 0.1f);
+        CheckForExecution();
         player.playerManager.UseStamina(player.playerStats.parryStaminaCost);
     }
     public override void OnUpdate()
@@ -54,5 +59,25 @@ public class PlayerParryState : PlayerBaseState
         GameEventManager.TriggerParrySuccess(hitPoint);
 
         player.playerManager.RestoreStamina(50f);
+    }
+    private void CheckForExecution()
+    {
+        Collider[] hitEnemies = Physics.OverlapSphere(player.transform.position, _executionRange, _enemyLayer);
+
+        foreach(var collider in hitEnemies)
+        {
+            EnemyManager enemy = collider.GetComponent<EnemyManager>();
+            if (enemy == null) continue;
+
+            if(enemy.IsParryTime)
+            {
+                Vector3 dirToEnemy = (enemy.transform.position - player.transform.position).normalized;
+                if(Vector3.Dot(player.transform.forward, dirToEnemy) > 0.5f)
+                {
+                    OnSuccessParry(enemy);
+                    return;
+                }
+            }
+        }
     }
 }

@@ -272,6 +272,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &45655875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 45655876}
+  m_Layer: 11
+  m_Name: ParryUI_Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &45655876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45655875}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7510849642355613320}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &55641681
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,6 +699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _parryIndicatorPrefab: {fileID: 4921810472567549610, guid: 062c954d33560af47b758ee1b5b5d3c9,
     type: 3}
+  _offset: {x: 0, y: 0.5, z: 0}
 --- !u!4 &210918698
 Transform:
   m_ObjectHideFlags: 0
@@ -1722,7 +1754,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211933, y: 0, z: 0, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2240,7 +2272,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211933, y: 0, z: 0, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2319,7 +2351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211933, y: 0.000000029614416, z: -0.000000003341417, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -17247,6 +17279,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5566935901905049776}
+  - {fileID: 45655876}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &7525183739751101961
@@ -18588,7 +18621,7 @@ MonoBehaviour:
     type: 2}
   _enemyController: {fileID: 8311655636658629870}
   _enemyAnim: {fileID: 5566935901905049777}
-  _headParryUITransform: {fileID: 210918698}
+  _headParryUITransform: {fileID: 45655876}
   isDead: 0
 --- !u!114 &8311655636658629872
 MonoBehaviour:

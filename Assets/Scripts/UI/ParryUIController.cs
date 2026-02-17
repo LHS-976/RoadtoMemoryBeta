@@ -9,6 +9,7 @@ using Core;
 public class ParryUIController : MonoBehaviour
 {
     [SerializeField] private GameObject _parryIndicatorPrefab;
+    [SerializeField] private Vector3 _offset = new Vector3(-0.365f, 2.2f, 0);
 
     private Dictionary<Transform, GameObject> _activeIndicators = new Dictionary<Transform, GameObject>();
 
@@ -30,6 +31,9 @@ public class ParryUIController : MonoBehaviour
 
         GameObject ui = Instantiate(_parryIndicatorPrefab, target.position + Vector3.up * 0.5f, Quaternion.identity);
         ui.transform.SetParent(target);
+
+        ui.transform.localPosition = _offset;
+        ui.transform.localScale = Vector3.one;
 
         _activeIndicators.Add(target, ui);
     }
