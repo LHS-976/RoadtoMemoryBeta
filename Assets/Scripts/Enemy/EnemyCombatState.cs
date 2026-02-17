@@ -29,6 +29,12 @@ public class EnemyCombatState : EnemyBaseState
         {
             enemyController.ChangeState(enemyController.attackState);
         }
+        else if (distance > enemyController.EnemyManager.EnemyStats.stopChaseDistance)
+        {
+            enemyController.targetTransform = null;
+            enemyController.Agent.ResetPath();
+            enemyController.ChangeState(enemyController.patrolState);
+        }
         else
         {
             enemyController.Agent.SetDestination(enemyController.targetTransform.position);

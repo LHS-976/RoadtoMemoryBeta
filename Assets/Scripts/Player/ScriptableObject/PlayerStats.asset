@@ -17,6 +17,8 @@ MonoBehaviour:
   RotateSpeed: 10
   CombatWalkSpeed: 3
   CombatRunSpeed: 5
+  AttackRotationSpeed: 15
+  LockOnRotationSpeed: 1.5
   MaxJumpHeight: 2
   MaxJumpTime: 0.5
   playerMaxHp: 100
@@ -25,3 +27,9 @@ MonoBehaviour:
   sprintStaminaCost: 5
   dashStaminaCost: 20
   staminaRecoveryOnHit: 5
+  parryStartupTime: 0.1
+  parryActiveTime: 0.2
+  parryRecoveryTime: 0.5
+  parryStaminaCost: 20
+  knockbackDuration: 0.2
+  knockbackPower: 10

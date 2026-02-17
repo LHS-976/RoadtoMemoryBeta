@@ -5,11 +5,11 @@ namespace EnemyControllerScripts
 {
     public class EnemyController : MonoBehaviour, IWeaponHitRange
     {
-        [SerializeField] public EnemyManager EnemyManager { get; private set; }
-        [SerializeField] public NavMeshAgent Agent { get; private set; }
-        [SerializeField] public EnemyAnimation EnemyAnim { get; private set; }
+        [field: SerializeField] public EnemyManager EnemyManager { get; private set; }
+        [field: SerializeField] public NavMeshAgent Agent { get; private set; }
+        [field: SerializeField] public EnemyAnimation EnemyAnim { get; private set; }
         [SerializeField] private WeaponTracer _weaponTracer;
-        [SerializeField] private LayerMask _targetLayer; //같은편 때리기 방지
+        [SerializeField] private LayerMask _targetLayer;
 
         public Transform targetTransform;
         public Vector3 spawnPosition;
@@ -19,6 +19,7 @@ namespace EnemyControllerScripts
         public EnemyPatrolState patrolState;
         public EnemyAttackState attackState;
         public EnemyHitState hitState;
+        public EnemyGroggyState groggyState;
 
         [HideInInspector] public Vector3 KnockbackForce;
 
@@ -28,7 +29,6 @@ namespace EnemyControllerScripts
         private const float TARGET_CHEST_HEIGHT = 1.2f;
         private const float TARGET_HEAD_HEIGHT = 1.8f;
         private const float BODY_OFFSET = 0.2f;
-
 
         private void Awake()
         {
@@ -42,15 +42,18 @@ namespace EnemyControllerScripts
             spawnPosition = transform.position;
             InitializeStates();
         }
+
         private void Start()
         {
             ChangeState(patrolState);
         }
+
         private void Update()
         {
             if (EnemyManager.isDead) return;
             currentState?.OnUpdate();
         }
+
         public void ChangeState(EnemyBaseState newState)
         {
             if (currentState == newState) return;
@@ -59,85 +62,97 @@ namespace EnemyControllerScripts
             currentState = newState;
             currentState.OnEnter();
         }
+
         private void InitializeStates()
         {
             combatState = new EnemyCombatState(this, EnemyAnim);
             patrolState = new EnemyPatrolState(this, EnemyAnim);
             attackState = new EnemyAttackState(this, EnemyAnim);
             hitState = new EnemyHitState(this, EnemyAnim);
+            groggyState = new EnemyGroggyState(this, EnemyAnim);
 
             Agent.speed = EnemyManager.EnemyStats.moveSpeed;
             Agent.angularSpeed = EnemyManager.EnemyStats.rotationSpeed;
             Agent.stoppingDistance = EnemyManager.EnemyStats.attackTriggerRange;
         }
 
-        //회전로직 (추격 중 사용)
+        #region Rotation
+
+        private bool TryGetDirectionToTarget(out Vector3 direction)
+        {
+            direction = Vector3.zero;
+            if (targetTransform == null) return false;
+
+            direction = targetTransform.position - transform.position;
+            direction.y = 0;
+
+            return direction.sqrMagnitude > 0.001f;
+        }
         public void RotateToTarget()
         {
-            if (targetTransform == null) return;
+            if (!TryGetDirectionToTarget(out Vector3 dir)) return;
 
-            Vector3 direction = (targetTransform.position - transform.position).normalized;
-            direction.y = 0;
-
-            if (direction.sqrMagnitude < 0.001f) return;
-            Quaternion lookRot = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * EnemyManager.EnemyStats.rotationSpeed);
+            Quaternion lookRot = Quaternion.LookRotation(dir.normalized);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, lookRot,
+                Time.deltaTime * EnemyManager.EnemyStats.rotationSpeed
+            );
         }
+
         public void RotateToTargetImmediate()
         {
-            if (targetTransform == null) return;
+            if (!TryGetDirectionToTarget(out Vector3 dir)) return;
 
-            Vector3 direction = (targetTransform.position - transform.position).normalized;
-            direction.y = 0;
-
-            if (direction.sqrMagnitude < 0.001f) return;
-
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.LookRotation(dir.normalized);
         }
+
+        #endregion
+
+        #region Detection
 
         public bool CanSeePlayer(Transform target)
         {
-            //적과 플레이어 사이의 거리를 계산
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-            //설정된 CLOSE_DETECTION_RANGE보다 가깝다면 시야각이나 장애물에 상관없이 즉시 감지.
             if (distanceToTarget < CLOSE_DETECTION_RANGE)
             {
                 return true;
             }
-
-            //시야각 확인
-            //적이 바라보는 정면 방향과 플레이어를 향한 방향 사이의 각도재기
-            //설정한 각도가 전체시야각 /2보다 작으면 시야 범위 안에 있는 것으로 감지.
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, dirToTarget) < EnemyManager.EnemyStats.viewAngle / 2f)
+            if (Vector3.Angle(transform.forward, dirToTarget) >= EnemyManager.EnemyStats.viewAngle / 2f)
             {
-
-                //오프셋 설정 - 플레이어의 몸 안쪽에서 레이가 겹쳐서 충돌 오류가 나는 것을 방지하기 위해, 타겟 지점을 적 쪽으로 살짝 당겨서 계산.
-                //첫 번째 시도(가슴) - 적의 위치에서 플레이어의 가슴 높이 지점 사이에 장애물이 있는지 확인.
-                //두 번쨰 시도(머리) - 가슴이 가려졌다면 적의 눈(myEyePos)에서 플레이어의 머리 높이 지점 사이에 장애물이 있는지 한 번 더 확인.
-                Vector3 myEyePos = transform.position + Vector3.up * EYE_HEIGHT;
-                Vector3 targetChestPos = target.position + Vector3.up * TARGET_CHEST_HEIGHT;
-
-                Vector3 dirToMe = (transform.position - target.position).normalized;
-                targetChestPos += dirToMe * BODY_OFFSET;
-
-                if (!Physics.Linecast(transform.position + Vector3.up, target.position + Vector3.up, EnemyManager.EnemyStats.obstacleLayer))
-                {
-                    RotateToTarget();
-                    return true; //플레이어를 찾음.
-                }
-                Vector3 targetHeadPos = target.position + Vector3.up * TARGET_HEAD_HEIGHT;
-                targetHeadPos += dirToMe * BODY_OFFSET;
-
-                if (!Physics.Linecast(myEyePos, targetHeadPos, EnemyManager.EnemyStats.obstacleLayer))
-                {
-                    RotateToTarget();
-                    return true;//플레이어를 찾음.
-                }
+                return false;
             }
+            Vector3 dirToMe = (transform.position - target.position).normalized;
+
+            //첫 번째 시도: 가슴 높이
+            Vector3 myEyePos = transform.position + Vector3.up * EYE_HEIGHT;
+            Vector3 targetChestPos = target.position + Vector3.up * TARGET_CHEST_HEIGHT;
+            targetChestPos += dirToMe * BODY_OFFSET;
+
+            if (!Physics.Linecast(myEyePos, targetChestPos, EnemyManager.EnemyStats.obstacleLayer))
+            {
+                RotateToTarget();
+                return true;
+            }
+
+            //두 번째 시도: 머리 높이
+            Vector3 targetHeadPos = target.position + Vector3.up * TARGET_HEAD_HEIGHT;
+            targetHeadPos += dirToMe * BODY_OFFSET;
+
+            if (!Physics.Linecast(myEyePos, targetHeadPos, EnemyManager.EnemyStats.obstacleLayer))
+            {
+                RotateToTarget();
+                return true;
+            }
+
             return false;
         }
+
+        #endregion
+
+        #region NavMesh Control
+
         public void HandleStop()
         {
             if (Agent.isOnNavMesh)
@@ -147,13 +162,16 @@ namespace EnemyControllerScripts
                 Agent.ResetPath();
             }
         }
+
         public void HandleNavRotationEnable()
         {
             Agent.isStopped = false;
             Agent.updatePosition = true;
+            Agent.updateRotation = true;
             Agent.updateUpAxis = true;
             Agent.stoppingDistance = 0f;
         }
+
         public void HandleNavRotationDisable()
         {
             Agent.isStopped = false;
@@ -162,31 +180,52 @@ namespace EnemyControllerScripts
             Agent.stoppingDistance = EnemyManager.EnemyStats.attackTriggerRange;
         }
 
+        #endregion
+
+        #region Combat
+
         public void OnWeaponHit(IDamageable target, Vector3 hitPoint, Vector3 hitDirection)
         {
             if (target.GetTransform() == transform) return;
 
             GameObject targetObj = target.GetTransform().gameObject;
-            if (((1 << targetObj.layer) & _targetLayer) == 0)
-            {
-                return;
-            }
+            if (((1 << targetObj.layer) & _targetLayer) == 0) return;
+
             Vector3 pushDir = (target.GetTransform().position - transform.position).normalized;
             pushDir.y = 0;
 
-            float finalDamage = EnemyManager.baseDamage * EnemyManager.EnemyStats.damageMultiplier;
+            //패링 판정
+            PlayerManager player = target.GetTransform().GetComponent<PlayerManager>();
+            if (player != null && player.TryParry(this.gameObject))
+            {
+                return;
+            }
+
+            float finalDamage = EnemyManager.EnemyStats.baseDamage * EnemyManager.EnemyStats.damageMultiplier;
             target.TakeDamage(finalDamage, pushDir);
 
             Debug.Log($"적 공격 적중! 데미지: {finalDamage}");
         }
+
         public void EnableWeaponTrace() => _weaponTracer.EnableTrace();
         public void DisableWeaponTrace() => _weaponTracer.DisableTrace();
+
+        #endregion
+
+        #region State Triggers
+
+        public void HandleGroggy()
+        {
+            DisableWeaponTrace();
+            ChangeState(groggyState);
+        }
 
         public void HandleHit()
         {
             DisableWeaponTrace();
             ChangeState(hitState);
         }
+
         public void HandleDie()
         {
             DisableWeaponTrace();
@@ -197,11 +236,14 @@ namespace EnemyControllerScripts
                 Agent.velocity = Vector3.zero;
                 Agent.enabled = false;
             }
+
             int deadLayer = LayerMask.NameToLayer("Dead");
             if (deadLayer != -1) gameObject.layer = deadLayer;
 
             EnemyAnim.PlayDie();
             this.enabled = false;
         }
+
+        #endregion
     }
 }

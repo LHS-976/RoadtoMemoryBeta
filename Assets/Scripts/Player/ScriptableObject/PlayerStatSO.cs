@@ -14,6 +14,7 @@ public class PlayerStatSO : ScriptableObject
     public float CombatWalkSpeed = 3f;
     public float CombatRunSpeed = 5f;
     public float AttackRotationSpeed = 15f;
+    public float LockOnRotationSpeed = 2f;
 
     [Header("Jump")]
     public float MaxJumpHeight = 2.0f;
@@ -27,6 +28,12 @@ public class PlayerStatSO : ScriptableObject
     public float sprintStaminaCost = 10f;
     public float dashStaminaCost = 20f;
     public float staminaRecoveryOnHit = 5f;
+
+    [Header("Parry Settings")]
+    public float parryStartupTime = 0.1f;
+    public float parryActiveTime = 0.2f;
+    public float parryRecoveryTime = 0.5f;
+    public float parryStaminaCost = 20f;
 
     [Header("Hurt Settings")]
     public float knockbackDuration = 0.2f;

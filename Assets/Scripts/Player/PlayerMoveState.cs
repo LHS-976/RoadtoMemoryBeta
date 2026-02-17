@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerBaseState
 {
-    public Vector3 _targetDirection;
     public PlayerMoveState(PlayerController player, Animator animator) : base(player, animator)
     {
     }
@@ -26,6 +25,7 @@ public class PlayerMoveState : PlayerBaseState
 
         float targetAnimSpeed = isSprinting ? 1.0f : 0.5f;
         if (player.InputVector.sqrMagnitude == 0) targetAnimSpeed = 0f;
+
         player.Animator.SetFloat(PlayerController.AnimIDSpeed, targetAnimSpeed, 0.1f, Time.deltaTime);
         player.HandleRotation(dir, isInstant: false);
         player.HandlePosition(dir);

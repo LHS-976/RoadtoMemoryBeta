@@ -15,8 +15,6 @@ public class CombatUIView : MonoBehaviour
     {
         if (player != null)
         {
-            player.OnCombatStateChanged += UpdateUI;
-            UpdateUI(player.isCombatMode);
         }
     }
     void UpdateUI(bool isCombat)
@@ -26,6 +24,5 @@ public class CombatUIView : MonoBehaviour
 
     void OnDisable()
     {
-        if (player != null) player.OnCombatStateChanged -= UpdateUI;
     }
 }

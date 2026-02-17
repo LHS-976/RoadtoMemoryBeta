@@ -31,7 +31,7 @@ public class ComboStrategySO : ScriptableObject
     [Header("Settings")]
     public string comboName;
     public float baseDamage = 10f;
-    public float attackSpeed = 1.0f;
+    public float attackSpeed = 1.5f;
 
     public List<ComboConnection> combos;
 

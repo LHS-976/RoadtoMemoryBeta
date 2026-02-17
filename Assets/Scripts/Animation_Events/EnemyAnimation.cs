@@ -9,6 +9,7 @@ public class EnemyAnimation : MonoBehaviour
 
     private static readonly int AnimIDEnemySpeed = Animator.StringToHash("Speed");
     private static readonly int AnimIDEnemyAttack = Animator.StringToHash("Attack");
+    private static readonly int AnimIDEnemyGroggy = Animator.StringToHash("Groggy");
     private static readonly int AnimIDEnemyDie = Animator.StringToHash("Die");
     private static readonly int AnimIDEnemyHit = Animator.StringToHash("Hit");
     private void Awake()
@@ -33,13 +34,16 @@ public class EnemyAnimation : MonoBehaviour
     {
         _animator.SetTrigger(AnimIDEnemyDie);
     }
-    public void ResetAllTriggers()
+    public void PlayGroggy()
     {
-        _animator.ResetTrigger(AnimIDEnemyAttack);
-        _animator.ResetTrigger(AnimIDEnemyHit);
+        _animator.SetBool(AnimIDEnemyGroggy, true);
+    }
+    public void ClearGroggy()
+    {
+        _animator.SetBool(AnimIDEnemyGroggy, false);
     }
 
-    //애니메이션 Events
+    //애니메이션 함수
     public void EnableWeaponTrace()
     {
         if (_enemyController != null) _enemyController.EnableWeaponTrace();

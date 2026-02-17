@@ -13,6 +13,8 @@ namespace Core
         public int CurrentDataChips { get; private set; }
         public int CurrentStageIndex { get; private set; }
 
+        private bool IsPaused = false;
+
 
         private void Awake()
         {
@@ -23,6 +25,13 @@ namespace Core
             }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+        }
+
+        public void ResumeGame()
+        {
+            IsPaused = false;
+            TimeManager.Instance.ForceRestoreTime();
+            Time.timeScale = 1f;
         }
     }
 }

@@ -19,8 +19,10 @@ MonoBehaviour:
   maxHealth: 100
   attackCooldown: 3
   attackRange: 1.5
+  attackTriggerRange: 1.8
   defenseArmor: 50
   damageMultiplier: 1
+  stopChaseDistance: 20
   playerMask:
     serializedVersion: 2
     m_Bits: 1024

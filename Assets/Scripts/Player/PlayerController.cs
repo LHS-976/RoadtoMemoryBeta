@@ -16,11 +16,12 @@ namespace PlayerControllerScripts
         public PlayerCombatSystem CombatSystem { get; private set; }
         public WeaponTracer WeaponTracer { get; private set; }
 
-        private PlayerBaseState _currentState;
+        public PlayerBaseState CurrentState { get; private set; }
         public PlayerIdleState idleState;
         public PlayerMoveState moveState;
         public PlayerCombatState combatState;
         public PlayerHitState hitState;
+        public PlayerParryState parryState;
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
@@ -28,6 +29,12 @@ namespace PlayerControllerScripts
         public float moveSpeed;
         [HideInInspector] public Vector3 KnockBackForce;
 
+        //애니메이션을 Enemy처럼 다른 스크립트로 분리하려고 했지만
+        //유니티의 실행순서로 인해 Animator.SetFloat는 호출 즉시 값이 반영X
+        //Animator평가 시점(내부적으로 Update후반 또는 LateUpdate 근처)에 처리된다.
+        //그래서 같은 프레임에 FreezeMovementAnimation() 호출 후 
+        //EnableRootMotion()을 켜면 Animator가 아직 이전 Speed값으로 평가하는 타이밍이 생김
+        //이로 인해 Input기반 이동과 루트모션이 한 프레임 동안 동시에 적용되서 분리X
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
         [HideInInspector] public static readonly int AnimIDInputY = Animator.StringToHash("InputY");
@@ -36,14 +43,13 @@ namespace PlayerControllerScripts
         [HideInInspector] public static readonly int AnimIDTriggerSheath = Animator.StringToHash("TriggerSheath");
         [HideInInspector] public static readonly int AnimIDAttack = Animator.StringToHash("Attack");
         [HideInInspector] public static readonly int AnimIDComboCount = Animator.StringToHash("ComboCount");
-        [HideInInspector] public static readonly int AnimIDHit = Animator.StringToHash("Hit"); //히트 애니메이션 추가.
-        [HideInInspector] public static readonly int AnimIDDie = Animator.StringToHash("Die"); //다이 애니메이션 추가.
-
+        [HideInInspector] public static readonly int AnimIDHit = Animator.StringToHash("Hit");
+        [HideInInspector] public static readonly int AnimIDDie = Animator.StringToHash("Die");
+        [HideInInspector] public static readonly int AnimIDParry = Animator.StringToHash("Parry");
 
         private Vector3 _velocity;
         private float _gravity;
         private float _initialJumpVelocity; //점프 구현
-        public event Action<bool> OnCombatStateChanged; //변경
         private bool _isSheathing = false;
 
         private const float Grounded_Velocity = -2f;
@@ -58,11 +64,7 @@ namespace PlayerControllerScripts
             if(playerManager == null) playerManager = GetComponent<PlayerManager>();
 
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
-            if (playerStats != null)
-            {
-                moveSpeed = playerStats.WalkSpeed;
-                SetupJumpVariables();
-            }
+
             if (playerStats == null)
             {
                 Debug.LogError("playerStats가 할당되지 않았습니다!!");
@@ -78,6 +80,7 @@ namespace PlayerControllerScripts
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
             hitState = new PlayerHitState(this, Animator);
+            parryState = new PlayerParryState(this, Animator);
         }
         private void InitializeStats()
         {
@@ -94,13 +97,14 @@ namespace PlayerControllerScripts
         private void Update()
         {
             HandleInput();
-            _currentState?.OnUpdate();
+            CurrentState?.OnUpdate();
             ApplyGravity();
         }
         private void HandleInput()
         {
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
+
             float staminaRequired = playerStats.sprintStaminaCost * Time.deltaTime;
             InputVector = new Vector2(h, v);
             bool sprintInput = Input.GetKey(KeyCode.LeftShift);
@@ -128,9 +132,9 @@ namespace PlayerControllerScripts
                 return;
             }
 
-            _currentState?.OnExit();
-            _currentState = newState;
-            _currentState.OnEnter();
+            CurrentState?.OnExit();
+            CurrentState = newState;
+            CurrentState.OnEnter();
         }
         public void ToggleCombatMode()
         {
@@ -155,14 +159,15 @@ namespace PlayerControllerScripts
                 _velocity.y = Grounded_Velocity;
             }
             _velocity.y += _gravity * Time.deltaTime;
-            if(!ShouldUseRootMotion())
+
+            if(!IsRootMotionActive())
             {
                 Controller.Move(_velocity * Time.deltaTime);
             }
         }
-        private bool ShouldUseRootMotion()
+        private bool IsRootMotionActive()
         {
-            return isCombatMode && combatState != null && combatState.UseRootMotion;
+            return CurrentState is PlayerCombatState combat && combat.UseRootMotion;
         }
 
         private void SetupJumpVariables()
@@ -173,14 +178,14 @@ namespace PlayerControllerScripts
         }
         public void CheckCombo()
         {
-            if (_currentState is PlayerCombatState combatState)
+            if (CurrentState is PlayerCombatState combatState)
             {
                 combatState.OnComboCheck();
             }
         }
         public void OnAnimationEnd()
         {
-            if(_currentState is PlayerCombatState combatState)
+            if(CurrentState is PlayerCombatState combatState)
             {
                 combatState.OnAnimationEnd();
             }
@@ -197,7 +202,6 @@ namespace PlayerControllerScripts
             if (playerManager.IsInvincible) return;
 
             KnockBackForce = knockBackDir;
-
             ChangeState(hitState);
         }
         public void HandleDie()
@@ -248,12 +252,15 @@ namespace PlayerControllerScripts
             if (isInstant)
             {
                 //combatmode용 회전
+                transform.rotation = targetRotation;
                 _playerMesh.rotation = targetRotation;
+               
             }
             else
             {
                 //이동용 회전
-                _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation, Time.deltaTime * playerStats.RotateSpeed);
+                _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation, 
+                                                        Time.deltaTime * playerStats.RotateSpeed);
             }
         }
         //적 감지 회전, 에임고정을 위한 회전
@@ -261,13 +268,28 @@ namespace PlayerControllerScripts
         {
             if (CombatSystem.CurrentTarget == null) return;
 
-            Vector3 dirTotarget = CombatSystem.CurrentTarget.position - transform.position;
-            dirTotarget.y = 0;
+            Vector3 dirToTarget = CombatSystem.CurrentTarget.position - transform.position;
+            dirToTarget.y = 0;
 
-            if(dirTotarget.sqrMagnitude > 0.1f)
+            if (dirToTarget.sqrMagnitude > 0.1f)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(dirTotarget.normalized);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * playerStats.AttackRotationSpeed);
+                transform.rotation = Quaternion.LookRotation(dirToTarget.normalized);
+            }
+        }
+        public void HandleLockOnRotation()
+        {
+            if (CombatSystem.CurrentTarget == null) return;
+
+            Vector3 dirToTarget = CombatSystem.CurrentTarget.position - transform.position;
+            dirToTarget.y = 0;
+
+            if (dirToTarget.sqrMagnitude > 0.1f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(dirToTarget.normalized);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation, targetRotation,
+                    Time.deltaTime * playerStats.AttackRotationSpeed * playerStats.LockOnRotationSpeed
+                );
             }
         }
         public void HandlePosition(Vector3 targetDirection)
@@ -276,7 +298,7 @@ namespace PlayerControllerScripts
         }
         public void OnAnimatorMoveManual()
         {
-            if (_currentState is PlayerCombatState combat && combat.UseRootMotion)
+            if (IsRootMotionActive())
             {
                 Vector3 velocity = Animator.deltaPosition;
 

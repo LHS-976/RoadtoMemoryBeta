@@ -6,6 +6,9 @@ public class EnemyHitState : EnemyBaseState
 
     private float _knockbackDuration;
     private float _knockbackForce;
+
+    private const float WallCheckRadius = 0.3f;
+    private const float WallCheckOffset = 0.5f;
     public EnemyHitState(EnemyController _enemyController, EnemyAnimation _enemyAnimation) : base(_enemyController, _enemyAnimation)
     {
     }
@@ -45,7 +48,17 @@ public class EnemyHitState : EnemyBaseState
     {
         float currentSpeed = Mathf.Lerp(_knockbackForce, 0f, _afterHitTime / _knockbackDuration);
         Vector3 moveDir = enemyController.KnockbackForce;
+        Vector3 displacement = moveDir * currentSpeed * Time.deltaTime;
 
-        enemyController.transform.position += moveDir * currentSpeed * Time.deltaTime;
+        Vector3 origin = enemyController.transform.position + Vector3.up * WallCheckOffset;
+
+        RaycastHit hit;
+        if (Physics.SphereCast(origin, WallCheckRadius, displacement.normalized, out hit, 
+            displacement.magnitude + WallCheckRadius, enemyController.EnemyManager.EnemyStats.obstacleLayer ))
+        {
+            float safeDistance = Mathf.Max(0f, hit.distance - WallCheckRadius);
+            displacement = displacement.normalized * safeDistance;
+        }
+        enemyController.transform.position += displacement;
     }
 }

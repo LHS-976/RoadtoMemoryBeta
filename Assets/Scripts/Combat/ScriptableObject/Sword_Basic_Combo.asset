@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboName: BaseCombo
   baseDamage: 10
-  attackSpeed: 1
+  attackSpeed: 1.2
   combos:
   - commandType: 0
     nextComboIndex: 0

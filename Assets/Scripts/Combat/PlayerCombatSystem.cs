@@ -31,19 +31,15 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
     public bool CanCombo { get; private set; }
     public Transform CurrentTarget { get; private set; }
 
-    public void SetTarget(Transform target)
-    {
-        CurrentTarget = target;
-    }
+    [Header("Damage Settings")]
+    [SerializeField] private float _heavyDefenseAttackDmgMultiplier = 2.0f;
 
     [Header("Target Detect")]
-    [SerializeField] private float _detectRadius = 5.5f; //적 탐지 반경
-    [SerializeField] private float _targetLockAngle = 60f; //적을 인식하는 각도범위
-    [SerializeField] private float _targetLostMultiplier = 1.2f; //타겟을 잃는 거리배율
+    [SerializeField] private float _detectRadius = 5.5f;
+    [SerializeField] private float _targetLockAngle = 60f;
+    [SerializeField] private float _targetLostMultiplier = 1.2f;
     [SerializeField] private LayerMask _enemyLayer;
 
-    [SerializeField] private float _hitStopTimeScale = 0.05f;
-    [SerializeField] private bool _useHitTimer = true;
     private Collider[] _enemyBuffer = new Collider[20];
 
     public bool IsDamageActive { get; private set; }
@@ -60,12 +56,18 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         if (_weaponTracer != null) _weaponTracer.Initialize(this);
         if (currentStrategy != null) UpdateActionMap();
     }
+
+    public void SetTarget(Transform target)
+    {
+        CurrentTarget = target;
+    }
+
     public void UpdateActionMap()
     {
         _actionMap.Clear();
         if (currentStrategy == null) return;
 
-        foreach(var action in currentStrategy.actions)
+        foreach (var action in currentStrategy.actions)
         {
             int hash = Animator.StringToHash(action.attackName);
             if (!_actionMap.ContainsKey(hash))
@@ -74,42 +76,33 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             }
         }
     }
+
     private void Update()
     {
         CheckAttackHitWindow();
     }
 
+    #region Hit Window & Damage
+
     private void CheckAttackHitWindow()
     {
-        if(currentStrategy == null || _actionMap.Count == 0)
+        if (currentStrategy == null || _actionMap.Count == 0)
         {
             IsDamageActive = false;
             return;
         }
-        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-        AnimatorStateInfo nextInfo = _animator.GetNextAnimatorStateInfo(0);
+
+        // 트랜지션 중에는 다음 상태를, 아니면 현재 상태를 기준으로 판정
         bool isTransitioning = _animator.IsInTransition(0);
+        AnimatorStateInfo stateInfo = isTransitioning
+            ? _animator.GetNextAnimatorStateInfo(0)
+            : _animator.GetCurrentAnimatorStateInfo(0);
 
-        int targetHash = 0;
-        float currentNormalizedTime = 0f;
-        bool isAttackState = false;
+        if (_actionMap.TryGetValue(stateInfo.shortNameHash, out AttackAction currentAction))
+        {
+            float time = stateInfo.normalizedTime % 1.0f;
 
-        if (isTransitioning)
-        {
-            targetHash = nextInfo.shortNameHash;
-            currentNormalizedTime = nextInfo.normalizedTime;
-        }
-        else
-        {
-            targetHash = stateInfo.shortNameHash;
-            currentNormalizedTime = stateInfo.normalizedTime;
-        }    
-        if (_actionMap.TryGetValue(targetHash, out AttackAction currentAction))
-        {
-            isAttackState = true;
-            float time = currentNormalizedTime % 1.0f;
-
-            if(time >= currentAction.startFrameHit && time <= currentAction.endFrameHit)
+            if (time >= currentAction.startFrameHit && time <= currentAction.endFrameHit)
             {
                 _activeAttackAction = currentAction;
                 EnableDamage();
@@ -120,150 +113,48 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
                 _activeAttackAction = null;
             }
         }
-        if(!isAttackState)
+        else
         {
             DisableDamage();
         }
     }
+
     private void EnableDamage()
     {
-        if(!IsDamageActive)
+        if (!IsDamageActive)
         {
             IsDamageActive = true;
             _weaponTracer.EnableTrace();
         }
     }
+
     private void DisableDamage()
     {
-        if(IsDamageActive)
+        if (IsDamageActive)
         {
             IsDamageActive = false;
             _weaponTracer.DisableTrace();
         }
     }
 
-    //피격, 회피등으로 캔슬될 때 외부에서 호출
-    public void ForceStopAttack()
-    {
-        DisableDamage();
-        ResetCombo();
-        _currentActionIndex = -1;
-    }
+    #endregion
 
-    //타겟 갱신. 기존 타겟이 유효하면 유지하고 아니면 새로찾는다.
-    public void UpdateTarget(Vector3 playerPos, Vector3 searchDir)
-    {
-        if (IsValidTarget(CurrentTarget, playerPos))
-        {
-            return;
-        }
-        CurrentTarget = GetNearestEnemy(playerPos, searchDir);
-    }
-    private bool IsValidTarget(Transform target, Vector3 playerPos)
-    {
-        if (target == null || !target.gameObject.activeSelf) return false;
-
-        SandBagEnemy enemy = target.GetComponent<SandBagEnemy>();
-        if(enemy != null && enemy.IsDead)
-        {
-            return false;
-        }
-        float distance = Vector3.Distance(playerPos, target.position);
-        return distance <= _detectRadius * _targetLostMultiplier;
-    }
-    public Transform GetNearestEnemy(Vector3 playerPos, Vector3 searchDir)
-    {
-        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer, _enemyLayer);
-        Transform nearestTarget = null;
-        float minDistance = float.MaxValue;
-
-        //탐색방향 결정
-        Vector3 checkDir = searchDir.sqrMagnitude > 0.01f ? searchDir : transform.forward;
-
-        for (int i = 0; i < count; i++)
-        {
-            Collider collider = _enemyBuffer[i];
-            if (!collider.gameObject.activeSelf) continue;
-
-            Vector3 toEnemy = collider.transform.position - playerPos;
-            toEnemy.y = 0;
-
-            float angle = Vector3.Angle(checkDir, toEnemy);
-            if (angle > _targetLockAngle) continue;
-
-
-            //근접한 적 선택
-            float dist = toEnemy.sqrMagnitude;
-            if (dist < minDistance)
-            {
-                minDistance = dist;
-                nearestTarget = collider.transform;
-            }
-        }
-        return nearestTarget;
-    }
-    public void ClearTarget()
-    {
-        CurrentTarget = null;
-    }
-
-    public void OnWeaponHit(IDamageable target, Vector3 hitPoint, Vector3 hitDirection)
-    {
-
-        if(_controller != null)
-        {
-            _controller.playerManager.RestoreStamina(_controller.playerStats.staminaRecoveryOnHit);
-        }
-
-        AttackAction action = _activeAttackAction;
-        if (action == null) action = GetCurrentAttackAction();
-        if (action == null) return;
-
-        Vector3 targetPos = target.GetTransform().position;
-        Vector3 knockBackDir = (targetPos - transform.position).normalized;
-        knockBackDir.y = 0;
-
-        float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
-        target.TakeDamage(finalDamage, knockBackDir);
-        Debug.Log($"데미지 적용 : {finalDamage} -> {target}");
-
-        if(action.hitStopDuration > 0 && _hitTimer != null)
-        {
-            //GetComponentInChildren<Animator>();
-            Animator enemyAnim = (target as Component)?.GetComponent<Animator>();
-            _hitTimer.StartHitStop(action.hitStopDuration, enemyAnim);
-        }
-        if (action.hitVFX != null)
-        {
-            VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
-        }
-    }
-    private void PlayAttackAnim(int index)
-    {
-        if (index >= currentStrategy.actions.Count) return;
-
-        _currentActionIndex = index;
-        AttackAction action = currentStrategy.actions[index];
-
-        _animator.CrossFadeInFixedTime(action.attackName, 0.1f);
-        _animator.SetInteger(PlayerController.AnimIDComboCount, index);
-
-        CanCombo = false;
-    }
-
+    #region Attack Execution
 
     public void ExecuteAttack(CombatCommand commandType)
     {
         if (currentStrategy == null) return;
+
         if (_currentActionIndex == -1)
         {
             int startIndex = currentStrategy.GetStartingIndex(commandType);
-            if(startIndex != -1)
+            if (startIndex != -1)
             {
                 PlayAttackAnim(startIndex);
             }
             return;
         }
+
         AttackAction currentAction = currentStrategy.actions[_currentActionIndex];
         ComboConnection connection = FindNextCombo(currentAction, commandType);
 
@@ -273,9 +164,156 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         }
     }
 
+    private void PlayAttackAnim(int index)
+    {
+        if (index >= currentStrategy.actions.Count) return;
+
+        _currentActionIndex = index;
+        AttackAction action = currentStrategy.actions[index];
+
+        _animator.CrossFadeInFixedTime(action.attackName, 0.1f);
+        _animator.SetInteger(PlayerController.AnimIDComboCount, index);
+        _animator.speed = currentStrategy.attackSpeed;
+
+        CanCombo = false;
+    }
+    public void ForceStopAttack()
+    {
+        DisableDamage();
+        ResetCombo();
+        _currentActionIndex = -1;
+    }
+
+    #endregion
+
+    #region Weapon Hit Callback
+
+    public void OnWeaponHit(IDamageable target, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        if (_controller != null)
+        {
+            _controller.playerManager.RestoreStamina(_controller.playerStats.staminaRecoveryOnHit);
+        }
+
+        AttackAction action = _activeAttackAction ?? GetCurrentAttackAction();
+        if (action == null) return;
+
+        Vector3 knockBackDir = (target.GetTransform().position - transform.position).normalized;
+        knockBackDir.y = 0;
+
+        float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
+
+        ApplyArmorDamage(target, action, finalDamage);
+        target.TakeDamage(finalDamage, knockBackDir);
+
+        ApplyHitStop(target, action);
+        ApplyHitVFX(action, hitPoint);
+
+        Debug.Log($"데미지 적용 : {finalDamage} -> {target}");
+    }
+
+    private void ApplyArmorDamage(IDamageable target, AttackAction action, float baseDamage)
+    {
+        EnemyManager enemy = target.GetTransform().GetComponent<EnemyManager>();
+        if (enemy == null) return;
+
+        // TODO: action.attackName.Contains("Heavy") 대신
+        // AttackAction에 isHeavy 필드 또는 AttackType enum 추가 권장
+        if (action.attackName.Contains("Heavy"))
+        {
+            float bonusArmorDmg = baseDamage * (_heavyDefenseAttackDmgMultiplier - 1.0f);
+            if (bonusArmorDmg > 0)
+            {
+                enemy.TakeArmorDamage(bonusArmorDmg);
+            }
+        }
+    }
+
+    private void ApplyHitStop(IDamageable target, AttackAction action)
+    {
+        if (action.hitStopDuration <= 0 || _hitTimer == null) return;
+
+        Animator enemyAnim = target.GetTransform().GetComponent<Animator>();
+        if (enemyAnim == null) enemyAnim = target.GetTransform().GetComponentInChildren<Animator>();
+
+        _hitTimer.StartHitStop(action.hitStopDuration, enemyAnim);
+    }
+
+    private void ApplyHitVFX(AttackAction action, Vector3 hitPoint)
+    {
+        if (action.hitVFX != null)
+        {
+            VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
+        }
+    }
+
+    #endregion
+
+    #region Target Detection
+
+    /// <summary>
+    ///타겟 갱신. 기존 타겟이 유효하면 유지하고 아니면 새로 찾는다.
+    /// </summary>
+    public void UpdateTarget(Vector3 playerPos, Vector3 searchDir)
+    {
+        if (IsValidTarget(CurrentTarget, playerPos)) return;
+
+        CurrentTarget = GetNearestEnemy(playerPos, searchDir);
+    }
+
+    private bool IsValidTarget(Transform target, Vector3 playerPos)
+    {
+        if (target == null || !target.gameObject.activeSelf) return false;
+
+        //IDamageable 기반으로 사망 판별
+        EnemyManager enemy = target.GetComponent<EnemyManager>();
+        if (enemy != null && enemy.isDead) return false;
+
+        float distance = Vector3.Distance(playerPos, target.position);
+        return distance <= _detectRadius * _targetLostMultiplier;
+    }
+
+    public Transform GetNearestEnemy(Vector3 playerPos, Vector3 searchDir)
+    {
+        int count = Physics.OverlapSphereNonAlloc(playerPos, _detectRadius, _enemyBuffer, _enemyLayer);
+        Transform nearestTarget = null;
+        float minDistance = float.MaxValue;
+
+        Vector3 checkDir = searchDir.sqrMagnitude > 0.01f ? searchDir : transform.forward;
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider col = _enemyBuffer[i];
+            if (!col.gameObject.activeSelf) continue;
+
+            Vector3 toEnemy = col.transform.position - playerPos;
+            toEnemy.y = 0;
+
+            float angle = Vector3.Angle(checkDir, toEnemy);
+            if (angle > _targetLockAngle) continue;
+
+            float dist = toEnemy.sqrMagnitude;
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                nearestTarget = col.transform;
+            }
+        }
+        return nearestTarget;
+    }
+
+    public void ClearTarget()
+    {
+        CurrentTarget = null;
+    }
+
+    #endregion
+
+    #region Combo Control
+
     public AttackAction GetCurrentAttackAction()
     {
-        int currentHash = 0;
+        int currentHash;
         if (_animator.IsInTransition(0))
         {
             currentHash = _animator.GetNextAnimatorStateInfo(0).shortNameHash;
@@ -285,24 +323,20 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             currentHash = _animator.GetCurrentAnimatorStateInfo(0).shortNameHash;
         }
 
-        if(_actionMap.TryGetValue(currentHash, out AttackAction action))
-        {
-            return action;
-        }
-        return null;
-
+        return _actionMap.TryGetValue(currentHash, out AttackAction action) ? action : null;
     }
+
     private ComboConnection FindNextCombo(AttackAction action, CombatCommand commandType)
     {
+        if (action.nextCombos == null) return null;
+
         foreach (var combo in action.nextCombos)
         {
-            if (combo.commandType == commandType)
-            {
-                return combo;
-            }
+            if (combo.commandType == commandType) return combo;
         }
         return null;
     }
+
     public void SetComboWindow(int state) => CanCombo = (state == 1);
     public void ResetComboWindow() => CanCombo = false;
 
@@ -310,5 +344,8 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
     {
         _currentActionIndex = -1;
         _animator.SetInteger(PlayerController.AnimIDComboCount, 0);
+        _animator.speed = 1f;
     }
+
+    #endregion
 }

@@ -70,6 +70,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         if (isDead) return;
 
+
         _currentHp -= damage;
         if(_playerController != null)
         {
@@ -81,6 +82,20 @@ public class PlayerManager : MonoBehaviour, IDamageable
             _currentHp = 0;
             Die();
         }
+    }
+
+    public bool TryParry(GameObject attacker)
+    {
+        if(_playerController.CurrentState is PlayerParryState parryState && parryState.IsParryActive)
+        {
+            EnemyManager enemy = attacker.GetComponent<EnemyManager>();
+            if(enemy != null && enemy.isParryTime)
+            {
+                parryState.OnSuccessParry(enemy);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void SetInvincible(bool state)

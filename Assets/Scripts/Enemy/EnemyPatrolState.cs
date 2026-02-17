@@ -22,6 +22,7 @@ public class EnemyPatrolState : EnemyBaseState
         _viewRadius = enemyController.EnemyManager.EnemyStats.viewRadius;
 
         enemyController.HandleNavRotationEnable();
+        enemyController.Agent.speed = enemyController.EnemyManager.EnemyStats.moveSpeed;
 
         SetRandomDestination();
     }
@@ -34,13 +35,13 @@ public class EnemyPatrolState : EnemyBaseState
         }
         if(!enemyController.Agent.pathPending && enemyController.Agent.remainingDistance <= enemyController.Agent.stoppingDistance + 0.1f)
         {
-            enemyAnimation.UpdateMoveSpeed(0);
+            enemyAnimation.UpdateMoveSpeed(0f);
 
             _waitTimer += Time.deltaTime;
             if(_waitTimer >= _patrolidleTime)
             {
                 SetRandomDestination();
-                _waitTimer = 0;
+                _waitTimer = 0f;
             }
         }
         else
@@ -50,6 +51,7 @@ public class EnemyPatrolState : EnemyBaseState
     }
     public override void OnExit()
     {
+        _waitTimer = 0f;
         enemyController.Agent.stoppingDistance = _attackRange;
     }
 
@@ -58,6 +60,7 @@ public class EnemyPatrolState : EnemyBaseState
         Vector3 randomPoint = enemyController.spawnPosition + Random.insideUnitSphere * _patrolRadius;
 
         NavMeshHit hit;
+        //NavMesh.AllAreas - 어떤 속성(Area)의 땅이든 상관없이 위치 잡기
         if(NavMesh.SamplePosition(randomPoint, out hit, _patrolRadius, NavMesh.AllAreas))
         {
             enemyController.Agent.SetDestination(hit.position);

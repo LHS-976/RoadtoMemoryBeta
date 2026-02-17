@@ -12,13 +12,23 @@ public class EnemyStatsSO : ScriptableObject
     public float viewRadius = 10f;
     public float viewAngle = 80f;
 
-    [Header("Combat Setting")]
+    [Header("Combat Settings")]
     public float maxHealth = 100f;
+    public float baseDamage = 15f;
     public float attackCooldown = 3f;
     public float attackRange = 2.5f;
     public float attackTriggerRange = 1.8f;
-    public float defenseArmor = 50f; //깨질때 특수처리할 예정
     public float damageMultiplier = 1.0f;
+    public float stopChaseDistance = 15.0f;
+
+    [Header("Defense Settings")]
+    public float defenseArmor = 100f; //깨질때 특수처리할 예정
+    public float groggyDuration = 3.0f;
+    public float damageReduce = 0.8f;
+    public float groggyDamageMultiplier = 1.5f;
+
+    [Header("Parry Settings")]
+    public float canParryDuration = 3.0f;
 
     [Header("Detection Setting")]
     public LayerMask playerMask;

@@ -14,4 +14,12 @@ public abstract class PlayerBaseState
     public abstract void OnEnter();
     public abstract void OnUpdate();
     public abstract void OnExit();
+
+    protected void FreezeMovementAnimation()
+    {
+        player.moveSpeed = 0f;
+        animator.SetFloat(PlayerController.AnimIDSpeed, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputX, 0f);
+        animator.SetFloat(PlayerController.AnimIDInputY, 0f);
+    }
 }
