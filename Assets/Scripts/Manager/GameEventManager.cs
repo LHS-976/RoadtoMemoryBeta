@@ -6,22 +6,22 @@ namespace Core
 {
     public  static class GameEventManager
     {
-        public static event Action<Vector3> OnParrySuccess;
+        public static event Action<Vector3> OnExecutionSuccess;
 
-        public static event Action<Transform> OnParryWindowOpen;
-        public static event Action<Transform> OnParryWindowClose;
+        public static event Action<Transform> OnExecutionWindowOpen;
+        public static event Action<Transform> OnExecutionWindowClose;
 
-        public static void TriggerParryWindowOpen(Transform target)
+        public static void TriggerExecutionWindowOpen(Transform target)
         {
-            OnParryWindowOpen?.Invoke(target);
+            OnExecutionWindowOpen?.Invoke(target);
         }
-        public static void TriggerParryWindowClose(Transform target)
+        public static void TriggerExecutionWindowClose(Transform target)
         {
-            OnParryWindowClose?.Invoke(target);
+            OnExecutionWindowClose?.Invoke(target);
         }
-        public static void TriggerParrySuccess(Vector3 hitPoint)
+        public static void TriggerExecutionSuccess(Vector3 hitPoint)
         {
-            OnParrySuccess?.Invoke(hitPoint);
+            OnExecutionSuccess?.Invoke(hitPoint);
         }
     }
 }

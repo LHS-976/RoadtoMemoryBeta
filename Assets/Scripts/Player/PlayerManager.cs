@@ -86,12 +86,12 @@ public class PlayerManager : MonoBehaviour, IDamageable
 
     public bool TryParry(GameObject attacker)
     {
-        if(_playerController.CurrentState is PlayerParryState parryState && parryState.IsParryActive)
+        if(_playerController.CurrentState is PlayerExecutionState parryState && parryState.IsExecutionActive)
         {
             EnemyManager enemy = attacker.GetComponent<EnemyManager>();
-            if(enemy != null && enemy.IsParryTime)
+            if(enemy != null && enemy.IsExecutionTime)
             {
-                parryState.OnSuccessParry(enemy);
+                parryState.OnSuccessExecution(enemy);
                 return true;
             }
         }

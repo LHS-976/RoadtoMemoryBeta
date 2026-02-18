@@ -2,14 +2,14 @@
 using UnityEngine;
 using Core;
 
-public class PlayerParryState : PlayerBaseState
+public class PlayerExecutionState : PlayerBaseState
 {
     private float _timer;
-    public bool IsParryActive { get; private set; }
+    public bool IsExecutionActive { get; private set; }
 
-    private float _executionRange = 3.0f;
+    private const float _executionRange = 3.0f;
     private LayerMask _enemyLayer;
-    public PlayerParryState(PlayerController player, Animator animator) : base(player, animator)
+    public PlayerExecutionState(PlayerController player, Animator animator) : base(player, animator)
     {
         _enemyLayer = LayerMask.GetMask("Enemy");
     }
@@ -17,7 +17,7 @@ public class PlayerParryState : PlayerBaseState
     public override void OnEnter()
     {
         _timer = 0f;
-        IsParryActive = false;
+        IsExecutionActive = false;
         player.moveSpeed = 0f;
 
         animator.CrossFadeInFixedTime(PlayerController.AnimIDParry, 0.1f);
@@ -33,11 +33,11 @@ public class PlayerParryState : PlayerBaseState
 
         if(_timer >= startup && _timer <= (startup + active))
         {
-            IsParryActive = true;
+            IsExecutionActive = true;
         }
         else
         {
-            IsParryActive = false;
+            IsExecutionActive = false;
         }
         if(_timer >= totalDuration)
         {
@@ -46,17 +46,17 @@ public class PlayerParryState : PlayerBaseState
     }
     public override void OnExit()
     {
-        IsParryActive = false;
+        IsExecutionActive = false;
     }
 
-    public void OnSuccessParry(EnemyManager enemy)
+    public void OnSuccessExecution(EnemyManager enemy)
     {
         if (enemy == null) return;
 
-        enemy.HandleParryHit();
+        enemy.HandleExecutionHit();
 
         Vector3 hitPoint = (player.transform.position + enemy.transform.position) / 2f + Vector3.up;
-        GameEventManager.TriggerParrySuccess(hitPoint);
+        GameEventManager.TriggerExecutionSuccess(hitPoint);
 
         player.playerManager.RestoreStamina(50f);
     }
@@ -69,12 +69,12 @@ public class PlayerParryState : PlayerBaseState
             EnemyManager enemy = collider.GetComponent<EnemyManager>();
             if (enemy == null) continue;
 
-            if(enemy.IsParryTime)
+            if(enemy.IsExecutionTime)
             {
                 Vector3 dirToEnemy = (enemy.transform.position - player.transform.position).normalized;
                 if(Vector3.Dot(player.transform.forward, dirToEnemy) > 0.5f)
                 {
-                    OnSuccessParry(enemy);
+                    OnSuccessExecution(enemy);
                     return;
                 }
             }

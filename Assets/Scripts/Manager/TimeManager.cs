@@ -10,9 +10,9 @@ public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; private set; }
 
-    [Header("Parry SlowMotion Settings")]
-    [SerializeField] private float _parrySlowScale = 0.1f;
-    [SerializeField] private float _parrySlowDuration = 0.3f;
+    [Header("Execution SlowMotion Settings")]
+    [SerializeField] private float _executionSlowScale = 0.1f;
+    [SerializeField] private float _executionSlowDuration = 0.3f;
 
     private Coroutine _activeSlowMotion;
     private float _originalFixedDeltaTime;
@@ -30,17 +30,17 @@ public class TimeManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventManager.OnParrySuccess += OnParrySuccess;
+        GameEventManager.OnExecutionSuccess += OnExecutionSuccess;
     }
 
     private void OnDisable()
     {
-        GameEventManager.OnParrySuccess -= OnParrySuccess;
+        GameEventManager.OnExecutionSuccess -= OnExecutionSuccess;
     }
 
-    private void OnParrySuccess(Vector3 hitPoint)
+    private void OnExecutionSuccess(Vector3 hitPoint)
     {
-        DoSlowMotion(_parrySlowScale, _parrySlowDuration);
+        DoSlowMotion(_executionSlowScale, _executionSlowDuration);
     }
 
     /// <summary>

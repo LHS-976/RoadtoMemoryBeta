@@ -17,14 +17,14 @@ public class TestParryTrigger : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             Debug.Log("Test: 패리 기회 발생!");
-            GameEventManager.TriggerParryWindowOpen(_headPos);
+            GameEventManager.TriggerExecutionWindowOpen(_headPos);
         }
 
         // [Y] 키를 누르면 -> 패리 UI 끄기 (시간 초과/성공 시뮬레이션)
         if (Input.GetKeyDown(KeyCode.Y))
         {
             Debug.Log("Test: 패리 기회 종료!");
-            GameEventManager.TriggerParryWindowClose(_headPos);
+            GameEventManager.TriggerExecutionWindowClose(_headPos);
         }
     }
 }

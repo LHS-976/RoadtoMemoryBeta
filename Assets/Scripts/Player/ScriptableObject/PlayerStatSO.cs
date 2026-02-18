@@ -29,7 +29,7 @@ public class PlayerStatSO : ScriptableObject
     public float dashStaminaCost = 20f;
     public float staminaRecoveryOnHit = 5f;
 
-    [Header("Parry Settings")]
+    [Header("Execution Settings")]
     public float parryStartupTime = 0.1f;
     public float parryActiveTime = 0.2f;
     public float parryRecoveryTime = 0.5f;

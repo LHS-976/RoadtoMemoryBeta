@@ -8,11 +8,11 @@ public class EnemyManager : MonoBehaviour, IDamageable
     [field: SerializeField] public EnemyStatsSO EnemyStats { get; private set; }
     [SerializeField] private EnemyController _enemyController;
     [SerializeField] private EnemyAnimation _enemyAnim;
-    [SerializeField] private Transform _headParryUITransform;
+    [SerializeField] private Transform _headExecutionUITransform;
 
     public float CurrentHealth { get; private set; }
     public float CurrentArmor { get; private set; }
-    public bool IsParryTime { get; private set; }
+    public bool IsExecutionTime { get; private set; }
     public bool IsGroggy { get; private set; }
     public bool isDead = false;
 
@@ -23,12 +23,12 @@ public class EnemyManager : MonoBehaviour, IDamageable
         if (_enemyController == null) _enemyController = GetComponent<EnemyController>();
         if (_enemyAnim == null) _enemyAnim = GetComponentInChildren<EnemyAnimation>();
 
-        if (_headParryUITransform != null)
+        if (_headExecutionUITransform != null)
         {
             Animator anim = GetComponentInChildren<Animator>();
             if (anim != null)
             {
-                _headParryUITransform = anim.GetBoneTransform(HumanBodyBones.Head);
+                _headExecutionUITransform = anim.GetBoneTransform(HumanBodyBones.Head);
             }
         }
 
@@ -72,54 +72,54 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     public void TakeArmorDamage(float amount)
     {
-        if (IsGroggy || IsParryTime) return;
+        if (IsGroggy || IsExecutionTime) return;
 
         CurrentArmor -= amount;
 
         if (CurrentArmor <= 0)
         {
             CurrentArmor = 0;
-            TriggerParryPossible();
+            TriggerExecutionPossible();
         }
     }
 
     #region Parry & Groggy
 
-    private void TriggerParryPossible()
+    private void TriggerExecutionPossible()
     {
-        IsParryTime = true;
-        GameEventManager.TriggerParryWindowOpen(_headParryUITransform);
-        StartCoroutine(ParryPossibleTime());
+        IsExecutionTime = true;
+        GameEventManager.TriggerExecutionWindowOpen(_headExecutionUITransform);
+        StartCoroutine(ExecutionPossibleTime());
     }
 
-    private IEnumerator ParryPossibleTime()
+    private IEnumerator ExecutionPossibleTime()
     {
         yield return new WaitForSeconds(EnemyStats.canParryDuration);
 
-        if (IsParryTime && !IsGroggy)
+        if (IsExecutionTime && !IsGroggy)
         {
-            ParryFailure();
+            ExecutionFailure();
         }
     }
 
-    private void ParryFailure()
+    private void ExecutionFailure()
     {
-        GameEventManager.TriggerParryWindowClose(_headParryUITransform);
-        IsParryTime = false;
+        GameEventManager.TriggerExecutionWindowClose(_headExecutionUITransform);
+        IsExecutionTime = false;
         CurrentArmor = EnemyStats.defenseArmor;
     }
 
-    public void HandleParryHit()
+    public void HandleExecutionHit()
     {
         StopAllCoroutines();
-        GameEventManager.TriggerParryWindowClose(_headParryUITransform);
+        GameEventManager.TriggerExecutionWindowClose(_headExecutionUITransform);
         TriggerGroggy();
     }
 
     private void TriggerGroggy()
     {
         IsGroggy = true;
-        IsParryTime = false;
+        IsExecutionTime = false;
         CurrentArmor = 0;
 
         _enemyController.HandleGroggy();

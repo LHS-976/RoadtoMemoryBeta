@@ -21,7 +21,7 @@ namespace PlayerControllerScripts
         public PlayerMoveState moveState;
         public PlayerCombatState combatState;
         public PlayerHitState hitState;
-        public PlayerParryState parryState;
+        public PlayerExecutionState parryState;
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
@@ -80,7 +80,7 @@ namespace PlayerControllerScripts
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
             hitState = new PlayerHitState(this, Animator);
-            parryState = new PlayerParryState(this, Animator);
+            parryState = new PlayerExecutionState(this, Animator);
         }
         private void InitializeStats()
         {
