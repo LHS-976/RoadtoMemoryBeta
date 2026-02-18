@@ -58,7 +58,6 @@ public class PlayerExecutionState : PlayerBaseState
 
     public override void OnExit()
     {
-        player.IsInputLock = false;
     }
 
     private bool TryExecution()

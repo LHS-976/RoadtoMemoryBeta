@@ -24,7 +24,6 @@ namespace PlayerControllerScripts
         public PlayerExecutionState executionState;
 
         public Vector2 InputVector { get; private set; }
-        public bool IsInputLock;
         public bool IsSprint { get; private set; }
         public bool isCombatMode;
         public float moveSpeed;
@@ -103,12 +102,6 @@ namespace PlayerControllerScripts
         }
         private void HandleInput()
         {
-            if(IsInputLock)
-            {
-                InputVector = Vector2.zero;
-                IsSprint = false;
-                return;
-            }
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
             float staminaRequired = playerStats.sprintStaminaCost * Time.deltaTime;

@@ -171,7 +171,9 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         _currentActionIndex = index;
         AttackAction action = currentStrategy.actions[index];
 
-        _animator.CrossFadeInFixedTime(action.attackName, 0.1f);
+        Debug.Log($"PlayAttackAnim: {action.attackName}");
+
+        _animator.CrossFadeInFixedTime(action.attackName, 0.1f, 0);
         _animator.SetInteger(PlayerController.AnimIDComboCount, index);
         _animator.speed = currentStrategy.attackSpeed;
 
