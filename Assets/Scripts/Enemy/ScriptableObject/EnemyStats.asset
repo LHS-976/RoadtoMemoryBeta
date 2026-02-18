@@ -17,12 +17,17 @@ MonoBehaviour:
   viewRadius: 10
   viewAngle: 120
   maxHealth: 100
+  baseDamage: 15
   attackCooldown: 3
   attackRange: 1.5
   attackTriggerRange: 1.8
-  defenseArmor: 50
   damageMultiplier: 1
   stopChaseDistance: 20
+  defenseArmor: 50
+  groggyDuration: 6
+  damageReduce: 0.8
+  groggyDamageMultiplier: 1.5
+  canExecutionDuration: 4
   playerMask:
     serializedVersion: 2
     m_Bits: 1024

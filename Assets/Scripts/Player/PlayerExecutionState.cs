@@ -8,6 +8,8 @@ public class PlayerExecutionState : PlayerBaseState
     private bool _executionSuccess;
     private LayerMask _enemyLayer;
 
+    private float _missRecoveryTime = 0.5f;
+
     public PlayerExecutionState(PlayerController player, Animator animator) : base(player, animator)
     {
         _enemyLayer = LayerMask.GetMask("Enemy");
@@ -19,33 +21,45 @@ public class PlayerExecutionState : PlayerBaseState
         _executionSuccess = false;
 
         FreezeMovementAnimation();
+
         player.CombatSystem.ForceStopAttack();
-
-        //처형 대상 탐색 → 실패 시 스태미나 소모 없이 즉시 복귀
-        if (!TryExecution())
+        if(TryExecution())
         {
-            player.ChangeState(player.combatState);
-            return;
+            _executionSuccess = true;
+            player.playerManager.UseStamina(player.playerStats.executionStaminaCost);
+            player.Animator.SetTrigger(PlayerController.AnimIDExecution);
         }
-
-        _executionSuccess = true;
-        player.playerManager.UseStamina(player.playerStats.executionStaminaCost);
-        animator.CrossFadeInFixedTime(PlayerController.AnimIDExecution, 0.1f);
+        else
+        {
+            _executionSuccess = false;
+        }
     }
 
     public override void OnUpdate()
     {
+
         _timer += Time.deltaTime;
+        float duration;
 
-        float totalDuration = player.playerStats.executionStartupTime + player.playerStats.executionRecoveryTime;
+        if(_executionSuccess)
+        {
+            duration = player.playerStats.executionStartupTime + player.playerStats.executionRecoveryTime;
+        }
+        else
+        {
+            duration = _missRecoveryTime;
+        }
 
-        if (_timer >= totalDuration)
+        if(_timer >= duration)
         {
             player.ChangeState(player.combatState);
         }
     }
 
-    public override void OnExit() { }
+    public override void OnExit()
+    {
+        player.IsInputLock = false;
+    }
 
     private bool TryExecution()
     {

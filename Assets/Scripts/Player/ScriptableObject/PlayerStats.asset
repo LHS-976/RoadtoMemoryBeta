@@ -27,9 +27,10 @@ MonoBehaviour:
   sprintStaminaCost: 5
   dashStaminaCost: 20
   staminaRecoveryOnHit: 5
-  parryStartupTime: 0.1
-  parryActiveTime: 0.2
-  parryRecoveryTime: 0.5
-  parryStaminaCost: 20
+  executionRange: 4
+  executionStartupTime: 0.1
+  executionRecoveryTime: 1.7
+  executionStaminaRestore: 50
+  executionStaminaCost: 20
   knockbackDuration: 0.2
   knockbackPower: 10

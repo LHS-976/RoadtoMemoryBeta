@@ -128,7 +128,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     public void RecoverFromGroggy()
     {
         IsGroggy = false;
-        CurrentArmor = EnemyStats.defenseArmor;
+        CurrentArmor = 0;
     }
 
     #endregion

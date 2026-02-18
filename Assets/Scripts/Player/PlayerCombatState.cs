@@ -20,8 +20,7 @@ public class PlayerCombatState : PlayerBaseState
     private const float PreventDuplicateInput = 1.0f;
     private const float MinActionDuration = 0.15f;
 
-
-    public bool UseRootMotion { get; private set; }
+    public bool UseRootMotion;
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
     {
     }

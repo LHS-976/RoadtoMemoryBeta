@@ -92,7 +92,7 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             return;
         }
 
-        // 트랜지션 중에는 다음 상태를, 아니면 현재 상태를 기준으로 판정
+        //트랜지션 중에는 다음 상태를, 아니면 현재 상태를 기준으로 판정
         bool isTransitioning = _animator.IsInTransition(0);
         AnimatorStateInfo stateInfo = isTransitioning
             ? _animator.GetNextAnimatorStateInfo(0)
@@ -217,8 +217,6 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         EnemyManager enemy = target.GetTransform().GetComponent<EnemyManager>();
         if (enemy == null) return;
 
-        // TODO: action.attackName.Contains("Heavy") 대신
-        // AttackAction에 isHeavy 필드 또는 AttackType enum 추가 권장
         if (action.attackName.Contains("Heavy"))
         {
             float bonusArmorDmg = baseDamage * (_heavyDefenseAttackDmgMultiplier - 1.0f);

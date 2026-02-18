@@ -30,7 +30,7 @@ public class PlayerStatSO : ScriptableObject
     public float staminaRecoveryOnHit = 5f;
 
     [Header("Execution Settings")]
-    public float executionRange = 3.0f;
+    public float executionRange = 4.0f;
     public float executionStartupTime = 0.1f;
     public float executionRecoveryTime = 0.5f;
     public float executionStaminaRestore = 50f;

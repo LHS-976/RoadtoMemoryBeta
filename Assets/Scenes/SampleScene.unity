@@ -697,9 +697,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f850646c7332fba48805b6062d3e83de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _parryIndicatorPrefab: {fileID: 4921810472567549610, guid: 062c954d33560af47b758ee1b5b5d3c9,
+  _executionIndicatorPrefab: {fileID: 4921810472567549610, guid: 062c954d33560af47b758ee1b5b5d3c9,
     type: 3}
-  _offset: {x: 0, y: 0.5, z: 0}
+  _offset: {x: 0, y: 2.2, z: 0}
 --- !u!4 &210918698
 Transform:
   m_ObjectHideFlags: 0
@@ -1754,7 +1754,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211934, y: -4.3883602e-16, z: 5.774765e-17, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2272,7 +2272,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211934, y: -4.3883602e-16, z: 5.774765e-17, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2351,7 +2351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211934, y: 0.000000003701802, z: -4.1767714e-10, w: 0.9936948}
+  m_LocalRotation: {x: 0.11211933, y: 0.000000003701802, z: -4.1767712e-10, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -18621,7 +18621,7 @@ MonoBehaviour:
     type: 2}
   _enemyController: {fileID: 8311655636658629870}
   _enemyAnim: {fileID: 5566935901905049777}
-  _headParryUITransform: {fileID: 45655876}
+  _headExecutionUITransform: {fileID: 45655876}
   isDead: 0
 --- !u!114 &8311655636658629872
 MonoBehaviour:
