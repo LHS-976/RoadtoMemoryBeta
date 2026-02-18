@@ -27,8 +27,8 @@ public class EnemyStatsSO : ScriptableObject
     public float damageReduce = 0.8f;
     public float groggyDamageMultiplier = 1.5f;
 
-    [Header("Parry Settings")]
-    public float canParryDuration = 4.0f;
+    [Header("Execution Settings")]
+    public float canExecutionDuration = 4.0f;
 
     [Header("Detection Setting")]
     public LayerMask playerMask;

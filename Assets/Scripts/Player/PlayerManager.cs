@@ -84,20 +84,6 @@ public class PlayerManager : MonoBehaviour, IDamageable
         }
     }
 
-    public bool TryParry(GameObject attacker)
-    {
-        if(_playerController.CurrentState is PlayerExecutionState parryState && parryState.IsExecutionActive)
-        {
-            EnemyManager enemy = attacker.GetComponent<EnemyManager>();
-            if(enemy != null && enemy.IsExecutionTime)
-            {
-                parryState.OnSuccessExecution(enemy);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void SetInvincible(bool state)
     {
         IsInvincible = state;

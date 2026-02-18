@@ -12,7 +12,7 @@ public class PlayerCombatState : PlayerBaseState
     private float _lastEvasionTime = -10f;
     private float _lastActionStartTime;
     private float _lastClickTime;
-    private float _lastParryTime = -10f;
+    private float _lastExecutionTime = -10f;
 
     private const float MaxComboDelay = 0.5f;
     private const float EvasionCooldown = 0.5f;
@@ -40,7 +40,7 @@ public class PlayerCombatState : PlayerBaseState
     }
     public override void OnUpdate()
     {
-        if (TryParryInput()) return;
+        if (TryExecutionInput()) return;
 
         HandleEvasionInput();
         HandleAttackInput();
@@ -61,18 +61,18 @@ public class PlayerCombatState : PlayerBaseState
     }
 
     #region Input Handling
-    private bool TryParryInput()
+    private bool TryExecutionInput()
     {
         if (!Input.GetKeyDown(KeyCode.Q)) return false;
-        if (Time.time - _lastParryTime < PreventDuplicateInput) return false;
-        if (player.playerManager.CurrentStamina < player.playerStats.parryStaminaCost) return false;
+        if (Time.time - _lastExecutionTime < PreventDuplicateInput) return false;
+        if (player.playerManager.CurrentStamina < player.playerStats.executionStaminaCost) return false;
 
         player.CombatSystem.ForceStopAttack();
         FreezeMovementAnimation();
         DisableRootMotion();
 
-        _lastParryTime = Time.time;
-        player.ChangeState(player.parryState);
+        _lastExecutionTime = Time.time;
+        player.ChangeState(player.executionState);
         return true;
     }
     private void HandleEvasionInput()

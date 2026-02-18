@@ -21,7 +21,7 @@ namespace PlayerControllerScripts
         public PlayerMoveState moveState;
         public PlayerCombatState combatState;
         public PlayerHitState hitState;
-        public PlayerExecutionState parryState;
+        public PlayerExecutionState executionState;
 
         public Vector2 InputVector { get; private set; }
         public bool IsSprint { get; private set; }
@@ -45,7 +45,7 @@ namespace PlayerControllerScripts
         [HideInInspector] public static readonly int AnimIDComboCount = Animator.StringToHash("ComboCount");
         [HideInInspector] public static readonly int AnimIDHit = Animator.StringToHash("Hit");
         [HideInInspector] public static readonly int AnimIDDie = Animator.StringToHash("Die");
-        [HideInInspector] public static readonly int AnimIDParry = Animator.StringToHash("Parry");
+        [HideInInspector] public static readonly int AnimIDExecution = Animator.StringToHash("Execution");
 
         private Vector3 _velocity;
         private float _gravity;
@@ -80,7 +80,7 @@ namespace PlayerControllerScripts
             moveState = new PlayerMoveState(this, Animator);
             combatState = new PlayerCombatState(this, Animator);
             hitState = new PlayerHitState(this, Animator);
-            parryState = new PlayerExecutionState(this, Animator);
+            executionState = new PlayerExecutionState(this, Animator);
         }
         private void InitializeStats()
         {
@@ -104,7 +104,6 @@ namespace PlayerControllerScripts
         {
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
-
             float staminaRequired = playerStats.sprintStaminaCost * Time.deltaTime;
             InputVector = new Vector2(h, v);
             bool sprintInput = Input.GetKey(KeyCode.LeftShift);

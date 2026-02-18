@@ -23,7 +23,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
         if (_enemyController == null) _enemyController = GetComponent<EnemyController>();
         if (_enemyAnim == null) _enemyAnim = GetComponentInChildren<EnemyAnimation>();
 
-        if (_headExecutionUITransform != null)
+        if (_headExecutionUITransform == null)
         {
             Animator anim = GetComponentInChildren<Animator>();
             if (anim != null)
@@ -83,7 +83,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
         }
     }
 
-    #region Parry & Groggy
+    #region Execution & Groggy
 
     private void TriggerExecutionPossible()
     {
@@ -94,7 +94,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     private IEnumerator ExecutionPossibleTime()
     {
-        yield return new WaitForSeconds(EnemyStats.canParryDuration);
+        yield return new WaitForSeconds(EnemyStats.canExecutionDuration);
 
         if (IsExecutionTime && !IsGroggy)
         {

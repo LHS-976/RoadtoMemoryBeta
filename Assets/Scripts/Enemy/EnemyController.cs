@@ -194,13 +194,6 @@ namespace EnemyControllerScripts
             Vector3 pushDir = (target.GetTransform().position - transform.position).normalized;
             pushDir.y = 0;
 
-            //패링 판정
-            PlayerManager player = target.GetTransform().GetComponent<PlayerManager>();
-            if (player != null && player.TryParry(this.gameObject))
-            {
-                return;
-            }
-
             float finalDamage = EnemyManager.EnemyStats.baseDamage * EnemyManager.EnemyStats.damageMultiplier;
             target.TakeDamage(finalDamage, pushDir);
 
