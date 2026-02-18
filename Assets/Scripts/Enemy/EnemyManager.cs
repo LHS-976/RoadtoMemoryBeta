@@ -133,7 +133,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     #endregion
 
-    private void Die()
+    public void Die()
     {
         if (isDead) return;
 

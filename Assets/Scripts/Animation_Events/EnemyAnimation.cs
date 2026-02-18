@@ -32,6 +32,7 @@ public class EnemyAnimation : MonoBehaviour
     }
     public void PlayDie()
     {
+        _animator.SetBool(AnimIDEnemyGroggy, false);
         _animator.SetTrigger(AnimIDEnemyDie);
     }
     public void PlayGroggy()
