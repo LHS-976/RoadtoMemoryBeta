@@ -10,14 +10,20 @@ public class TitleUIManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private PanelFader _pressAnyKeyPanel;
     [SerializeField] private PanelFader _mainMenuPanel;
+    [SerializeField] private PanelFader _gameModePanel;
     [SerializeField] private PanelFader _settingsPanel;
+    [SerializeField] private PanelFader _quitConfirmPanel;
 
-
+    private PanelFader _currentPanel;
     private static bool _hasPassedPressAnyKey = false;
 
 
     private void Start()
     {
+        _gameModePanel?.SetImmediateClosed();
+        _settingsPanel?.SetImmediateClosed();
+        _quitConfirmPanel?.SetImmediateClosed();
+
         if (_settingsPanel != null) _settingsPanel.SetImmediateClosed();
 
         if (_hasPassedPressAnyKey)
@@ -38,13 +44,40 @@ public class TitleUIManager : MonoBehaviour
             _hasPassedPressAnyKey = true;
             if (_pressAnyKeyPanel != null) _pressAnyKeyPanel.FadeOut();
             if (_mainMenuPanel != null) _mainMenuPanel.FadeIn();
-
+            _currentPanel = _mainMenuPanel;
             //GameCore.Instance.SoundManager.PlaySFX(클릭효과음);
         }
     }
+    #region Panel Navigation
+    private void SwitchPanel(PanelFader next)
+    {
+        _currentPanel?.FadeOut();
+        next?.FadeIn();
+        _currentPanel = next;
+    }
+    private void BackToMainMenu()
+    {
+        SwitchPanel(_mainMenuPanel);
+    }
+    #endregion
 
     #region Main Menu Buttons
 
+    public void OnClickStart()
+    {
+        SwitchPanel(_gameModePanel);
+    }
+    public void OnClickOption()
+    {
+        SwitchPanel(_settingsPanel);
+    }
+    public void OnClickExit()
+    {
+        SwitchPanel(_quitConfirmPanel);
+    }
+    #endregion
+
+    #region GameMode Panel Buttons(New/Continue/Load)
     public void OnClickNewGame()
     {
         Debug.Log("[Title] 새 게임 시작!");
@@ -71,29 +104,54 @@ public class TitleUIManager : MonoBehaviour
             //"저장된 데이터가 없습니다" 팝업(PanelFader)을 FadeIn() 추가.
         }
     }
-
-    public void OnClickSettings()
+    public void OnClickLoad()
     {
-        _mainMenuPanel.FadeOut();
-        _settingsPanel.FadeIn();
+        //로드 슬롯 UI구현 시 확장
+        OnClickContinue();
     }
-
-    public void OnClickQuit()
+    public void OnClickBackFromGameMode()
     {
-        Debug.Log("[Title] 게임 종료");
-        _mainMenuPanel.FadeOut();
-        Application.Quit();
+        BackToMainMenu();
     }
-
     #endregion
 
-    #region Settings Panel Buttons
 
+    //버튼 이벤트 추가예정
+    #region Settings Panel Buttons
     public void OnClickCloseSettings()
     {
-        _settingsPanel.FadeOut();
-        _mainMenuPanel.FadeIn();
+        BackToMainMenu();
     }
+    #endregion
 
+    #region Quit Confirm Panel Buttons
+
+    public void OnClickQuitConfirm()
+    {
+        Debug.Log("[Title] 게임 종료");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+    public void OnClickQuitCancel()
+    {
+        BackToMainMenu();
+    }
+    #endregion
+
+    #region Scene Loading
+
+    private void LoadTargetScene()
+    {
+        _currentPanel?.FadeOut();
+        _currentPanel = null;
+
+        if (_loadSceneChannel != null && _firstStageScene != null)
+        {
+            _loadSceneChannel.RaiseEvent(_firstStageScene);
+        }
+    }
     #endregion
 }
