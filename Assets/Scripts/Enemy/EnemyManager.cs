@@ -10,6 +10,12 @@ public class EnemyManager : MonoBehaviour, IDamageable
     [SerializeField] private EnemyAnimation _enemyAnim;
     [SerializeField] private Transform _headExecutionUITransform;
 
+    [Header("Quest Info")]
+    public string enemyID = "Robot_01";
+
+    [Header("Broadcasting")]
+    [SerializeField] private StringEventChannelSO _questKillChannel;
+
     public float CurrentHealth { get; private set; }
     public float CurrentArmor { get; private set; }
     public bool IsExecutionTime { get; private set; }
@@ -136,11 +142,15 @@ public class EnemyManager : MonoBehaviour, IDamageable
     public void Die()
     {
         if (isDead) return;
-
         isDead = true;
         if (_enemyController != null)
         {
             _enemyController.HandleDie();
+        }
+
+        if (_questKillChannel != null)
+        {
+            _questKillChannel.RaiseEvent(enemyID);
         }
 
         Collider col = GetComponent<Collider>();

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: MainQuest2
+  m_EditorClassIdentifier: 
+  ID: 1001
+  Title: "\uCCAB \uBC88\uCA30 \uB2E8\uC11C"
+  Description: "\uC77C\uC5B4\uC11C\uC11C \uC8FC\uBCC0\uC744 \uB458\uB7EC\uBCF4\uBA74
+    \uD558\uC580\uC0C9\uC73C\uB85C \uAC00\uB4DD\uCC2C \uBC29. AI\uC74C\uC131\uB9CC
+    \uB4E4\uB9B4\uBFD0 \uC778\uAE30\uCC99\uC774 \uC5C6\uB2E4. \n(\uBB38 \uC55E\uC73C\uB85C
+    \uAC00\uBCF4\uC790, Shift\uD0A4\uB97C \uB204\uB974\uBA74 \uB2EC\uB9AC\uAE30\uAC00
+    \uAC00\uB2A5\uD569\uB2C8\uB2E4.)"
+  Type: 1
+  TargetID: 
+  TargetCount: 0
+  TargetScene: StageOne
+  RewardDataChips: 0
+  NextQuestID: 1002
+  IsMainStory: 1

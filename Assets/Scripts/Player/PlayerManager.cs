@@ -69,7 +69,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
     public void TakeDamage(float damage, Vector3 knockBackDir)
     {
         if (isDead) return;
-
+        if (IsInvincible) return; //무적
 
         _currentHp -= damage;
         if(_playerController != null)
