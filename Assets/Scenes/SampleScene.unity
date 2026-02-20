@@ -1754,7 +1754,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756256731}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211935, y: 4.4280611e-16, z: -8.895939e-17, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119354, y: 0, z: 0, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2272,7 +2272,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1267839276}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211935, y: 4.4280611e-16, z: -8.895939e-17, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119354, y: 0, z: 0, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2351,7 +2351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411942862}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.11211935, y: 0, z: 0, w: 0.9936948}
+  m_LocalRotation: {x: 0.112119354, y: 0, z: 0, w: 0.9936948}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2925,25 +2925,6 @@ MonoBehaviour:
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
---- !u!1 &1725864127 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 562693814646104789, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-    type: 3}
-  m_PrefabInstance: {fileID: 8848057601733619497}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1725864131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1725864127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f998783fb2b9c74f93efe0545f0bce0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerManager: {fileID: 887683959}
 --- !u!1001 &1853674020
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18622,6 +18603,8 @@ MonoBehaviour:
   _enemyController: {fileID: 8311655636658629870}
   _enemyAnim: {fileID: 5566935901905049777}
   _headExecutionUITransform: {fileID: 45655876}
+  enemyID: Robot_01
+  _questKillChannel: {fileID: 0}
   isDead: 0
 --- !u!114 &8311655636658629872
 MonoBehaviour:
@@ -19593,22 +19576,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3897278703879714740, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-        type: 3}
-      propertyPath: <PlayerStats>k__BackingField
-      value: 
-      objectReference: {fileID: 11400000, guid: 152370a19327e2945a7bf92b25ee7862,
-        type: 2}
-    - target: {fileID: 3897278703879714740, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-        type: 3}
-      propertyPath: <PlayerManager>k__BackingField
-      value: 
-      objectReference: {fileID: 887683959}
-    - target: {fileID: 4163686318063732683, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-        type: 3}
-      propertyPath: _enemyAnimator
-      value: 
-      objectReference: {fileID: 1991037856802833098}
     - target: {fileID: 4741161066663697619, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
         type: 3}
       propertyPath: _playerManager
@@ -19664,11 +19631,6 @@ PrefabInstance:
       propertyPath: _playerManager
       value: 
       objectReference: {fileID: 887683959}
-    - target: {fileID: 8470486441232675899, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-        type: 3}
-      propertyPath: _playerAnimation
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8932753793364704962, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
         type: 3}
       propertyPath: _playerManager
@@ -19677,11 +19639,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 562693814646104789, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1725864131}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5ed3ab3c3cd7e5e43a16734ba6848850, type: 3}
 --- !u!1 &8849289320367414847
 GameObject:
