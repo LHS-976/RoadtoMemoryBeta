@@ -9,6 +9,9 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private GameSceneSO _titleScene;
     [SerializeField] private float _splashTime = 2.0f;
 
+    [Header("Transition")]
+    [SerializeField] private PanelFader _sceneFader;
+
     private void Start()
     {
         StartCoroutine(BootSequence());
@@ -18,6 +21,12 @@ public class Bootstrap : MonoBehaviour
         GameCore.Instance.InitializeManagers();
 
         yield return new WaitForSeconds(_splashTime);
+
+        if(_sceneFader != null)
+        {
+            _sceneFader.FadeIn();
+            yield return new WaitForSeconds(0.5f);
+        }
 
         Debug.Log("[Bootstrap] 타이틀 씬으로 이동합니다.");
 
