@@ -17,6 +17,7 @@ public class QuestManager : MonoBehaviour
     [Header("Listening Channels")]
     [SerializeField] private StringEventChannelSO _questKillChannel;
     [SerializeField] private StringEventChannelSO _questArriveChannel;
+    [SerializeField] private StringEventChannelSO _questEventChannel;
 
     private void Start()
     {
@@ -30,13 +31,20 @@ public class QuestManager : MonoBehaviour
 
         if (_questArriveChannel != null)
             _questArriveChannel.OnEventRaised += ReportArrive;
+
+        if (_questEventChannel != null)
+            _questEventChannel.OnEventRaised += ReportEvent;
     }
     private void OnDisable()
     {
         if (_questKillChannel != null)
             _questKillChannel.OnEventRaised -= ReportKill;
+
         if (_questArriveChannel != null)
             _questArriveChannel.OnEventRaised -= ReportArrive;
+
+        if (_questEventChannel != null)
+            _questEventChannel.OnEventRaised -= ReportEvent;
     }
     #endregion
     #region Report API

@@ -4,6 +4,9 @@
 [CreateAssetMenu(fileName = "EnemyStats", menuName = "Enemy/Stats")]
 public class EnemyStatsSO : ScriptableObject
 {
+    [Header("Identity")]
+    public string enemyID;
+
     [Header("Movement")]
     public float moveSpeed = 2.5f;
     public float rotationSpeed = 100f;
@@ -41,4 +44,7 @@ public class EnemyStatsSO : ScriptableObject
     [Header("Hurt Settings")]
     public float knockbackDuration = 0.2f;
     public float knockbackPower = 10f;
+
+    [Header("Drop Settings")]
+    public int dropDataChips = 10;
 }

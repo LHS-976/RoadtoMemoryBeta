@@ -79,6 +79,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     public void TakeArmorDamage(float amount)
     {
         if (IsGroggy || IsExecutionTime) return;
+        if (EnemyStats.defenseArmor <= 0) return;
 
         CurrentArmor -= amount;
 
