@@ -313,9 +313,13 @@ MonoBehaviour:
   _database: {fileID: 11400000, guid: ee789ce9d405a464d8e05d8c823625de, type: 2}
   _dataManager: {fileID: 5143796370614462065}
   _questKillChannel: {fileID: 11400000, guid: 7fc29685e0346b140869289b5c84e21c, type: 2}
-  _questArriveChannel: {fileID: 11400000, guid: 7fc29685e0346b140869289b5c84e21c,
+  _questArriveChannel: {fileID: 11400000, guid: 82ad787268b66274fa4e352721fa30cf,
     type: 2}
-  _questEventChannel: {fileID: 11400000, guid: 7fc29685e0346b140869289b5c84e21c, type: 2}
+  _questEventChannel: {fileID: 11400000, guid: 74c8b1e6c75e676479a0e690e10dd9fb, type: 2}
+  _questCompletedChannel: {fileID: 11400000, guid: a324a3f806331da4b81eb9dde362785f,
+    type: 2}
+  _questStartedChannel: {fileID: 11400000, guid: 8c3df8b5a30c8764990d90986e56bc2b,
+    type: 2}
 --- !u!1 &7241721631277546512
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +364,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d9334ff0480a6e4dbf4c4e97b5b7511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _executionSuccessChannel: {fileID: 11400000, guid: f717863f14c1c374ab82dd171a30b934,
+  _executionSuccessChannel: {fileID: 11400000, guid: e2ff0b616e1691945adf0e719c7636fd,
     type: 2}
   _executionSlowScale: 0.1
   _executionSlowDuration: 0.3
@@ -392,8 +396,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8566551216306340270}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.09068701, y: -0.5843162, z: 0.06592885, w: 0.80374366}
+  m_LocalPosition: {x: 3.3293357, y: 2, z: -1.0795958}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -430,11 +434,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 55
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
