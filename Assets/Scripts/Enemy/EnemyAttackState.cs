@@ -33,5 +33,6 @@ public class EnemyAttackState : EnemyBaseState
     }
     public override void OnExit()
     {
+        enemyController.DisableWeaponTrace();
     }
 }

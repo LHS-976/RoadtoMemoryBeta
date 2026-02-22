@@ -9,6 +9,9 @@ public class EnemyCombatState : EnemyBaseState
     {
         enemyController.HandleNavRotationDisable();
         enemyController.RotateToTargetImmediate();
+
+        float chaseSpeed = enemyController.EnemyManager.EnemyStats.chaseMoveSpeed;
+        enemyController.Agent.speed = chaseSpeed;
         if(enemyController.targetTransform != null)
         {
             enemyController.Agent.SetDestination(enemyController.targetTransform.position);

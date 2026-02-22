@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class QuestManager : MonoBehaviour
@@ -18,6 +19,10 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private StringEventChannelSO _questKillChannel;
     [SerializeField] private StringEventChannelSO _questArriveChannel;
     [SerializeField] private StringEventChannelSO _questEventChannel;
+
+    [Header("Broadcasting Channels")]
+    [SerializeField] private IntEventChannelSO _questCompletedChannel;
+    [SerializeField] private IntEventChannelSO _questStartedChannel;
 
     private void Start()
     {
@@ -91,8 +96,11 @@ public class QuestManager : MonoBehaviour
 
         SaveProgress();
         OnQuestStarted?.Invoke(CurrentQuest);
+        if (_questStartedChannel != null)
+        {
+            _questStartedChannel.RaiseEvent(CurrentQuest.ID);
+        }
         Debug.Log($"[Quest] 시작: {CurrentQuest.Title}");
-        //UI알림.
     }
 
     private void AdvanceProgress()
@@ -123,18 +131,7 @@ public class QuestManager : MonoBehaviour
         Debug.Log($"[Quest] 완료: {CurrentQuest.Title}");
 
         int nextID = CurrentQuest.NextQuestID;
-        if (nextID > 0)
-        {
-            StartQuest(nextID);
-        }
-        else
-        {
-            CurrentQuest = null;
-            CurrentProgress = 0;
-            AllQuestsCompleted = true;
-            SaveProgress();
-            Debug.Log("[Quest] 모든 퀘스트 완료.");
-        }
+        StartCoroutine(ProceedToNextQuestRoutine(CurrentQuest.ID, nextID));
     }
 
     #endregion
@@ -214,5 +211,23 @@ public class QuestManager : MonoBehaviour
     private bool IsActiveQuest(QuestType type)
     {
         return CurrentQuest != null && CurrentQuest.Type == type;
+    }
+    private IEnumerator ProceedToNextQuestRoutine(int completedQuestID, int nextQuestID)
+    {
+        _questCompletedChannel?.RaiseEvent(completedQuestID);
+
+        yield return new WaitForSeconds(3.5f);
+        if(nextQuestID >0)
+        {
+            StartQuest(nextQuestID);
+        }
+        else
+        {
+            CurrentQuest = null;
+            CurrentProgress = 0;
+            AllQuestsCompleted = true;
+            SaveProgress();
+            Debug.Log("[Quest] 모든 퀘스트 완료.");
+        }
     }
 }

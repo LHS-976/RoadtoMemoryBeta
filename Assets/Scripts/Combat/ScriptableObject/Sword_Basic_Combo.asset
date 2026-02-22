@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboName: BaseCombo
   baseDamage: 10
-  attackSpeed: 1.2
+  attackSpeed: 1.3
   combos:
   - commandType: 0
     nextComboIndex: 0
@@ -35,7 +35,7 @@ MonoBehaviour:
   actions:
   - attackName: Attack_L1
     damageMultiplier: 1
-    startFrameHit: 0.108333334
+    startFrameHit: 0.1083333
     endFrameHit: 0.3333333
     nextCombos:
     - commandType: 0
@@ -52,8 +52,12 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
       type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 1c4b3aef6bc35df4cba9673af439b75f,
+      type: 3}
+    slashRotationOffset: {x: 100, y: 80, z: 0}
+    slashForwardOffset: 1
     hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L2
@@ -71,8 +75,12 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
       type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 1c4b3aef6bc35df4cba9673af439b75f,
+      type: 3}
+    slashRotationOffset: {x: 0, y: 380, z: -10}
+    slashForwardOffset: 1
     hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L3
@@ -90,8 +98,12 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 7
       nextComboIndex: 14
-    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
       type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 1c4b3aef6bc35df4cba9673af439b75f,
+      type: 3}
+    slashRotationOffset: {x: -10, y: 360, z: 0}
+    slashForwardOffset: 2
     hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L4
@@ -109,8 +121,12 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
       type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 1c4b3aef6bc35df4cba9673af439b75f,
+      type: 3}
+    slashRotationOffset: {x: 0, y: 0, z: -85}
+    slashForwardOffset: 2
     hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_L5
@@ -128,8 +144,12 @@ MonoBehaviour:
       nextComboIndex: 13
     - commandType: 6
       nextComboIndex: 14
-    hitVFX: {fileID: 3632761872620219410, guid: b529065ae448f8540908a97267be92ea,
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
       type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 1c4b3aef6bc35df4cba9673af439b75f,
+      type: 3}
+    slashRotationOffset: {x: 0, y: -5, z: -180}
+    slashForwardOffset: 1
     hitStopDuration: 0.05
     cameraShakePower: 0
   - attackName: Attack_H1
@@ -149,7 +169,12 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 5651998087562554003, guid: 51520c363e48c9f43aa658cb11ef0679,
+      type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 6243221f1cfbab2429fbecc4c79343ed,
+      type: 3}
+    slashRotationOffset: {x: 10, y: 5, z: -20}
+    slashForwardOffset: 2
     hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H2
@@ -169,7 +194,12 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 5651998087562554003, guid: 51520c363e48c9f43aa658cb11ef0679,
+      type: 3}
+    slashVFX: {fileID: 8731266917374741900, guid: 33c336f2979351d4084a935bed1aac32,
+      type: 3}
+    slashRotationOffset: {x: 0, y: 0, z: 60}
+    slashForwardOffset: 2
     hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H3
@@ -189,12 +219,17 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 5651998087562554003, guid: 51520c363e48c9f43aa658cb11ef0679,
+      type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 6243221f1cfbab2429fbecc4c79343ed,
+      type: 3}
+    slashRotationOffset: {x: -90, y: 65, z: 35}
+    slashForwardOffset: 3
     hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H4
     damageMultiplier: 2.2
-    startFrameHit: 0.2083333
+    startFrameHit: 0.1
     endFrameHit: 0.625
     nextCombos:
     - commandType: 3
@@ -209,7 +244,12 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 5651998087562554003, guid: 51520c363e48c9f43aa658cb11ef0679,
+      type: 3}
+    slashVFX: {fileID: 6079971737158681591, guid: 6243221f1cfbab2429fbecc4c79343ed,
+      type: 3}
+    slashRotationOffset: {x: -40, y: 90, z: 10}
+    slashForwardOffset: 1
     hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Attack_H5
@@ -225,13 +265,18 @@ MonoBehaviour:
       nextComboIndex: 14
     - commandType: 7
       nextComboIndex: 13
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 5651998087562554003, guid: 51520c363e48c9f43aa658cb11ef0679,
+      type: 3}
+    slashVFX: {fileID: 2715158585946434236, guid: 3de61f43a24c1704cbac9f2df3065ddb,
+      type: 3}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 3.5
     hitStopDuration: 0.1
     cameraShakePower: 0
   - attackName: Dash_L1
     damageMultiplier: 1
-    startFrameHit: 0
-    endFrameHit: 0
+    startFrameHit: 0.1
+    endFrameHit: 0.56
     nextCombos:
     - commandType: 0
       nextComboIndex: 1
@@ -241,7 +286,11 @@ MonoBehaviour:
       nextComboIndex: 5
     - commandType: 2
       nextComboIndex: 5
-    hitVFX: {fileID: 0}
+    hitVFX: {fileID: 4879131067221385979, guid: 78c77cbe871fe294695fa27e63a53a11,
+      type: 3}
+    slashVFX: {fileID: 0}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 0.5
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Evasion_Back
@@ -258,6 +307,9 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 10
     hitVFX: {fileID: 0}
+    slashVFX: {fileID: 0}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 0.5
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Evasion_Forward
@@ -274,6 +326,9 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 10
     hitVFX: {fileID: 0}
+    slashVFX: {fileID: 0}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 0.5
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Evasion_Left
@@ -290,6 +345,9 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 10
     hitVFX: {fileID: 0}
+    slashVFX: {fileID: 0}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 0.5
     hitStopDuration: 0
     cameraShakePower: 0
   - attackName: Evasion_Right
@@ -306,5 +364,8 @@ MonoBehaviour:
     - commandType: 2
       nextComboIndex: 10
     hitVFX: {fileID: 0}
+    slashVFX: {fileID: 0}
+    slashRotationOffset: {x: 0, y: 0, z: 0}
+    slashForwardOffset: 0.5
     hitStopDuration: 0
     cameraShakePower: 0

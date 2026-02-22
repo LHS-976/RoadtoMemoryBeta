@@ -9,6 +9,7 @@ namespace PlayerControllerScripts
         [field: SerializeField] public PlayerManager playerManager { get; private set; }
 
         [SerializeField] private Transform _playerMesh;
+        [SerializeField] private LayerMask _groundLayer;
 
         public CharacterController Controller { get; private set; }
         public Animator Animator { get; private set; }
@@ -29,12 +30,6 @@ namespace PlayerControllerScripts
         public float moveSpeed;
         [HideInInspector] public Vector3 KnockBackForce;
 
-        //애니메이션을 Enemy처럼 다른 스크립트로 분리하려고 했지만
-        //유니티의 실행순서로 인해 Animator.SetFloat는 호출 즉시 값이 반영X
-        //Animator평가 시점(내부적으로 Update후반 또는 LateUpdate 근처)에 처리된다.
-        //그래서 같은 프레임에 FreezeMovementAnimation() 호출 후 
-        //EnableRootMotion()을 켜면 Animator가 아직 이전 Speed값으로 평가하는 타이밍이 생김
-        //이로 인해 Input기반 이동과 루트모션이 한 프레임 동안 동시에 적용되서 분리X
         [HideInInspector] public static readonly int AnimIDSpeed = Animator.StringToHash("Speed");
         [HideInInspector] public static readonly int AnimIDInputX = Animator.StringToHash("InputX");
         [HideInInspector] public static readonly int AnimIDInputY = Animator.StringToHash("InputY");
@@ -48,20 +43,21 @@ namespace PlayerControllerScripts
         [HideInInspector] public static readonly int AnimIDExecution = Animator.StringToHash("Execution");
 
         private Vector3 _velocity;
-        private float _gravity;
-        private float _initialJumpVelocity; //점프 구현
+        private Vector3 _pendingMovement;
         private bool _isSheathing = false;
 
         private const float Grounded_Velocity = -2f;
-
+        private const float _gravity = -9.81f;
+        private const float _groundCheckDistance = 0.2f;
+        private const float _slopeCheckDistance = 2.0f;
 
         private void Awake()
         {
-            if(Controller == null) Controller = GetComponent<CharacterController>();
-            if(Animator == null) Animator = GetComponentInChildren<Animator>();
-            if(CombatSystem == null) CombatSystem = GetComponent<PlayerCombatSystem>();
-            if(WeaponTracer == null) WeaponTracer = GetComponentInChildren<WeaponTracer>();
-            if(playerManager == null) playerManager = GetComponent<PlayerManager>();
+            if (Controller == null) Controller = GetComponent<CharacterController>();
+            if (Animator == null) Animator = GetComponentInChildren<Animator>();
+            if (CombatSystem == null) CombatSystem = GetComponent<PlayerCombatSystem>();
+            if (WeaponTracer == null) WeaponTracer = GetComponentInChildren<WeaponTracer>();
+            if (playerManager == null) playerManager = GetComponent<PlayerManager>();
 
             if (Camera.main != null) MainCameraTransform = Camera.main.transform;
 
@@ -74,6 +70,7 @@ namespace PlayerControllerScripts
             InitializeStates();
             InitializeStats();
         }
+
         private void InitializeStates()
         {
             idleState = new PlayerIdleState(this, Animator);
@@ -82,10 +79,10 @@ namespace PlayerControllerScripts
             hitState = new PlayerHitState(this, Animator);
             executionState = new PlayerExecutionState(this, Animator);
         }
+
         private void InitializeStats()
         {
             moveSpeed = playerStats.WalkSpeed;
-            SetupJumpVariables();
             CombatSystem.Initialize(this, Animator);
         }
 
@@ -96,10 +93,13 @@ namespace PlayerControllerScripts
 
         private void Update()
         {
+            _pendingMovement = Vector3.zero;
+
             HandleInput();
             CurrentState?.OnUpdate();
-            ApplyGravity();
+            ApplyMovementAndGravity();
         }
+
         private void HandleInput()
         {
             float h = Input.GetAxisRaw("Horizontal");
@@ -107,8 +107,8 @@ namespace PlayerControllerScripts
             float staminaRequired = playerStats.sprintStaminaCost * Time.deltaTime;
             InputVector = new Vector2(h, v);
             bool sprintInput = Input.GetKey(KeyCode.LeftShift);
-            
-            if(sprintInput && InputVector.sqrMagnitude > 0 && playerManager.CurrentStamina >= staminaRequired)
+
+            if (sprintInput && InputVector.sqrMagnitude > 0 && playerManager.CurrentStamina >= staminaRequired)
             {
                 IsSprint = true;
                 playerManager.ConsumeStamina(staminaRequired);
@@ -125,7 +125,7 @@ namespace PlayerControllerScripts
 
         public void ChangeState(PlayerBaseState newState)
         {
-            if(newState == null)
+            if (newState == null)
             {
                 Debug.LogError("null 상태로 전환시도");
                 return;
@@ -135,9 +135,10 @@ namespace PlayerControllerScripts
             CurrentState = newState;
             CurrentState.OnEnter();
         }
+
         public void ToggleCombatMode()
         {
-            if(_isSheathing) return;
+            if (_isSheathing) return;
             if (isCombatMode)
             {
                 _isSheathing = true;
@@ -151,30 +152,100 @@ namespace PlayerControllerScripts
                 ChangeState(combatState);
             }
         }
-        private void ApplyGravity()
+
+        #region Movement & Gravity
+        private void ApplyMovementAndGravity()
         {
-            if (Controller.isGrounded && _velocity.y < 0)
+            if (IsRootMotionActive()) return;
+
+            bool grounded = CheckStableGround();
+
+            if (grounded)
             {
-                _velocity.y = Grounded_Velocity;
+                if (_velocity.y < 0)
+                {
+                    _velocity.y = Grounded_Velocity;
+                }
             }
-            _velocity.y += _gravity * Time.deltaTime;
-            
-            if(!IsRootMotionActive())
+            else
             {
-                Controller.Move(_velocity * Time.deltaTime);
+                _velocity.y += _gravity * Time.deltaTime;
             }
+
+            Vector3 finalMovement = _pendingMovement;
+
+            if (grounded && finalMovement.sqrMagnitude > 0.001f)
+            {
+                finalMovement = AdjustMovementToSlope(finalMovement);
+            }
+
+            finalMovement.y += _velocity.y * Time.deltaTime;
+            Controller.Move(finalMovement);
         }
+
+        private Vector3 AdjustMovementToSlope(Vector3 movement)
+        {
+            Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, _slopeCheckDistance, _groundLayer))
+            {
+                float angle = Vector3.Angle(Vector3.up, hit.normal);
+
+                if (angle > 0.5f && angle < Controller.slopeLimit)
+                {
+                    return Vector3.ProjectOnPlane(movement, hit.normal);
+                }
+            }
+
+            return movement;
+        }
+
+        private bool CheckStableGround()
+        {
+            if (Controller.isGrounded) return true;
+
+            float checkRadius = Controller.radius * 0.9f;
+            Vector3 origin = transform.position + Vector3.up * (Controller.radius + Controller.skinWidth);
+
+            return Physics.SphereCast(
+                origin,
+                checkRadius,
+                Vector3.down,
+                out RaycastHit hit,
+                _groundCheckDistance,
+                _groundLayer
+            );
+        }
+
         private bool IsRootMotionActive()
         {
             return CurrentState is PlayerCombatState combat && combat.UseRootMotion;
         }
 
-        private void SetupJumpVariables()
+        #endregion
+
+        #region Public Movement API
+
+        public void HandlePosition(Vector3 targetDirection)
         {
-            float timeToApex = playerStats.MaxJumpTime / 2;
-            _gravity = (-2 * playerStats.MaxJumpHeight) / Mathf.Pow(timeToApex, 2);
-            _initialJumpVelocity = (2 * playerStats.MaxJumpHeight) / timeToApex;
+            _pendingMovement = targetDirection * moveSpeed * Time.deltaTime;
         }
+
+        public void OnAnimatorMoveManual()
+        {
+            if (IsRootMotionActive())
+            {
+                Vector3 velocity = Animator.deltaPosition;
+                velocity.y = _velocity.y * Time.deltaTime;
+                Controller.Move(velocity);
+                transform.rotation *= Animator.deltaRotation;
+            }
+        }
+
+        #endregion
+
+        #region Animation Callbacks
+
         public void CheckCombo()
         {
             if (CurrentState is PlayerCombatState combatState)
@@ -182,13 +253,15 @@ namespace PlayerControllerScripts
                 combatState.OnComboCheck();
             }
         }
+
         public void OnAnimationEnd()
         {
-            if(CurrentState is PlayerCombatState combatState)
+            if (CurrentState is PlayerCombatState combatState)
             {
                 combatState.OnAnimationEnd();
             }
         }
+
         public void OnSheathComplete()
         {
             isCombatMode = false;
@@ -196,6 +269,11 @@ namespace PlayerControllerScripts
             Animator.SetBool(AnimIDCombat, false);
             ChangeState(idleState);
         }
+
+        #endregion
+
+        #region Hit & Die
+
         public void OnHit(Vector3 knockBackDir)
         {
             if (playerManager.IsInvincible) return;
@@ -203,6 +281,7 @@ namespace PlayerControllerScripts
             KnockBackForce = knockBackDir;
             ChangeState(hitState);
         }
+
         public void HandleDie()
         {
             if (!enabled) return;
@@ -214,7 +293,7 @@ namespace PlayerControllerScripts
             if (Controller != null) Controller.enabled = false;
             this.enabled = false;
 
-            if(Animator != null)
+            if (Animator != null)
             {
                 Animator.applyRootMotion = false;
                 Animator.SetTrigger(AnimIDDie);
@@ -222,10 +301,12 @@ namespace PlayerControllerScripts
             if (WeaponTracer != null) WeaponTracer.DisableTrace();
 
             Debug.Log("플레이어 사망");
-            //UI 이벤트 호출 추가.
         }
 
-        //카메라 기준 방향으로 변환
+        #endregion
+
+        #region Direction & Rotation
+
         public Vector3 GetTargetDirection(Vector2 input)
         {
             if (MainCameraTransform == null) return Vector3.zero;
@@ -241,7 +322,7 @@ namespace PlayerControllerScripts
 
             return (camForward * input.y) + (camRight * input.x);
         }
-        //플레이어 회전
+
         public void HandleRotation(Vector3 targetDirection, bool isInstant = false)
         {
             if (targetDirection == Vector3.zero || _playerMesh == null) return;
@@ -250,19 +331,16 @@ namespace PlayerControllerScripts
 
             if (isInstant)
             {
-                //combatmode용 회전
                 transform.rotation = targetRotation;
                 _playerMesh.rotation = targetRotation;
-               
             }
             else
             {
-                //이동용 회전
-                _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation, 
+                _playerMesh.rotation = Quaternion.Slerp(_playerMesh.rotation, targetRotation,
                                                         Time.deltaTime * playerStats.RotateSpeed);
             }
         }
-        //적 감지 회전, 에임고정을 위한 회전
+
         public void HandleAttackRotation()
         {
             if (CombatSystem.CurrentTarget == null) return;
@@ -275,6 +353,7 @@ namespace PlayerControllerScripts
                 transform.rotation = Quaternion.LookRotation(dirToTarget.normalized);
             }
         }
+
         public void HandleLockOnRotation()
         {
             if (CombatSystem.CurrentTarget == null) return;
@@ -291,19 +370,7 @@ namespace PlayerControllerScripts
                 );
             }
         }
-        public void HandlePosition(Vector3 targetDirection)
-        {
-            Controller.Move(targetDirection * moveSpeed * Time.deltaTime);
-        }
-        public void OnAnimatorMoveManual()
-        {
-            if (IsRootMotionActive())
-            {
-                Vector3 velocity = Animator.deltaPosition;
-                velocity.y = _velocity.y * Time.deltaTime;
-                Controller.Move(velocity);
-                transform.rotation *= Animator.deltaRotation;
-            }
-        }
+
+        #endregion
     }
 }

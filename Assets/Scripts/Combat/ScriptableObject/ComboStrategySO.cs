@@ -18,11 +18,13 @@ public class AttackAction
     public float endFrameHit;
 
     public List<ComboConnection> nextCombos;
-
-    //추가사항
+    [Header ("VFX")]
     public GameObject hitVFX;
+    public GameObject slashVFX;
+    public Vector3 slashRotationOffset;
+    public float slashForwardOffset = 0.5f;
+
     public float hitStopDuration;
-    public float cameraShakePower; //카메라 흔들림은 추후 추가예정
 }
 
 [CreateAssetMenu(fileName = "NewComboStrategy", menuName = "Combat Strategy")]

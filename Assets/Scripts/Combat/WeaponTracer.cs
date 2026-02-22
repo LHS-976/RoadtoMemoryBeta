@@ -25,7 +25,7 @@ public class WeaponTracer : MonoBehaviour
     public ParticleSystem drawVFX;
     public ParticleSystem sheathVFX;
 
-
+    private Vector3 _prevMidPoint;
     public void Initialize(IWeaponHitRange weaponHitRange)
     {
         _weaponHitRange = weaponHitRange;
@@ -57,6 +57,7 @@ public class WeaponTracer : MonoBehaviour
 
         _isTracing = true;
         _hitVictims.Clear();
+        _prevMidPoint = GetSlashPosition();
 
         for (int i = 0; i < _tracePoints.Length; i++)
         {
@@ -74,8 +75,14 @@ public class WeaponTracer : MonoBehaviour
     }
     private void LateUpdate()
     {
-        if (!_isTracing || _weaponHitRange == null) return;
+        if (!_isTracing || _weaponHitRange == null)
+        {
+            _prevMidPoint = GetSlashPosition();
+            return;
+        }
+
         PerformTrace();
+        _prevMidPoint = GetSlashPosition();
     }
     private void PerformTrace()
     {
@@ -83,6 +90,8 @@ public class WeaponTracer : MonoBehaviour
         {
             Vector3 startPos = _prevPositions[i];
             Vector3 endPos = _tracePoints[i].position;
+
+            Debug.DrawLine(startPos, endPos, Color.red, 5.0f);
             Vector3 direction = endPos - startPos;
             float distance = direction.magnitude;
 
@@ -140,5 +149,32 @@ public class WeaponTracer : MonoBehaviour
 
         if (sheathVFX != null) sheathVFX.Play();
 
+    }
+    public Vector3 GetSlashPosition()
+    {
+        if (_tracePoints.Length == 0) return transform.position;
+
+        Vector3 sum = Vector3.zero;
+        for (int i = 0; i < _tracePoints.Length; i++)
+        {
+            sum += _tracePoints[i].position;
+        }
+        return sum / _tracePoints.Length;
+    }
+
+    public Quaternion GetSlashRotation()
+    {
+        Vector3 currentMid = GetSlashPosition();
+        Vector3 swingDir = currentMid - _prevMidPoint;
+
+        Vector3 bladeDir = (_tracePoints[_tracePoints.Length - 1].position
+                           - _tracePoints[0].position).normalized;
+
+        if (swingDir.sqrMagnitude < 0.001f)
+        {
+            return Quaternion.LookRotation(-transform.forward, bladeDir);
+        }
+
+        return Quaternion.LookRotation(-swingDir.normalized, bladeDir);
     }
 }

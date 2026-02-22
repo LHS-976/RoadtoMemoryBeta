@@ -3,7 +3,7 @@
 public class DoorAnimatorHelper : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
-    [SerializeField] private string _boolParameterName = "Opened";
+    [SerializeField] private string _TriggerParameterName = "Opened";
 
     private void Awake()
     {
@@ -11,11 +11,11 @@ public class DoorAnimatorHelper : MonoBehaviour
     }
     public void OpenDoor()
     {
-        _animator.SetBool(_boolParameterName, true);
+        _animator.SetBool(_TriggerParameterName, true);
     }
 
     public void ClosedDoor()
     {
-        _animator.SetBool(_boolParameterName, false);
+        _animator.SetBool(_TriggerParameterName, false);
     }
 }

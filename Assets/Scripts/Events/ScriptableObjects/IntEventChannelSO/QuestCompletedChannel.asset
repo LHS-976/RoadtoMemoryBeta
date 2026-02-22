@@ -9,6 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff9169d074ff8074b826b4e3305fac47, type: 3}
-  m_Name: String Event Channel SO
+  m_Script: {fileID: 11500000, guid: 5bd1252b0039c534b91df75a9a189ffe, type: 3}
+  m_Name: QuestCompletedChannel
   m_EditorClassIdentifier: 

@@ -3,45 +3,49 @@ using EnemyControllerScripts;
 
 public class EnemyAnimation : MonoBehaviour
 {
+    [field: SerializeField] public Animator Animator { get; private set; }
     [Header("Reference")]
-    [SerializeField] private Animator _animator;
     [SerializeField] private EnemyController _enemyController;
 
     private static readonly int AnimIDEnemySpeed = Animator.StringToHash("Speed");
-    private static readonly int AnimIDEnemyAttack = Animator.StringToHash("Attack");
+    public static int AnimIDEnemyAttack = Animator.StringToHash("Attack");
     private static readonly int AnimIDEnemyGroggy = Animator.StringToHash("Groggy");
     private static readonly int AnimIDEnemyDie = Animator.StringToHash("Die");
     private static readonly int AnimIDEnemyHit = Animator.StringToHash("Hit");
     private void Awake()
     {
-        if (_animator == null) _animator = GetComponent<Animator>();
+        if (Animator == null) Animator = GetComponent<Animator>();
         if(_enemyController == null) _enemyController = GetComponentInParent<EnemyController>();
     }
 
     public void UpdateMoveSpeed(float speed)
     {
-        _animator.SetFloat(AnimIDEnemySpeed, speed);
+        Animator.SetFloat(AnimIDEnemySpeed, speed);
     }
     public void PlayAttack()
     {
-        _animator.SetTrigger(AnimIDEnemyAttack);
+        Animator.SetTrigger(AnimIDEnemyAttack);
     }
     public void PlayHit()
     {
-        _animator.SetTrigger(AnimIDEnemyHit);
+        Animator.SetTrigger(AnimIDEnemyHit);
     }
     public void PlayDie()
     {
-        _animator.SetBool(AnimIDEnemyGroggy, false);
-        _animator.SetTrigger(AnimIDEnemyDie);
+        Animator.SetBool(AnimIDEnemyGroggy, false);
+        Animator.SetTrigger(AnimIDEnemyDie);
+    }
+    public void OnlyPlayDie()
+    {
+        Animator.SetTrigger(AnimIDEnemyDie);
     }
     public void PlayGroggy()
     {
-        _animator.SetBool(AnimIDEnemyGroggy, true);
+        Animator.SetBool(AnimIDEnemyGroggy, true);
     }
     public void ClearGroggy()
     {
-        _animator.SetBool(AnimIDEnemyGroggy, false);
+        Animator.SetBool(AnimIDEnemyGroggy, false);
     }
 
     //애니메이션 함수

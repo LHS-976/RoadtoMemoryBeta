@@ -37,12 +37,12 @@ public class PlayerInteraction : MonoBehaviour
         UpdateClosestTarget();
         if(_closestTarget != null && Input.GetKeyDown(_interactKey))
         {
-            if(_closestTarget.CanInteract)
+            if (_closestTarget.CanInteract)
             {
                 _closestTarget.Interact(gameObject);
                 _interactedChannel?.RaiseEvent();
 
-                if(!_closestTarget.CanInteract)
+                if (!_closestTarget.CanInteract)
                 {
                     _nearbyTargets.Remove(_closestTarget);
                     _closestTarget = null;

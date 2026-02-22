@@ -23,12 +23,16 @@ namespace EnemyControllerScripts
 
         [HideInInspector] public Vector3 KnockbackForce;
 
-        [Header("Enemy EyeSight")]
-        private const float CLOSE_DETECTION_RANGE = 2.0f;
-        private const float EYE_HEIGHT = 1.5f;
-        private const float TARGET_CHEST_HEIGHT = 1.2f;
-        private const float TARGET_HEAD_HEIGHT = 1.8f;
-        private const float BODY_OFFSET = 0.2f;
+
+        //EnemyStats로 옮기기
+        [Header("Caching Enemy EyeSight")]
+        private float CLOSE_DETECTION_RANGE;
+        private float EYE_HEIGHT;
+        private float TARGET_CHEST_HEIGHT;
+        private float TARGET_HEAD_HEIGHT;
+        private float BODY_OFFSET;
+
+
 
         private void Awake()
         {
@@ -40,6 +44,11 @@ namespace EnemyControllerScripts
                 _weaponTracer.Initialize(this);
             }
             spawnPosition = transform.position;
+            CLOSE_DETECTION_RANGE = EnemyManager.EnemyStats.closeDetectionRange;
+            EYE_HEIGHT = EnemyManager.EnemyStats.eyeHeight;
+            TARGET_CHEST_HEIGHT = EnemyManager.EnemyStats.targetChestHeight;
+            TARGET_HEAD_HEIGHT = EnemyManager.EnemyStats.targetHeadHeight;
+            BODY_OFFSET = EnemyManager.EnemyStats.bodyOffset;
             InitializeStates();
         }
 
@@ -233,7 +242,14 @@ namespace EnemyControllerScripts
             int deadLayer = LayerMask.NameToLayer("Dead");
             if (deadLayer != -1) gameObject.layer = deadLayer;
 
-            EnemyAnim.PlayDie();
+            if(EnemyManager.EnemyStats.enemyID == "Zombie")
+            {
+                EnemyAnim.OnlyPlayDie();
+            }
+            else
+            {
+                EnemyAnim.PlayDie();
+            }
             this.enabled = false;
         }
 

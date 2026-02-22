@@ -10,26 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86b76941384445943bf421c12bcacaa7, type: 3}
-  m_Name: EnemyStats
+  m_Name: EnemyStats2
   m_EditorClassIdentifier: 
-  enemyID: GuardRobot
+  enemyID: Zombie
   moveSpeed: 1
-  chaseMoveSpeed: 3
-  rotationSpeed: 120
-  viewRadius: 10
-  viewAngle: 120
-  maxHealth: 300
-  baseDamage: 30
-  attackCooldown: 3
-  attackRange: 1.5
-  attackTriggerRange: 1.8
+  chaseMoveSpeed: 2
+  rotationSpeed: 100
+  viewRadius: 6
+  viewAngle: 100
+  maxHealth: 100
+  baseDamage: 15
+  attackCooldown: 4
+  attackRange: 1
+  attackTriggerRange: 1.1
   damageMultiplier: 1
-  stopChaseDistance: 20
-  defenseArmor: 50
-  groggyDuration: 6
-  damageReduce: 0.8
-  groggyDamageMultiplier: 1.5
-  canExecutionDuration: 4
+  stopChaseDistance: 15
+  defenseArmor: 0
+  groggyDuration: 0
+  damageReduce: 0
+  groggyDamageMultiplier: 0
+  canExecutionDuration: 0
   playerMask:
     serializedVersion: 2
     m_Bits: 1024
@@ -38,6 +38,6 @@ MonoBehaviour:
     m_Bits: 72
   patrolRadius: 10
   patrolidleTime: 2
-  knockbackDuration: 0.25
+  knockbackDuration: 0.3
   knockbackPower: 10
   dropDataChips: 10

@@ -20,6 +20,11 @@ public class EnemyHitState : EnemyBaseState
         _knockbackForce = enemyController.EnemyManager.EnemyStats.knockbackPower;
 
         enemyController.HandleStop();
+        enemyController.DisableWeaponTrace();
+        if(enemyAnimation.Animator != null)
+        {
+            enemyAnimation.Animator.ResetTrigger("Attack");
+        }
         enemyAnimation.PlayHit();
         enemyController.Agent.updatePosition = false;
     }

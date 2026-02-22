@@ -10,11 +10,10 @@ public class EnemyManager : MonoBehaviour, IDamageable
     [SerializeField] private EnemyAnimation _enemyAnim;
     [SerializeField] private Transform _headExecutionUITransform;
 
-    [Header("Quest Info")]
-    public string enemyID = "Robot_01";
-
     [Header("Broadcasting")]
     [SerializeField] private StringEventChannelSO _questKillChannel;
+
+    private const float _corpseObstacle = 1.5f;
 
     public float CurrentHealth { get; private set; }
     public float CurrentArmor { get; private set; }
@@ -22,6 +21,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
     public bool IsGroggy { get; private set; }
     public bool isDead = false;
 
+    private bool _hasBeenGroggy = false;
     private const float DestroyDelay = 4.5f;
 
     private void Awake()
@@ -63,22 +63,20 @@ public class EnemyManager : MonoBehaviour, IDamageable
         }
 
         CurrentHealth -= finalHealthDamage;
-
-        if (!IsGroggy)
+        if(CurrentHealth <= 0)
+        {
+            Die();
+        }
+        else if(!IsGroggy)
         {
             _enemyController.KnockbackForce = knockBackDir;
             _enemyController.HandleHit();
-        }
-
-        if (CurrentHealth <= 0)
-        {
-            Die();
         }
     }
 
     public void TakeArmorDamage(float amount)
     {
-        if (IsGroggy || IsExecutionTime) return;
+        if (IsGroggy || IsExecutionTime || _hasBeenGroggy) return;
         if (EnemyStats.defenseArmor <= 0) return;
 
         CurrentArmor -= amount;
@@ -126,6 +124,8 @@ public class EnemyManager : MonoBehaviour, IDamageable
     private void TriggerGroggy()
     {
         IsGroggy = true;
+
+        _hasBeenGroggy = true;
         IsExecutionTime = false;
         CurrentArmor = 0;
 
@@ -151,17 +151,22 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
         if (_questKillChannel != null)
         {
-            _questKillChannel.RaiseEvent(enemyID);
+            _questKillChannel.RaiseEvent(EnemyStats.enemyID);
         }
-
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-
+        StartCoroutine(ObstacleRoutine());
         Destroy(gameObject, DestroyDelay);
     }
 
     public Transform GetTransform()
     {
         return transform;
+    }
+    //공격중 통과를 살짝 막기.
+    private IEnumerator ObstacleRoutine()
+    {
+        yield return new WaitForSeconds(_corpseObstacle);
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
     }
 }

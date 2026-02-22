@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+
 public class AutoReturnToPool : MonoBehaviour
 {
     private GameObject _originalPrefab;
     private VFXManager vfxManager;
-    private float _lifeTime = 1.0f;
+
+
+    [SerializeField] private float _fallbackLifeTime = 1.0f;
 
     public void Initialize(GameObject prefab, VFXManager manager)
     {
@@ -34,17 +37,22 @@ public class AutoReturnToPool : MonoBehaviour
         }
         if(maxDuartion > 0)
         {
-            _lifeTime = maxDuartion + 0.2f;
+            //기존 파티클
+            _fallbackLifeTime = maxDuartion + 0.2f;
+            return;
         }
     }
 
     private void OnEnable()
     {
-        StartCoroutine(ReturnRoutine());
+        StopAllCoroutines();
+        StartCoroutine(SafeReturnRoutine());
     }
-    private IEnumerator ReturnRoutine()
+    private IEnumerator SafeReturnRoutine()
     {
-        yield return new WaitForSeconds(_lifeTime);
+
+        yield return null;
+        yield return new WaitForSeconds(_fallbackLifeTime);
 
         if(vfxManager != null)
         {

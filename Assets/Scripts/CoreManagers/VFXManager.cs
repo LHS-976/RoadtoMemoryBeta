@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class VFXManager : MonoBehaviour
 {
@@ -48,6 +49,13 @@ public class VFXManager : MonoBehaviour
         vfxInstance.SetActive(true);
 
         vfxInstance.transform.SetParent(null);
+
+        VisualEffect vfx = vfxInstance.GetComponent<VisualEffect>();
+        if(vfx != null)
+        {
+            vfx.Reinit();
+            vfx.Play();
+        }
 
     }
     private GameObject CreateNewInstance(GameObject prefab)

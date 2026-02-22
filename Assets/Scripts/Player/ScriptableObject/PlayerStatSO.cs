@@ -15,12 +15,7 @@ public class PlayerStatSO : ScriptableObject
     public float CombatRunSpeed = 5f;
     public float AttackRotationSpeed = 15f;
     public float LockOnRotationSpeed = 2f;
-
-    [Header("Jump")]
-    public float MaxJumpHeight = 2.0f;
-    public float MaxJumpTime = 0.5f;
-
-    [Tooltip("체력, 공격력, 스태미나")]
+    [Header("BaseStats")]
     public float playerMaxHp = 100f;
     public float playerMaxStamina = 100f;
 

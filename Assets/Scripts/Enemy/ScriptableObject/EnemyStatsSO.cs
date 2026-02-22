@@ -9,11 +9,19 @@ public class EnemyStatsSO : ScriptableObject
 
     [Header("Movement")]
     public float moveSpeed = 2.5f;
+    public float chaseMoveSpeed = 3f;
     public float rotationSpeed = 100f;
 
     [Header("FOV")]
     public float viewRadius = 10f;
     public float viewAngle = 80f;
+
+    [Header("Enemy EyeSight")]
+    public float closeDetectionRange = 2.0f;
+    public float eyeHeight = 1.5f;
+    public float targetChestHeight = 1.2f;
+    public float targetHeadHeight = 1.8f;
+    public float bodyOffset = 0.2f;
 
     [Header("Combat Settings")]
     public float maxHealth = 100f;

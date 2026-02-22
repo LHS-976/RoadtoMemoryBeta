@@ -22,6 +22,11 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
     [SerializeField] private WeaponTracer _weaponTracer;
     [SerializeField] private HitTimerController _hitTimer;
 
+    [Header("Broadcasting Channels")]
+    [SerializeField] private VoidEventChannelSO _hitEffectChannel;
+    [SerializeField] private VoidEventChannelSO _heavyHitEffectChannel;
+
+
     [Header("Strategy Data")]
     public ComboStrategySO currentStrategy;
     public List<ComboStrategySO> availableStyles;
@@ -45,6 +50,10 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
     public bool IsDamageActive { get; private set; }
 
     private Dictionary<int, AttackAction> _actionMap = new Dictionary<int, AttackAction>();
+
+    private bool _slashPlayed = false;
+    private int _lastAttackHash = 0;
+
 
     public void Initialize(PlayerController controller, Animator animator)
     {
@@ -97,7 +106,11 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         AnimatorStateInfo stateInfo = isTransitioning
             ? _animator.GetNextAnimatorStateInfo(0)
             : _animator.GetCurrentAnimatorStateInfo(0);
-
+        if (stateInfo.shortNameHash != _lastAttackHash)
+        {
+            _lastAttackHash = stateInfo.shortNameHash;
+            _slashPlayed = false;
+        }
         if (_actionMap.TryGetValue(stateInfo.shortNameHash, out AttackAction currentAction))
         {
             float time = stateInfo.normalizedTime % 1.0f;
@@ -106,6 +119,11 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             {
                 _activeAttackAction = currentAction;
                 EnableDamage();
+                if(!_slashPlayed)
+                {
+                    _slashPlayed = true;
+                    PlaySlashVFX();
+                }
             }
             else
             {
@@ -204,13 +222,23 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         knockBackDir.y = 0;
 
         float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
-
         ApplyArmorDamage(target, action, finalDamage);
         target.TakeDamage(finalDamage, knockBackDir);
 
         ApplyHitStop(target, action);
-        ApplyHitVFX(action, hitPoint);
-
+        if(_activeAttackAction.hitVFX != null)
+        {
+            Quaternion vfxRotation = Quaternion.LookRotation(-hitDirection);
+            VFXManager.Instance.PlayVFX(_activeAttackAction.hitVFX, hitPoint, vfxRotation);
+        }
+        if(action.attackName.Contains("Heavy"))
+        {
+            _heavyHitEffectChannel?.RaiseEvent();
+        }
+        else
+        {
+            _hitEffectChannel?.RaiseEvent();
+        }
         Debug.Log($"데미지 적용 : {finalDamage} -> {target}");
     }
 
@@ -239,12 +267,20 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         _hitTimer.StartHitStop(action.hitStopDuration, enemyAnim);
     }
 
-    private void ApplyHitVFX(AttackAction action, Vector3 hitPoint)
+    public void PlaySlashVFX()
     {
-        if (action.hitVFX != null)
-        {
-            VFXManager.Instance.PlayVFX(action.hitVFX, hitPoint, Quaternion.LookRotation(transform.forward));
-        }
+
+        AttackAction action = _activeAttackAction ?? GetCurrentAttackAction();
+
+        if (action == null || action.slashVFX == null) return;
+
+
+        Vector3 spawnPos = _weaponTracer.GetSlashPosition() + _controller.transform.forward * action.slashForwardOffset;
+        Quaternion swingRot = _weaponTracer.GetSlashRotation();
+        Quaternion offsetRot = Quaternion.Euler(action.slashRotationOffset);
+        Quaternion finalRot = swingRot * offsetRot;
+
+        VFXManager.Instance.PlayVFX(action.slashVFX, spawnPos, finalRot);
     }
 
     #endregion
