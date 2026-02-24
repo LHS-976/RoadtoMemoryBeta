@@ -15,21 +15,14 @@ public class LevelSetup : MonoBehaviour
     {
         SpawnSetUp();
         if (_gameState != null) _gameState.SetState(GameState.Gameplay);
-        if(GameCore.Instance != null && GameCore.Instance.QuestManager != null)
+        if (Core.GameCore.Instance != null && Core.GameCore.Instance.QuestManager != null)
         {
-            Debug.Log("[InGameInitializer] 맵 로딩 완료. 첫 퀘스트(또는 세이브 데이터)를 불러옵니다.");
-            GameCore.Instance.QuestManager.ResetForNewGame();
-
-            /*
-             * if(newGame)
-             * {
-             *      GameCore.Instance.QuestManager.ResetForNewGame();
-             * }
-             * else(Continue || Load)
-             * {
-             *      GameCore.Instance.QuestManager.LoadQuestProgress();
-             * }
-             */
+            if (Core.GameCore.Instance.QuestManager.CurrentQuest == null &&
+                !Core.GameCore.Instance.QuestManager.AllQuestsCompleted)
+            {
+                Debug.Log("[InGameInitializer] 맵 로딩 완료. 첫 퀘스트(또는 세이브 데이터)를 불러옵니다.");
+                Core.GameCore.Instance.QuestManager.LoadQuestProgress();
+            }
         }
     }
     private void SpawnSetUp()

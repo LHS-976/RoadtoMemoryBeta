@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class QuestAnnouncerUI : MonoBehaviour
 {
@@ -23,6 +24,11 @@ public class QuestAnnouncerUI : MonoBehaviour
 
     private void Start()
     {
+        if(_questManager == null || _questManager.CurrentQuest == null || _questManager.AllQuestsCompleted)
+        {
+            return;
+        }
+
         if (_announcerFader != null && _questManager != null && _questManager.CurrentQuest != null)
         {
             _announceTitleText.text = "현재 목표";
@@ -53,6 +59,8 @@ public class QuestAnnouncerUI : MonoBehaviour
 
     private void ShowQuestStart(QuestSO quest)
     {
+        if (quest == null) return;
+
         _announceTitleText.text = "퀘스트 시작";
         _announceSubText.text = quest.Description;
 
@@ -62,8 +70,10 @@ public class QuestAnnouncerUI : MonoBehaviour
 
     private void ShowQuestComplete(QuestSO quest)
     {
+        if (quest == null) return;
+
         _announceTitleText.text = "퀘스트 완료";
-        _announceSubText.text = quest.Description;
+        _announceSubText.text = "보상지급 완료!";
 
         if (_announceCoroutine != null) StopCoroutine(_announceCoroutine);
         _announceCoroutine = StartCoroutine(ShowAndHideRoutine());

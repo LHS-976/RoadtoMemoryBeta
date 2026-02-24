@@ -39,8 +39,6 @@ namespace Core
             Application.targetFrameRate = 60;
             QualitySettings.vSyncCount = 0;
 
-            DataManager.LoadGame();
-            QuestManager.LoadQuestProgress();
             //SoundManager.InitializeVolume();
         }
         public void TogglePause()
@@ -85,11 +83,6 @@ namespace Core
                 }
 
                 TogglePause();
-            }
-            if(Input.GetKeyDown(KeyCode.J))
-            {
-                //세이브 테스트
-                DataManager.SaveGame();
             }
         }
 

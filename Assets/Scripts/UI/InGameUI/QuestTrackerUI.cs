@@ -79,22 +79,37 @@ public class QuestTrackerUI : MonoBehaviour
 
     private void HandleQuestUpdated(QuestSO quest, int progress)
     {
+        if (quest == null) return;
         UpdateQuestUI(quest, progress);
-        ShowUI();
+        if(_isToggledOn)
+        {
+            ShowUI();
+        }
     }
 
     private void HandleQuestCompleted(QuestSO quest)
     {
+        if (quest == null) return;
+
         if (_questProgressText != null) _questProgressText.text = "완료";
-        ShowUI();
+        if(_isToggledOn)
+        {
+            ShowUI();
+        }
     }
 
     private void UpdateQuestUI(QuestSO quest, int progress)
     {
-        if (quest == null) return;
+        if (quest == null || (_questManager != null && _questManager.AllQuestsCompleted))
+        {
+            HideUI();
+            return;
+        }
 
         if (_questTitleText != null) _questTitleText.text = quest.Title;
         if (_questDescText != null) _questDescText.text = quest.Description;
+
+        int displayProgress = Mathf.Min(progress, quest.TargetCount);
 
         if (_questProgressText != null)
             _questProgressText.text = $"({progress} / {quest.TargetCount})";

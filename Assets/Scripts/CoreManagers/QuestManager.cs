@@ -25,6 +25,8 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private IntEventChannelSO _questCompletedChannel;
     [SerializeField] private IntEventChannelSO _questStartedChannel;
 
+    private bool _isChangingQuest = false;
+
     #region Event callback
     private void OnEnable()
     {
@@ -92,6 +94,7 @@ public class QuestManager : MonoBehaviour
 
     private void AdvanceProgress()
     {
+        if (_isChangingQuest) return;
         CurrentProgress++;
         OnQuestUpdated?.Invoke(CurrentQuest, CurrentProgress);
 
@@ -103,14 +106,26 @@ public class QuestManager : MonoBehaviour
 
     private void CompleteCurrentQuest()
     {
-        if (CurrentQuest == null) return;
+        if (CurrentQuest == null || _isChangingQuest) return;
+        _isChangingQuest = true;
 
-        _dataManager?.AddDatachips(CurrentQuest.RewardDataChips);
-
-        GameData data = _dataManager?.CurrentData;
-        if (data != null && !data.ClearedQuestIDs.Contains(CurrentQuest.ID))
+        if (_dataManager != null)
         {
-            data.ClearedQuestIDs.Add(CurrentQuest.ID);
+            _dataManager.AddDatachips(CurrentQuest.RewardDataChips);
+
+            GameData data = _dataManager.CurrentData;
+            if (data != null)
+            {
+                if (data.ClearedQuestIDs == null)
+                {
+                    data.ClearedQuestIDs = new System.Collections.Generic.List<int>();
+                }
+
+                if (!data.ClearedQuestIDs.Contains(CurrentQuest.ID))
+                {
+                    data.ClearedQuestIDs.Add(CurrentQuest.ID);
+                }
+            }
         }
 
         OnQuestCompleted?.Invoke(CurrentQuest);
@@ -122,30 +137,6 @@ public class QuestManager : MonoBehaviour
 
     #endregion
     #region New / Save / Load
-
-
-    public void ResetForNewGame()
-    {
-        CurrentQuest = null;
-        CurrentProgress = 0;
-        AllQuestsCompleted = false;
-
-        QuestSO first = _database.GetFirstMainQuest();
-        if(first != null)
-        {
-            StartQuest(first.ID);
-        }
-    }
-    private void SaveProgress()
-    {
-        if (_dataManager == null) return;
-
-        GameData data = _dataManager.CurrentData;
-        data.CurrentQuestID = CurrentQuest != null ? CurrentQuest.ID : -1;
-        data.CurrentQuestProgress = CurrentProgress;
-        _dataManager.SaveGame();
-    }
-
     public void LoadQuestProgress()
     {
         if (_dataManager == null || _database == null) return;
@@ -217,8 +208,10 @@ public class QuestManager : MonoBehaviour
             CurrentQuest = null;
             CurrentProgress = 0;
             AllQuestsCompleted = true;
-            Debug.Log("[Quest] 모든 퀘스트 완료.");
+            Debug.Log("[Quest] 모든 퀘스트 완료. 더 이상 진행할 퀘스트가 없습니다.");
+            OnQuestUpdated?.Invoke(null, 0);
         }
+        _isChangingQuest = false;
     }
     public void RegisterDialogueUI(DialogueUIManager dialogueUIManager)
     {

@@ -9,6 +9,7 @@ public class TitleUIManager : MonoBehaviour
     [SerializeField] private GameSceneEventChannelSO _loadSceneChannel;
     [SerializeField] private GameSceneSO _firstStageScene;
     [SerializeField] private GameStateSO _gameState;
+    [SerializeField] private SaveSlotUIManager _slotManager;
 
     [Header("UI Panels")]
     [SerializeField] private PanelFader _pressAnyKeyPanel;
@@ -110,31 +111,31 @@ public class TitleUIManager : MonoBehaviour
     public void OnClickNewGame()
     {
         Debug.Log("새 게임 시작!");
-        GameCore.Instance.DataManager.DeleteSaveData();
+        if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.NewGame);
         _currentPanel?.FadeOut();
-        PlayCinematic();
     }
 
     public void OnClickContinue()
     {
-        if (GameCore.Instance.DataManager.CurrentData != null)
+        int latestSlot = GameCore.Instance.DataManager.GetLatestSaveSlot();
+
+        if (latestSlot != -1)
         {
-            Debug.Log("이어하기!");
+            Debug.Log($"[Title] 최근 세이브(슬롯 {latestSlot + 1})를 이어서 시작합니다!");
+            GameCore.Instance.DataManager.LoadGame(latestSlot);
+
             _currentPanel?.FadeOut();
-            _loadSceneChannel.RaiseEvent(_firstStageScene);
         }
         else
         {
-            Debug.LogWarning("저장된 데이터가 없습니다!");
-            Debug.LogWarning("게임을 새로 시작합니다.");
-            OnClickNewGame();
-            //"저장된 데이터가 없습니다" 팝업창 추가하기.
+            Debug.LogWarning("[Title] 저장된 데이터가 전혀 없습니다! 새 게임 창으로 유도합니다.");
+            if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.NewGame);
         }
     }
     public void OnClickLoad()
     {
-        //로드 슬롯 UI구현 시 확장
-        OnClickContinue();
+        Debug.Log("불러오기 슬롯 선택 창 열기");
+        if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.LoadGame);
     }
     public void OnClickBackFromGameMode()
     {
@@ -142,6 +143,7 @@ public class TitleUIManager : MonoBehaviour
     }
     public void PlayCinematic()
     {
+        _currentPanel?.FadeOut();
         if(_videoPanel != null && _videoPlayer != null)
         {
             StartCoroutine(PlayCinematicRoutine());

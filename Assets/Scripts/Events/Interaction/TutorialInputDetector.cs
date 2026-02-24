@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using Core;
+using UnityEngine;
 
 public class TutorialInputDetector : MonoBehaviour
 {
     [Header("Broadcasting Channel")]
     [SerializeField] private StringEventChannelSO _questEventChannel;
+
+    private bool _hasTriggeredSprint = false;
 
     private void Update()
     {
@@ -11,8 +14,18 @@ public class TutorialInputDetector : MonoBehaviour
         MoveTutorial();
         RunTutorial();
     }
+
+    private bool IsQuestActive(string targetEventID)
+    {
+        if (GameCore.Instance == null || GameCore.Instance.QuestManager == null) return false;
+        QuestSO currentQuest = Core.GameCore.Instance.QuestManager.CurrentQuest;
+
+        return currentQuest != null && currentQuest.Type == QuestType.Event && currentQuest.TargetID == targetEventID;
+    }
     private void MoveTutorial()
     {
+        if (!IsQuestActive("Input_Move")) return;
+
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) ||
             Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
         {
@@ -21,9 +34,11 @@ public class TutorialInputDetector : MonoBehaviour
     }
     private void RunTutorial()
     {
+        if (_hasTriggeredSprint || !IsQuestActive("Input_Sprint")) return;
         if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
             _questEventChannel.RaiseEvent("Input_Sprint");
+            _hasTriggeredSprint = true;
         }
     }
 }

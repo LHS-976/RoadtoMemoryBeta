@@ -16,6 +16,11 @@ public class LoadingSceneController : MonoBehaviour
     //다른 씬에서 로딩 씬으로 넘어오기 전에, 목적지를 여기에 적어둡니다.
     public static GameSceneSO TargetScene;
 
+    private void Awake()
+    {
+        Core.GameCore.Instance.TimeManager.ForceRestoreTime();
+    }
+
     private void Start()
     {
         if (TargetScene != null)
