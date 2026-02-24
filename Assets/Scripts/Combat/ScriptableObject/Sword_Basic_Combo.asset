@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sword_Basic_Combo
   m_EditorClassIdentifier: 
   comboName: BaseCombo
-  baseDamage: 10
+  baseDamage: 50
   attackSpeed: 1.3
   combos:
   - commandType: 0
@@ -59,7 +59,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 100, y: 80, z: 0}
     slashForwardOffset: 1
     hitStopDuration: 0.05
-    cameraShakePower: 0
   - attackName: Attack_L2
     damageMultiplier: 1.2
     startFrameHit: 0.1
@@ -82,7 +81,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 380, z: -10}
     slashForwardOffset: 1
     hitStopDuration: 0.05
-    cameraShakePower: 0
   - attackName: Attack_L3
     damageMultiplier: 1.5
     startFrameHit: 0.0833333
@@ -105,7 +103,6 @@ MonoBehaviour:
     slashRotationOffset: {x: -10, y: 360, z: 0}
     slashForwardOffset: 2
     hitStopDuration: 0.05
-    cameraShakePower: 0
   - attackName: Attack_L4
     damageMultiplier: 2
     startFrameHit: 0.11666667
@@ -128,7 +125,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: -85}
     slashForwardOffset: 2
     hitStopDuration: 0.05
-    cameraShakePower: 0
   - attackName: Attack_L5
     damageMultiplier: 2.5
     startFrameHit: 0.15
@@ -151,7 +147,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: -5, z: -180}
     slashForwardOffset: 1
     hitStopDuration: 0.05
-    cameraShakePower: 0
   - attackName: Attack_H1
     damageMultiplier: 1.5
     startFrameHit: 0.1
@@ -176,7 +171,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 10, y: 5, z: -20}
     slashForwardOffset: 2
     hitStopDuration: 0.1
-    cameraShakePower: 0
   - attackName: Attack_H2
     damageMultiplier: 1.8
     startFrameHit: 0.1
@@ -201,7 +195,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 60}
     slashForwardOffset: 2
     hitStopDuration: 0.1
-    cameraShakePower: 0
   - attackName: Attack_H3
     damageMultiplier: 2
     startFrameHit: 0.1
@@ -226,7 +219,6 @@ MonoBehaviour:
     slashRotationOffset: {x: -90, y: 65, z: 35}
     slashForwardOffset: 3
     hitStopDuration: 0.1
-    cameraShakePower: 0
   - attackName: Attack_H4
     damageMultiplier: 2.2
     startFrameHit: 0.1
@@ -251,7 +243,6 @@ MonoBehaviour:
     slashRotationOffset: {x: -40, y: 90, z: 10}
     slashForwardOffset: 1
     hitStopDuration: 0.1
-    cameraShakePower: 0
   - attackName: Attack_H5
     damageMultiplier: 2.5
     startFrameHit: 0.1
@@ -272,7 +263,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 3.5
     hitStopDuration: 0.1
-    cameraShakePower: 0
   - attackName: Dash_L1
     damageMultiplier: 1
     startFrameHit: 0.1
@@ -292,7 +282,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 0.5
     hitStopDuration: 0
-    cameraShakePower: 0
   - attackName: Evasion_Back
     damageMultiplier: 0
     startFrameHit: 0
@@ -311,7 +300,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 0.5
     hitStopDuration: 0
-    cameraShakePower: 0
   - attackName: Evasion_Forward
     damageMultiplier: 0
     startFrameHit: 0
@@ -330,7 +318,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 0.5
     hitStopDuration: 0
-    cameraShakePower: 0
   - attackName: Evasion_Left
     damageMultiplier: 0
     startFrameHit: 0
@@ -349,7 +336,6 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 0.5
     hitStopDuration: 0
-    cameraShakePower: 0
   - attackName: Evasion_Right
     damageMultiplier: 0
     startFrameHit: 0
@@ -368,4 +354,3 @@ MonoBehaviour:
     slashRotationOffset: {x: 0, y: 0, z: 0}
     slashForwardOffset: 0.5
     hitStopDuration: 0
-    cameraShakePower: 0

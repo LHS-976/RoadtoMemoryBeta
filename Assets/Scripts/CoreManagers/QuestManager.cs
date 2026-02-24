@@ -7,6 +7,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private QuestDatabase _database;
     [SerializeField] private DataManager _dataManager;
 
+    private DialogueUIManager _dialogueManager;
     public QuestSO CurrentQuest { get; private set; }
     public int CurrentProgress { get; private set; }
     public bool AllQuestsCompleted { get; private set; }
@@ -24,10 +25,6 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private IntEventChannelSO _questCompletedChannel;
     [SerializeField] private IntEventChannelSO _questStartedChannel;
 
-    private void Start()
-    {
-        LoadQuestProgress();
-    }
     #region Event callback
     private void OnEnable()
     {
@@ -90,23 +87,12 @@ public class QuestManager : MonoBehaviour
             return;
         }
 
-        CurrentQuest = quest;
-        CurrentProgress = 0;
-        AllQuestsCompleted = false;
-
-        SaveProgress();
-        OnQuestStarted?.Invoke(CurrentQuest);
-        if (_questStartedChannel != null)
-        {
-            _questStartedChannel.RaiseEvent(CurrentQuest.ID);
-        }
-        Debug.Log($"[Quest] 시작: {CurrentQuest.Title}");
+        TryStartQuest(quest);
     }
 
     private void AdvanceProgress()
     {
         CurrentProgress++;
-        SaveProgress();
         OnQuestUpdated?.Invoke(CurrentQuest, CurrentProgress);
 
         if (CurrentProgress >= CurrentQuest.TargetCount)
@@ -160,7 +146,7 @@ public class QuestManager : MonoBehaviour
         _dataManager.SaveGame();
     }
 
-    private void LoadQuestProgress()
+    public void LoadQuestProgress()
     {
         if (_dataManager == null || _database == null) return;
 
@@ -179,6 +165,10 @@ public class QuestManager : MonoBehaviour
                 Debug.Log($"[Quest] 이어서 진행: {CurrentQuest.Title} ({CurrentProgress}/{CurrentQuest.TargetCount})");
                 return;
             }
+        }
+        if (data.ClearedQuestIDs == null)
+        {
+            data.ClearedQuestIDs = new System.Collections.Generic.List<int>();
         }
 
         //클리어 기록으로 다음 퀘스트 탐색
@@ -207,6 +197,7 @@ public class QuestManager : MonoBehaviour
     }
 
     #endregion
+    #region CallBack Quset UI 
 
     private bool IsActiveQuest(QuestType type)
     {
@@ -226,8 +217,36 @@ public class QuestManager : MonoBehaviour
             CurrentQuest = null;
             CurrentProgress = 0;
             AllQuestsCompleted = true;
-            SaveProgress();
             Debug.Log("[Quest] 모든 퀘스트 완료.");
         }
     }
+    public void RegisterDialogueUI(DialogueUIManager dialogueUIManager)
+    {
+        _dialogueManager = dialogueUIManager;
+    }
+    public void TryStartQuest(QuestSO newQuest)
+    {
+        if(_dialogueManager != null && newQuest.IntroDialogues != null && newQuest.IntroDialogues.Length >0)
+        {
+            _dialogueManager.StartDialogue(newQuest.IntroDialogues, () => StartQuestActual(newQuest));
+        }
+        else
+        {
+            StartQuestActual(newQuest);
+        }
+    }
+    private void StartQuestActual(QuestSO newQuest)
+    {
+        CurrentQuest = newQuest;
+        CurrentProgress = 0;
+        AllQuestsCompleted = false;
+
+        OnQuestStarted?.Invoke(newQuest);
+        if (_questStartedChannel != null)
+        {
+            _questStartedChannel.RaiseEvent(CurrentQuest.ID);
+        }
+        Debug.Log($"[Quest] 시작: {CurrentQuest.Title}");
+    }
+    #endregion
 }

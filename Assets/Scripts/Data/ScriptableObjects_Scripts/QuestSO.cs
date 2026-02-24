@@ -16,6 +16,9 @@ public class QuestSO : ScriptableObject
     public string Title;
     [TextArea] public string Description;
 
+    [Header("Story Dialogue")]
+    [TextArea] public string[] IntroDialogues;
+
     [Header("Goal")]
     public QuestType Type;
     public string TargetID;

@@ -25,6 +25,11 @@ public class EnemyAttackState : EnemyBaseState
             enemyController.ChangeState(enemyController.combatState);
             return;
         }
+        if (enemyController.targetTransform == null)
+        {
+            enemyController.ChangeState(enemyController.patrolState);
+            return;
+        }
         float distance = Vector3.Distance(enemyController.transform.position, enemyController.targetTransform.position);
         if(distance <= enemyController.EnemyManager.EnemyStats.attackRange)
         {

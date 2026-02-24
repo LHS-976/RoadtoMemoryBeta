@@ -12,6 +12,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
 
     [Header("Broadcasting")]
     [SerializeField] private StringEventChannelSO _questKillChannel;
+    [SerializeField] private EnemyDamageUIEventChannelSO _damageUIChannel;
 
     private const float _corpseObstacle = 1.5f;
 
@@ -63,6 +64,19 @@ public class EnemyManager : MonoBehaviour, IDamageable
         }
 
         CurrentHealth -= finalHealthDamage;
+
+        if(_damageUIChannel != null)
+        {
+            DamageUIPayLoad payLoad = new DamageUIPayLoad
+            {
+                targetEnemy = this.transform,
+                damageAmount = finalHealthDamage,
+                currentHealth = CurrentHealth,
+                maxHealth = EnemyStats.maxHealth,
+                hitPoint = _headExecutionUITransform != null ? _headExecutionUITransform.position : this.transform.position
+            };
+            _damageUIChannel.RaiseEvent(payLoad);
+        }
         if(CurrentHealth <= 0)
         {
             Die();

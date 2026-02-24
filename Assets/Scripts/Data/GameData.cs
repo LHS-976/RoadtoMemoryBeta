@@ -9,6 +9,7 @@ public class GameData
     public string PlayerName;
     public int Level;
     public float CurrentHealth;
+    public float CurrentStamina;
 
     [Header("Currency")]
     public int DataChips;
@@ -22,6 +23,8 @@ public class GameData
     public List<int> ClearedQuestIDs = new List<int>();
     public int CurrentQuestID;
     public int CurrentQuestProgress;
+
+    public long LastSaveTimeTicks;
 
     public GameData()
     {

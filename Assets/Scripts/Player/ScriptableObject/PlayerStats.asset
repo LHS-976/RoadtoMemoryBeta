@@ -14,13 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WalkSpeed: 3
   RunSpeed: 6
-  RotateSpeed: 10
+  RotateSpeed: 8
   CombatWalkSpeed: 3
   CombatRunSpeed: 5
   AttackRotationSpeed: 15
   LockOnRotationSpeed: 1.5
-  MaxJumpHeight: 2
-  MaxJumpTime: 0.5
   playerMaxHp: 100
   playerMaxStamina: 100
   staminaRegenrate: 10

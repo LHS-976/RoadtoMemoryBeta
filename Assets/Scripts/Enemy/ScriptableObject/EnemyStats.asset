@@ -18,13 +18,18 @@ MonoBehaviour:
   rotationSpeed: 120
   viewRadius: 10
   viewAngle: 120
+  closeDetectionRange: 2
+  eyeHeight: 1.5
+  targetChestHeight: 1.2
+  targetHeadHeight: 1.8
+  bodyOffset: 0.2
   maxHealth: 300
   baseDamage: 30
-  attackCooldown: 3
+  attackCooldown: 4
   attackRange: 1.5
   attackTriggerRange: 1.8
   damageMultiplier: 1
-  stopChaseDistance: 20
+  stopChaseDistance: 15
   defenseArmor: 50
   groggyDuration: 6
   damageReduce: 0.8
@@ -40,4 +45,4 @@ MonoBehaviour:
   patrolidleTime: 2
   knockbackDuration: 0.25
   knockbackPower: 10
-  dropDataChips: 10
+  dropDataChips: 30

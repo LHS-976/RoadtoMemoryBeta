@@ -20,7 +20,7 @@ public class AutoReturnToPool : MonoBehaviour
     private void CalculateLifeTime()
     {
         var particles = GetComponentsInChildren<ParticleSystem>();
-        float maxDuartion = 0f;
+        float maxDuration = 0f;
 
         foreach (var ps in particles)
         {
@@ -29,16 +29,16 @@ public class AutoReturnToPool : MonoBehaviour
                 return;
             }
             float time = ps.main.duration + ps.main.startLifetime.constantMax;
-            if(time > maxDuartion)
+            if(time > maxDuration)
             {
-                maxDuartion = time;
+                maxDuration = time;
             }
 
         }
-        if(maxDuartion > 0)
+        if(maxDuration > 0)
         {
             //기존 파티클
-            _fallbackLifeTime = maxDuartion + 0.2f;
+            _fallbackLifeTime = maxDuration + 0.2f;
             return;
         }
     }

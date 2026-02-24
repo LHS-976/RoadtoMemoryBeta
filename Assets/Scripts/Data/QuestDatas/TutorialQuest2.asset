@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
-  m_Name: MainQuest3
+  m_Name: TutorialQuest2
   m_EditorClassIdentifier: 
-  ID: 1002
-  Title: "\uAE30\uAD34\uD55C \uC815\uC801\uACFC \uB2E8\uC11C"
-  Description: 
+  ID: 101
+  Title: "\uD2B9\uC774\uD55C \uBC29"
+  Description: "Shift\uD0A4\uB97C \uB204\uB974\uBA74 \uB2EC\uB9AC\uAE30\uAC00 \uAC00\uB2A5\uD569\uB2C8\uB2E4."
   Type: 2
-  TargetID: 
-  TargetCount: 0
-  TargetScene: 
+  TargetID: Input_Sprint
+  TargetCount: 1
+  TargetScene: StageOne
   RewardDataChips: 0
-  NextQuestID: 0
-  IsMainStory: 0
+  NextQuestID: 102
+  IsMainStory: 1

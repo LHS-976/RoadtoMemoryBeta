@@ -80,9 +80,10 @@ public class PlayerCombatState : PlayerBaseState
         if (_isAttacking && IsEvasionCommand(_lastCommand)) return;
         if (Time.time - _lastEvasionTime < EvasionCooldown) return;
 
+        CombatCommand? evasionCmd = GetEvasionDirection();
+        if (!evasionCmd.HasValue) return;
         if (!player.playerManager.UseStamina(player.playerStats.dashStaminaCost)) return;
 
-        CombatCommand? evasionCmd = GetEvasionDirection();
         if(evasionCmd.HasValue)
         {
             _lastEvasionTime = Time.time;

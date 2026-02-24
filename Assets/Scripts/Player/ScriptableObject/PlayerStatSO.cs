@@ -19,7 +19,7 @@ public class PlayerStatSO : ScriptableObject
     public float playerMaxHp = 100f;
     public float playerMaxStamina = 100f;
 
-    public float staminaRegenrate = 10f;
+    public float staminaRegenerate = 10f;
     public float sprintStaminaCost = 10f;
     public float dashStaminaCost = 20f;
     public float staminaRecoveryOnHit = 5f;

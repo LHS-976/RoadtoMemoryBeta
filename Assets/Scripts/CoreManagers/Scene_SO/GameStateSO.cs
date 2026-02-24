@@ -8,13 +8,13 @@ namespace Core
     /// </summary>
     public enum GameState
     {
+        Title,
         Gameplay,
         Option,
         PlayerInfo,
         StatShop,
         Cutscene,
-        Loading
-
+        Dialogue
     }
     [CreateAssetMenu(fileName = "GameStateChannel", menuName = "Events/GameState Data")]
     public class GameStateSO : ScriptableObject

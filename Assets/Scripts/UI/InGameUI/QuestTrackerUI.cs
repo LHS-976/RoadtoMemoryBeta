@@ -1,78 +1,116 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using TMPro;
 
 public class QuestTrackerUI : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private PanelFader _questPanelFader;
+    [SerializeField] private TextMeshProUGUI _questTitleText;
+    [SerializeField] private TextMeshProUGUI _questDescText;
+    [SerializeField] private TextMeshProUGUI _questProgressText;
 
     [Header("Settings")]
     [SerializeField] private KeyCode _toggleKey = KeyCode.F1;
-    [SerializeField] private float _autoHideTime = 3.0f;
 
-    [Header("Data & Channels")]
-    [Tooltip("퀘스트 시작 방송을 수신할 채널 (Int Channel)")]
-    [SerializeField] private IntEventChannelSO _questStartedChannel;
+    [Header("Data & Manager")]
+    [SerializeField] private QuestManager _questManager;
 
-    private Coroutine _autoShowCoroutine;
-    private bool _isToggledOn = false;
+    private bool _isToggledOn = true;
 
     private void Awake()
     {
         if (_questPanelFader == null) _questPanelFader = GetComponent<PanelFader>();
+
+        if (_questManager == null && Core.GameCore.Instance != null)
+        {
+            _questManager = Core.GameCore.Instance.QuestManager;
+        }
     }
 
     private void OnEnable()
     {
-        if (_questStartedChannel != null)
-            _questStartedChannel.OnEventRaised += HandleQuestStarted;
+        if (_questManager != null)
+        {
+            _questManager.OnQuestStarted += HandleQuestStarted;
+            _questManager.OnQuestUpdated += HandleQuestUpdated;
+            _questManager.OnQuestCompleted += HandleQuestCompleted;
+        }
     }
 
     private void OnDisable()
     {
-        if (_questStartedChannel != null)
-            _questStartedChannel.OnEventRaised -= HandleQuestStarted;
+        if (_questManager != null)
+        {
+            _questManager.OnQuestStarted -= HandleQuestStarted;
+            _questManager.OnQuestUpdated -= HandleQuestUpdated;
+            _questManager.OnQuestCompleted -= HandleQuestCompleted;
+        }
+    }
+
+    private void Start()
+    {
+        Invoke(nameof(ForceUpdateUI), 0.1f);
+    }
+
+    private void ForceUpdateUI()
+    {
+        if (_questManager != null && _questManager.CurrentQuest != null)
+        {
+            UpdateQuestUI(_questManager.CurrentQuest, _questManager.CurrentProgress);
+            ShowUI();
+        }
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(_toggleKey))
         {
-            ToggleTrackerUI();
+            _isToggledOn = !_isToggledOn;
+            if (_isToggledOn) ShowUI();
+            else HideUI();
         }
     }
 
-    private void HandleQuestStarted(int newQuestID)
+    private void HandleQuestStarted(QuestSO newQuest)
     {
-        if (_autoShowCoroutine != null) StopCoroutine(_autoShowCoroutine);
-        _autoShowCoroutine = StartCoroutine(AutoShowRoutine());
+        UpdateQuestUI(newQuest, 0);
+        ShowUI();
     }
 
-    private IEnumerator AutoShowRoutine()
+    private void HandleQuestUpdated(QuestSO quest, int progress)
+    {
+        UpdateQuestUI(quest, progress);
+        ShowUI();
+    }
+
+    private void HandleQuestCompleted(QuestSO quest)
+    {
+        if (_questProgressText != null) _questProgressText.text = "완료";
+        ShowUI();
+    }
+
+    private void UpdateQuestUI(QuestSO quest, int progress)
+    {
+        if (quest == null) return;
+
+        if (_questTitleText != null) _questTitleText.text = quest.Title;
+        if (_questDescText != null) _questDescText.text = quest.Description;
+
+        if (_questProgressText != null)
+            _questProgressText.text = $"({progress} / {quest.TargetCount})";
+
+        Debug.Log($"[UI] 퀘스트 텍스트 갱신 완료: {quest.Title}");
+    }
+
+    private void ShowUI()
     {
         _isToggledOn = true;
         _questPanelFader.FadeIn();
-
-        yield return new WaitForSecondsRealtime(_autoHideTime);
-
-        if (_isToggledOn)
-        {
-            _isToggledOn = false;
-            _questPanelFader.FadeOut();
-        }
     }
 
-    private void ToggleTrackerUI()
+    private void HideUI()
     {
-        if (_autoShowCoroutine != null)
-        {
-            StopCoroutine(_autoShowCoroutine);
-            _autoShowCoroutine = null;
-        }
-
-        _isToggledOn = !_isToggledOn;
-
-        if (_isToggledOn) _questPanelFader.FadeIn();
-        else _questPanelFader.FadeOut();
+        _isToggledOn = false;
+        _questPanelFader.FadeOut();
     }
 }

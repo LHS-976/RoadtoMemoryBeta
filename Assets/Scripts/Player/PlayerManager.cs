@@ -5,8 +5,10 @@ public class PlayerManager : MonoBehaviour, IDamageable
 {
     [SerializeField] private PlayerController _playerController;
 
-    [field: SerializeField] private float _currentHp;
+    [field: SerializeField] public float CurrentHp { get; private set; }
     [field: SerializeField] public float CurrentStamina { get; private set; }
+
+    [SerializeField] private PlayerUIEventChannelSO _playerUIChannel;
 
     public bool IsInvincible { get; private set; }
     private bool isDead;
@@ -20,25 +22,29 @@ public class PlayerManager : MonoBehaviour, IDamageable
     }
     void Update()
     {
-        HandleStaminaRegenrate();
+        HandleStaminaRegenerate();
     }
     private void Initialize()
     {
         if (_playerController.playerStats != null)
         {
-            _currentHp = _playerController.playerStats.playerMaxHp;
+            CurrentHp = _playerController.playerStats.playerMaxHp;
             CurrentStamina = _playerController.playerStats.playerMaxStamina;
             isDead = false;
+
+            BroadcastUIUpdate();
         }
     }
-    private void HandleStaminaRegenrate()
+    private void HandleStaminaRegenerate()
     {
         if (!_playerController.IsSprint && CurrentStamina < _playerController.playerStats.playerMaxStamina)
         {
-            CurrentStamina += _playerController.playerStats.staminaRegenrate * Time.deltaTime;
+            CurrentStamina += _playerController.playerStats.staminaRegenerate * Time.deltaTime;
 
             if (CurrentStamina > _playerController.playerStats.playerMaxStamina)
                 CurrentStamina = _playerController.playerStats.playerMaxStamina;
+
+            BroadcastUIUpdate();
         }
     }
     public bool UseStamina(float amount)
@@ -46,6 +52,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
         if (CurrentStamina >= amount)
         {
             CurrentStamina -= amount;
+            BroadcastUIUpdate();
             return true;
         }
         return false;
@@ -54,6 +61,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         CurrentStamina -= amount;
         if (CurrentStamina < 0) CurrentStamina = 0;
+        BroadcastUIUpdate();
     }
     public void RestoreStamina(float amount)
     {
@@ -63,6 +71,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
         {
             CurrentStamina = _playerController.playerStats.playerMaxStamina;
         }
+        BroadcastUIUpdate();
     }
 
 
@@ -71,24 +80,23 @@ public class PlayerManager : MonoBehaviour, IDamageable
         if (isDead) return;
         if (IsInvincible) return; //무적
 
-        _currentHp -= damage;
-        if(_playerController != null)
+        CurrentHp -= damage;
+        BroadcastUIUpdate();
+        if (_playerController != null)
         {
             _playerController.OnHit(knockBackDir);
         }
 
-        if (_currentHp <= 0)
+        if (CurrentHp <= 0)
         {
-            _currentHp = 0;
+            CurrentHp = 0;
             Die();
         }
     }
-
     public void SetInvincible(bool state)
     {
         IsInvincible = state;
     }
-
     public Transform GetTransform()
     {
         return transform;
@@ -98,4 +106,20 @@ public class PlayerManager : MonoBehaviour, IDamageable
         isDead = true;
         _playerController.HandleDie();
     }
+    #region Broad UI
+    private void BroadcastUIUpdate()
+    {
+        if (_playerUIChannel != null && _playerController.playerStats != null)
+        {
+            PlayerUIPayload payload = new PlayerUIPayload
+            {
+                currentHp = CurrentHp,
+                maxHp = _playerController.playerStats.playerMaxHp,
+                currentStamina = CurrentStamina,
+                maxStamina = _playerController.playerStats.playerMaxStamina
+            };
+            _playerUIChannel.RaiseEvent(payload);
+        }
+    }
+    #endregion
 }

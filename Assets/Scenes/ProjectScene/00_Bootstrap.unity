@@ -511,11 +511,27 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@GameCore'
       objectReference: {fileID: 0}
+    - target: {fileID: 7507295652861138180, guid: b94b6892ab9d4204daa5f08760f72966,
+        type: 3}
+      propertyPath: far clip plane
+      value: 2000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7507295652861138180, guid: b94b6892ab9d4204daa5f08760f72966,
+        type: 3}
+      propertyPath: near clip plane
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7635361908000991982, guid: b94b6892ab9d4204daa5f08760f72966,
+        type: 3}
+      propertyPath: _playerPrefab
+      value: 
+      objectReference: {fileID: 6485000998581766325, guid: 5ed3ab3c3cd7e5e43a16734ba6848850,
+        type: 3}
     - target: {fileID: 9049197803234657682, guid: b94b6892ab9d4204daa5f08760f72966,
         type: 3}
       propertyPath: _questEventChannel
       value: 
-      objectReference: {fileID: 11400000, guid: 7fc29685e0346b140869289b5c84e21c,
+      objectReference: {fileID: 11400000, guid: 74c8b1e6c75e676479a0e690e10dd9fb,
         type: 2}
     - target: {fileID: 9049197803234657682, guid: b94b6892ab9d4204daa5f08760f72966,
         type: 3}

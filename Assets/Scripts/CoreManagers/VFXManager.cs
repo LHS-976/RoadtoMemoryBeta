@@ -21,26 +21,26 @@ public class VFXManager : MonoBehaviour
         }
     }
 
-    public void PlayVFX(GameObject prefab, Vector3 position, Quaternion rotation)
+    public GameObject PlayVFX(GameObject prefab, Vector3 position, Quaternion rotation)
     {
-        if (prefab == null) return;
+        if (prefab == null) return null;
 
-        if(!_pools.ContainsKey(prefab))
+        if (!_pools.ContainsKey(prefab))
         {
             _pools.Add(prefab, new Queue<GameObject>());
         }
 
         GameObject vfxInstance = null;
 
-        while (_pools[prefab].Count >0)
+        while (_pools[prefab].Count > 0)
         {
             vfxInstance = _pools[prefab].Dequeue();
-            if(vfxInstance != null)
+            if (vfxInstance != null)
             {
                 break;
             }
         }
-        if(vfxInstance == null)
+        if (vfxInstance == null)
         {
             vfxInstance = CreateNewInstance(prefab);
         }
@@ -51,12 +51,13 @@ public class VFXManager : MonoBehaviour
         vfxInstance.transform.SetParent(null);
 
         VisualEffect vfx = vfxInstance.GetComponent<VisualEffect>();
-        if(vfx != null)
+        if (vfx != null)
         {
             vfx.Reinit();
             vfx.Play();
         }
 
+        return vfxInstance;
     }
     private GameObject CreateNewInstance(GameObject prefab)
     {

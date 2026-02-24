@@ -94,4 +94,14 @@ public class TimeManager : MonoBehaviour
         }
         RestoreTime();
     }
+    public void PauseTime()
+    {
+        if (_activeSlowMotion != null)
+        {
+            StopCoroutine(_activeSlowMotion);
+            _activeSlowMotion = null;
+        }
+
+        Time.timeScale = 0f;
+    }
 }

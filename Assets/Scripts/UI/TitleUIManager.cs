@@ -8,6 +8,7 @@ public class TitleUIManager : MonoBehaviour
     [Header("Scene Routing")]
     [SerializeField] private GameSceneEventChannelSO _loadSceneChannel;
     [SerializeField] private GameSceneSO _firstStageScene;
+    [SerializeField] private GameStateSO _gameState;
 
     [Header("UI Panels")]
     [SerializeField] private PanelFader _pressAnyKeyPanel;
@@ -30,6 +31,16 @@ public class TitleUIManager : MonoBehaviour
     private PanelFader _currentPanel;
     private static bool _hasPassedPressAnyKey = false;
 
+
+    private void Awake()
+    {
+        if (_gameState == null) _gameState = GetComponent<GameStateSO>();
+
+        if(_gameState != null)
+        {
+            _gameState.SetState(GameState.Title);
+        }
+    }
 
     private void Start()
     {
@@ -100,7 +111,6 @@ public class TitleUIManager : MonoBehaviour
     {
         Debug.Log("새 게임 시작!");
         GameCore.Instance.DataManager.DeleteSaveData();
-        GameCore.Instance.QuestManager.ResetForNewGame();
         _currentPanel?.FadeOut();
         PlayCinematic();
     }

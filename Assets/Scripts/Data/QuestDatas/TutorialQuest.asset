@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: TutorialQuest
+  m_EditorClassIdentifier: 
+  ID: 100
+  Title: "\uAC15\uC81C \uBC30\uCD9C"
+  Description: "AI\uC758 \"\uACA9\uB9AC \uC2E4\uD328\" \uC74C\uC131\uC774 \uC6B8\uB824\uD37C\uC9C4\uB2E4.\n(W,
+    A, S, D\uD0A4\uB85C \uC6C0\uC9C1\uC5EC\uBCF4\uC138\uC694.)"
+  IntroDialogues:
+  - "\".....\uCC28\uAC11\uB2E4.\"\n\uC228\uC744 \uB4E4\uC774\uC26C\uB294 \uAC83\uC870\uCC28
+    \uB0AF\uC124\uB2E4."
+  - "\"\uC5EC\uAE34.. \uC5B4\uB514\uC9C0?\"\n\uC2DC\uC57C\uAC00 \uCC9C\uCC9C\uD788
+    \uB610\uB837\uD574\uC9C4\uB2E4. \uBB34\uB38C\uC9C4 \uAC10\uAC01\uC774 \uB3CC\uC544\uC628\uB2E4."
+  - "\uBA38\uB9BF\uC18D\uC740 \uAE30\uAD34\uD560 \uC815\uB3C4\uB85C \uACE0\uC694\uD558\uB2E4.
+    \uB204\uAD70\uAC00 \uB0B4 \uC601\uD63C\uC744 \uC815\uAD50\uD558\uAC8C \uB3C4\uB824\uB0B8
+    \uAC83\uCC98\uB7FC."
+  - "\uBB34\uC5B8\uAC00 \uC798\uBABB\uB418\uC5C8\uB2E4. \uADF8\uB9AC\uACE0.. \uB0B4\uAC00
+    \uC5EC\uAE30\uC11C \uAE68\uC5B4\uB098\uC120 \uC548 \uB418\uC5C8\uB2E4\uB294 \uB290\uB08C."
+  Type: 2
+  TargetID: Input_Move
+  TargetCount: 4
+  TargetScene: StageOne
+  RewardDataChips: 20
+  NextQuestID: 101
+  IsMainStory: 1

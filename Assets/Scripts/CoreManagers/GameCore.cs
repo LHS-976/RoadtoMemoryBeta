@@ -19,6 +19,10 @@ namespace Core
         [Header("Data Settings")]
         [SerializeField] private GameStateSO _gameState;
 
+        [Header("Player Spawning")]
+        [SerializeField] private GameObject _playerPrefab;
+        public GameObject CurrentPlayer { get; private set; }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -36,6 +40,7 @@ namespace Core
             QualitySettings.vSyncCount = 0;
 
             DataManager.LoadGame();
+            QuestManager.LoadQuestProgress();
             //SoundManager.InitializeVolume();
         }
         public void TogglePause()
@@ -45,14 +50,15 @@ namespace Core
             if (_gameState.CurrentState == GameState.Gameplay)
             {
                 _gameState.SetState(GameState.Option);
+
+                if (TimeManager != null)
+                {
+                    TimeManager.PauseTime();
+                }
             }
-            else if (_gameState.CurrentState == GameState.Option)
+            else if (_gameState.CurrentState == GameState.Option || _gameState.CurrentState == GameState.PlayerInfo)
             {
-                _gameState.SetState(GameState.Gameplay);
-            }
-            else if(_gameState.CurrentState == GameState.PlayerInfo)
-            {
-                _gameState.SetState(GameState.Gameplay);
+                ResumeGame();
             }
         }
 
@@ -68,13 +74,33 @@ namespace Core
                 TimeManager.ForceRestoreTime();
             }
         }
-
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
+                if (_gameState != null &&
+                   (_gameState.CurrentState == GameState.Title || _gameState.CurrentState == GameState.Dialogue))
+                {
+                    return;
+                }
+
                 TogglePause();
             }
+            if(Input.GetKeyDown(KeyCode.J))
+            {
+                //세이브 테스트
+                DataManager.SaveGame();
+            }
         }
+
+        #region PlayerSpawnManage
+        public GameObject SpawnPlayer(Transform spawnPoint)
+        {
+            if (_playerPrefab == null) return null;
+
+            CurrentPlayer = Instantiate(_playerPrefab, spawnPoint.position, spawnPoint.rotation);
+            return CurrentPlayer;
+        }
+        #endregion
     }
 }
