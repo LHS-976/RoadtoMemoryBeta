@@ -24,7 +24,9 @@ namespace EnemyControllerScripts
         [HideInInspector] public Vector3 KnockbackForce;
 
 
-        //EnemyStats로 옮기기
+        [Header("Broad Channel")]
+        [SerializeField] private StringEventChannelSO _questKillChannel;
+
         [Header("Caching Enemy EyeSight")]
         private float CLOSE_DETECTION_RANGE;
         private float EYE_HEIGHT;
@@ -60,6 +62,17 @@ namespace EnemyControllerScripts
         private void Update()
         {
             if (EnemyManager.isDead) return;
+
+            //NavMesh 이탈 시 강제 복귀
+            if(Agent.enabled && !Agent.isOnNavMesh)
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(transform.position, out hit, 3f, Agent.areaMask))
+                {
+                    Agent.Warp(hit.position);
+                }
+            }
+
             currentState?.OnUpdate();
         }
 
@@ -83,6 +96,10 @@ namespace EnemyControllerScripts
             Agent.speed = EnemyManager.EnemyStats.moveSpeed;
             Agent.angularSpeed = EnemyManager.EnemyStats.rotationSpeed;
             Agent.stoppingDistance = EnemyManager.EnemyStats.attackTriggerRange;
+
+            //회피 설정 보장
+            Agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            Agent.avoidancePriority = 50;
         }
 
         #region Rotation
@@ -185,7 +202,6 @@ namespace EnemyControllerScripts
         {
             Agent.isStopped = false;
             Agent.updateRotation = false;
-            Agent.updateUpAxis = false;
             Agent.stoppingDistance = EnemyManager.EnemyStats.attackTriggerRange;
         }
 
@@ -231,6 +247,10 @@ namespace EnemyControllerScripts
         public void HandleDie()
         {
             DisableWeaponTrace();
+            if(_questKillChannel != null)
+            {
+                _questKillChannel.RaiseEvent(EnemyManager.EnemyStats.enemyID);
+            }
 
             if (Agent != null)
             {

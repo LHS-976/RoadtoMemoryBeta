@@ -141,7 +141,8 @@ public class SaveSlotUIManager : MonoBehaviour
 
         if(_titleUIManager != null)
         {
-            _titleUIManager.PlayCinematic();
+            bool isNewGame = (_currentMode == SlotMenuMode.NewGame);
+            _titleUIManager.PlayCinematic(!isNewGame);
         }
     }
 }

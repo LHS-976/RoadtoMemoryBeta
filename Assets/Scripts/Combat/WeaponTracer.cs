@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class WeaponTracer : MonoBehaviour
 {
@@ -22,10 +23,13 @@ public class WeaponTracer : MonoBehaviour
     public GameObject weaponBack;
 
     [Header("Effects")]
-    public ParticleSystem drawVFX;
-    public ParticleSystem sheathVFX;
+    public VisualEffect drawVFX;
+    public VisualEffect sheathVFX;
 
+    [Header("Combat Unlock")]
+    [SerializeField] private VoidEventChannelSO _enableCombatChannel;
     private Vector3 _prevMidPoint;
+    private bool _weaponUnlocked = false;
     public void Initialize(IWeaponHitRange weaponHitRange)
     {
         _weaponHitRange = weaponHitRange;
@@ -130,7 +134,38 @@ public class WeaponTracer : MonoBehaviour
     }
     private void Start()
     {
-        SheathWeapon();
+        GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+        if (data != null && data.IsCombatUnlocked)
+        {
+            _weaponUnlocked = true;
+            SheathWeapon();  //등에 표시
+        }
+        else
+        {
+            HideWeapon();    //완전 숨김
+        }
+    }
+    private void OnEnable()
+    {
+        if (_enableCombatChannel != null)
+            _enableCombatChannel.OnEventRaised += OnWeaponUnlocked;
+    }
+
+    private void OnDisable()
+    {
+        if (_enableCombatChannel != null)
+            _enableCombatChannel.OnEventRaised -= OnWeaponUnlocked;
+    }
+    private void OnWeaponUnlocked()
+    {
+        _weaponUnlocked = true;
+        SheathWeapon();  //등에 칼 표시
+    }
+
+    private void HideWeapon()
+    {
+        if (weaponHand != null) weaponHand.SetActive(false);
+        if (weaponBack != null) weaponBack.SetActive(false);
     }
 
     public void DrawWeapon()

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f1e67376e291f444a5b09a653b68141, type: 3}
-  m_Name: Stage01
+  m_Name: LoadingScene
   m_EditorClassIdentifier: 
-  sceneName: Stage01
-  displayName: Stage01
+  sceneName: LoadingScene
+  displayName: LoadingScene
   backgroundMusic: {fileID: 0}

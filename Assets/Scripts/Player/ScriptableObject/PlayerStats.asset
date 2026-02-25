@@ -19,9 +19,9 @@ MonoBehaviour:
   CombatRunSpeed: 5
   AttackRotationSpeed: 15
   LockOnRotationSpeed: 1.5
-  playerMaxHp: 100
-  playerMaxStamina: 100
-  staminaRegenrate: 10
+  playerMaxHp: 50
+  playerMaxStamina: 30
+  staminaRegenerate: 10
   sprintStaminaCost: 5
   dashStaminaCost: 20
   staminaRecoveryOnHit: 5

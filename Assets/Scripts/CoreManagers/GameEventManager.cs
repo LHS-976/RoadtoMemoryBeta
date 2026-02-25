@@ -2,8 +2,6 @@
 using UnityEngine;
 
 
-namespace Core
-{
     public  static class GameEventManager
     {
         public static event Action<Vector3> OnExecutionSuccess;
@@ -24,4 +22,3 @@ namespace Core
             OnExecutionSuccess?.Invoke(hitPoint);
         }
     }
-}

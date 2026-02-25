@@ -24,7 +24,9 @@ public class TitleUIManager : MonoBehaviour
 
     [Header("Scene Transition")]
     [SerializeField] private PanelFader _sceneFader;
-    
+
+    [Header("Available Scenes")]
+    [SerializeField] private GameSceneSO[] _allScenes;
     private const float _fadeWaitTime = 0.5f;
 
     private bool _isPlayingVideo = false;
@@ -111,6 +113,7 @@ public class TitleUIManager : MonoBehaviour
     public void OnClickNewGame()
     {
         Debug.Log("새 게임 시작!");
+        _gameModePanel?.FadeOut();
         if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.NewGame);
         _currentPanel?.FadeOut();
     }
@@ -121,19 +124,22 @@ public class TitleUIManager : MonoBehaviour
 
         if (latestSlot != -1)
         {
+            _gameModePanel?.FadeOut();
             Debug.Log($"[Title] 최근 세이브(슬롯 {latestSlot + 1})를 이어서 시작합니다!");
             GameCore.Instance.DataManager.LoadGame(latestSlot);
-
             _currentPanel?.FadeOut();
+            PlayCinematic(true);
         }
         else
         {
+            _gameModePanel?.FadeOut();
             Debug.LogWarning("[Title] 저장된 데이터가 전혀 없습니다! 새 게임 창으로 유도합니다.");
             if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.NewGame);
         }
     }
     public void OnClickLoad()
     {
+        _gameModePanel?.FadeOut();
         Debug.Log("불러오기 슬롯 선택 창 열기");
         if (_slotManager != null) _slotManager.OpenSlotMenu(SlotMenuMode.LoadGame);
     }
@@ -141,10 +147,10 @@ public class TitleUIManager : MonoBehaviour
     {
         BackToMainMenu();
     }
-    public void PlayCinematic()
+    public void PlayCinematic(bool skipVideo = false)
     {
         _currentPanel?.FadeOut();
-        if(_videoPanel != null && _videoPlayer != null)
+        if(!skipVideo && _videoPanel != null && _videoPlayer != null)
         {
             StartCoroutine(PlayCinematicRoutine());
         }
@@ -188,10 +194,29 @@ public class TitleUIManager : MonoBehaviour
         _currentPanel?.FadeOut();
         _currentPanel = null;
 
-        if (_loadSceneChannel != null && _firstStageScene != null)
+        GameData data = GameCore.Instance?.DataManager?.CurrentData;
+
+        GameSceneSO targetScene = _firstStageScene;
+
+        if (data != null && !string.IsNullOrEmpty(data.LastSceneName))
         {
-            _loadSceneChannel.RaiseEvent(_firstStageScene);
+            GameSceneSO found = FindSceneSOByName(data.LastSceneName);
+            if (found != null)
+                targetScene = found;
         }
+
+        _loadSceneChannel.RaiseEvent(targetScene);
+    }
+    private GameSceneSO FindSceneSOByName(string sceneName)
+    {
+        if (_allScenes == null) return null;
+
+        foreach (var scene in _allScenes)
+        {
+            if (scene.sceneName == sceneName)
+                return scene;
+        }
+        return null;
     }
     #endregion
 

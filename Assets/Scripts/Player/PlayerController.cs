@@ -42,6 +42,15 @@ namespace PlayerControllerScripts
         [HideInInspector] public static readonly int AnimIDDie = Animator.StringToHash("Die");
         [HideInInspector] public static readonly int AnimIDExecution = Animator.StringToHash("Execution");
 
+
+        [Header("Broadcasting Channel")]
+        [SerializeField] private VoidEventChannelSO _enableCombatChannel;
+        [SerializeField] protected VoidEventChannelSO _deathChannel;
+        [SerializeField] private VoidEventChannelSO _playerHitChannel;
+
+        [SerializeField]private bool _canUseCombatMode = false;
+
+
         private Vector3 _velocity;
         private Vector3 _pendingMovement;
         private bool _isSheathing = false;
@@ -85,10 +94,30 @@ namespace PlayerControllerScripts
             moveSpeed = playerStats.WalkSpeed;
             CombatSystem.Initialize(this, Animator);
         }
+        private void OnEnable()
+        {
+            if (_enableCombatChannel != null)
+                _enableCombatChannel.OnEventRaised += UnlockCombatMode;
+        }
+
+        private void OnDisable()
+        {
+            if (_enableCombatChannel != null)
+                _enableCombatChannel.OnEventRaised -= UnlockCombatMode;
+        }
 
         private void Start()
         {
             ChangeState(idleState);
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            if (data != null && data.IsCombatUnlocked)
+            {
+                _canUseCombatMode = true;
+                if (!isCombatMode)
+                {
+                    ToggleCombatMode();
+                }
+            }
         }
 
         private void Update()
@@ -117,7 +146,7 @@ namespace PlayerControllerScripts
             {
                 IsSprint = false;
             }
-            if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.X)&&_canUseCombatMode)
             {
                 ToggleCombatMode();
             }
@@ -280,6 +309,10 @@ namespace PlayerControllerScripts
 
             KnockBackForce = knockBackDir;
             ChangeState(hitState);
+            if(_playerHitChannel != null)
+            {
+                _playerHitChannel.RaiseEvent();
+            }
         }
 
         public void HandleDie()
@@ -300,6 +333,7 @@ namespace PlayerControllerScripts
             }
             if (WeaponTracer != null) WeaponTracer.DisableTrace();
 
+            _deathChannel?.RaiseEvent();
             Debug.Log("플레이어 사망");
         }
 
@@ -368,6 +402,20 @@ namespace PlayerControllerScripts
                     transform.rotation, targetRotation,
                     Time.deltaTime * playerStats.AttackRotationSpeed * playerStats.LockOnRotationSpeed
                 );
+            }
+        }
+        #endregion
+        #region Broad Event
+        private void UnlockCombatMode()
+        {
+            _canUseCombatMode = true;
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            if (data != null) data.IsCombatUnlocked = true;
+
+            if (!isCombatMode)
+            {
+                ToggleCombatMode();
+                Debug.Log("[Player] 전투 모드 권한 획득! 무기를 빼듭니다.");
             }
         }
 

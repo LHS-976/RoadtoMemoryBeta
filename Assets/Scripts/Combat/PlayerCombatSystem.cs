@@ -166,8 +166,11 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         if (_currentActionIndex == -1)
         {
             int startIndex = currentStrategy.GetStartingIndex(commandType);
-            if (startIndex != -1)
+
+            //if (startIndex != -1)
+            if (startIndex != -1 && IsAttackAvailable(startIndex) && CanAffordStamina(startIndex))
             {
+                ConsumeAttackStamina(startIndex);
                 PlayAttackAnim(startIndex);
             }
             return;
@@ -176,8 +179,10 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         AttackAction currentAction = currentStrategy.actions[_currentActionIndex];
         ComboConnection connection = FindNextCombo(currentAction, commandType);
 
-        if (connection != null)
+        //if (connection != null)
+        if (connection != null && IsAttackAvailable(connection.nextComboIndex) && CanAffordStamina(connection.nextComboIndex))
         {
+            ConsumeAttackStamina(connection.nextComboIndex);
             PlayAttackAnim(connection.nextComboIndex);
         }
     }
@@ -222,6 +227,11 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         knockBackDir.y = 0;
 
         float finalDamage = currentStrategy.baseDamage * action.damageMultiplier;
+        GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+        if(data != null)
+        {
+            finalDamage += data.GetAttackBonus();
+        }
         ApplyArmorDamage(target, action, finalDamage);
         target.TakeDamage(finalDamage, knockBackDir);
 
@@ -382,6 +392,40 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         _animator.SetInteger(PlayerController.AnimIDComboCount, 0);
         _animator.speed = 1f;
     }
+
+    private bool IsAttackAvailable(int actionIndex)
+    {
+        if (actionIndex >= currentStrategy.actions.Count) return false;
+
+        AttackAction action = currentStrategy.actions[actionIndex];
+
+        if (!action.requiresUnlock) return true;
+
+        //GameData에서 해금 여부 확인
+        GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+        if (data == null) return false;
+
+        return data.IsAttackUnlocked(action.attackName);
+    }
+    private bool CanAffordStamina(int actionIndex)
+    {
+        if (actionIndex >= currentStrategy.actions.Count) return false;
+
+        float cost = currentStrategy.actions[actionIndex].staminaCost;
+        if (cost <= 0) return true;
+
+        return _controller.playerManager.CurrentStamina >= cost;
+    }
+
+    private void ConsumeAttackStamina(int actionIndex)
+    {
+        float cost = currentStrategy.actions[actionIndex].staminaCost;
+        if (cost > 0)
+        {
+            _controller.playerManager.ConsumeStamina(cost);
+        }
+    }
+
 
     #endregion
 }

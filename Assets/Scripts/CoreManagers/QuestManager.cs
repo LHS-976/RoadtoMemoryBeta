@@ -198,7 +198,7 @@ public class QuestManager : MonoBehaviour
     {
         _questCompletedChannel?.RaiseEvent(completedQuestID);
 
-        yield return new WaitForSeconds(3.5f);
+        yield return new WaitForSeconds(1.5f);
         if(nextQuestID >0)
         {
             StartQuest(nextQuestID);

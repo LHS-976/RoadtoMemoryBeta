@@ -72,6 +72,10 @@ public class InGameUIManager : MonoBehaviour
                 _hudPanel.FadeOut();
                 _optionPanel.FadeOut();
                 break;
+            case GameState.StatShop:
+                _hudPanel.FadeOut();
+                _optionPanel.FadeOut();
+                break;
         }
     }
 

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: TutorialQuest5
+  m_EditorClassIdentifier: 
+  ID: 104
+  Title: "\uCCAB \uBC88\uC9F8 \uAE30\uC5B5(1/3)"
+  Description: "\uBB38\uC744 \uB118\uC5B4 \uBC29\uC744 \uD0C8\uCD9C\uD558\uC790.\n"
+  IntroDialogues:
+  - "-\uC2E4\uD5D8\uCCB4 mornye\n-\uC2E4\uD5D8 \uB2E8\uACC4 3\uC9C4\uD589\n-\uC2E0\uCCB4
+    \uAC1C\uC870 \uC801\uC751\uB960 87%"
+  - "- \uB300\uC0C1 \uAC01\uC131 \uBC18\uC751 \uC608\uC0C1\uCE58 \uCD08\uACFC\n-
+    \uACA9\uB9AC \uD504\uB85C\uD1A0\uCF5C \uC218\uB3D9 \uC804\uD658!!!"
+  - '....................................
+
+    ........................
+
+    .................'
+  - "-\uAE30\uB85D \uB9D0\uC18C-"
+  - "Error! Error! Error! \nError! Error! Error! \nError! Error! Error! "
+  - "De=t B!o  z \uD504\uB85C\uD1A0\uCF5C \uD574\uC81C"
+  Type: 2
+  TargetID: EscapeCorridor
+  TargetCount: 1
+  TargetScene: StageOne
+  RewardDataChips: 10
+  NextQuestID: 105
+  IsMainStory: 1

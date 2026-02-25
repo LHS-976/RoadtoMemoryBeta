@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using Core;
 using TMPro;
+using UnityEngine;
 
 public class QuestTrackerUI : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class QuestTrackerUI : MonoBehaviour
 
     [Header("Data & Manager")]
     [SerializeField] private QuestManager _questManager;
+
+    [Header("GameState")]
+    [SerializeField] private GameStateSO _gameState;
+
+    private bool _wasVisibleBeforePause = false;
 
     private bool _isToggledOn = true;
 
@@ -35,6 +41,8 @@ public class QuestTrackerUI : MonoBehaviour
             _questManager.OnQuestUpdated += HandleQuestUpdated;
             _questManager.OnQuestCompleted += HandleQuestCompleted;
         }
+        if(_gameState != null)
+            _gameState.OnStateChange += HandleStateChange;
     }
 
     private void OnDisable()
@@ -45,6 +53,8 @@ public class QuestTrackerUI : MonoBehaviour
             _questManager.OnQuestUpdated -= HandleQuestUpdated;
             _questManager.OnQuestCompleted -= HandleQuestCompleted;
         }
+        if (_gameState != null)
+            _gameState.OnStateChange -= HandleStateChange;
     }
 
     private void Start()
@@ -68,6 +78,23 @@ public class QuestTrackerUI : MonoBehaviour
             _isToggledOn = !_isToggledOn;
             if (_isToggledOn) ShowUI();
             else HideUI();
+        }
+    }
+    private void HandleStateChange(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.Option:
+            case GameState.StatShop:
+            case GameState.PlayerInfo:
+                _wasVisibleBeforePause = _isToggledOn;
+                _questPanelFader.FadeOut();
+                break;
+
+            case GameState.Gameplay:
+                if (_wasVisibleBeforePause)
+                    _questPanelFader.FadeIn();
+                break;
         }
     }
 

@@ -12,6 +12,10 @@ public class AttackAction
 {
     public string attackName;
     public float damageMultiplier;
+    public float staminaCost = 0f;
+
+    [Header("Unlock Settings")]
+    public bool requiresUnlock = false;
 
     [Header("정확한 프레임 계산: 공격 판정이 켜지는 시점 / 120frame")]
     public float startFrameHit;

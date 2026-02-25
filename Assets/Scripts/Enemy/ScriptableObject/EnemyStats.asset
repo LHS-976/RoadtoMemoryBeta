@@ -16,8 +16,8 @@ MonoBehaviour:
   moveSpeed: 1
   chaseMoveSpeed: 3
   rotationSpeed: 120
-  viewRadius: 10
-  viewAngle: 120
+  viewRadius: 15
+  viewAngle: 150
   closeDetectionRange: 2
   eyeHeight: 1.5
   targetChestHeight: 1.2

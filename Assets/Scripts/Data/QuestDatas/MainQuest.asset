@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
   m_Name: MainQuest
   m_EditorClassIdentifier: 
-  ID: 102
+  ID: 0
   Title: "\uCCAB\uBC88\uC9F8 \uAE30\uC5B5"
   Description: "\uC2A4\uC704\uCE58 \uC0C1\uD638\uC791\uC6A9\uD0A4\uB294 F\uC785\uB2C8\uB2E4."
+  IntroDialogues: []
   Type: 2
   TargetID: 
   TargetCount: 1

@@ -57,13 +57,19 @@ public class EnemyPatrolState : EnemyBaseState
 
     private void SetRandomDestination()
     {
-        Vector3 randomPoint = enemyController.spawnPosition + Random.insideUnitSphere * _patrolRadius;
+        // Y축 제거 — 수평 원형 범위에서만 랜덤
+        Vector2 randomCircle = Random.insideUnitCircle * _patrolRadius;
+        Vector3 randomPoint = enemyController.spawnPosition + new Vector3(randomCircle.x, 0f, randomCircle.y);
 
         NavMeshHit hit;
-        //NavMesh.AllAreas - 어떤 속성(Area)의 땅이든 상관없이 위치 잡기
-        if(NavMesh.SamplePosition(randomPoint, out hit, _patrolRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPoint, out hit, 2f, enemyController.Agent.areaMask))
         {
-            enemyController.Agent.SetDestination(hit.position);
+            // 실제로 Agent가 도달 가능한 경로인지 확인
+            NavMeshPath path = new NavMeshPath();
+            if (enemyController.Agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
+            {
+                enemyController.Agent.SetDestination(hit.position);
+            }
         }
     }
     private bool CheckForPlayer()

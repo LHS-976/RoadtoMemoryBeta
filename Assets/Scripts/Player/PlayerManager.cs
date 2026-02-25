@@ -8,7 +8,9 @@ public class PlayerManager : MonoBehaviour, IDamageable
     [field: SerializeField] public float CurrentHp { get; private set; }
     [field: SerializeField] public float CurrentStamina { get; private set; }
 
+    [Header("Broadcast Channel")]
     [SerializeField] private PlayerUIEventChannelSO _playerUIChannel;
+    [SerializeField] private VoidEventChannelSO _enableCombatChannel;
 
     public bool IsInvincible { get; private set; }
     private bool isDead;
@@ -28,22 +30,50 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         if (_playerController.playerStats != null)
         {
-            CurrentHp = _playerController.playerStats.playerMaxHp;
-            CurrentStamina = _playerController.playerStats.playerMaxStamina;
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            if (data != null)
+            {
+                CurrentHp = data.GetUpgradedMaxHp(_playerController.playerStats.playerMaxHp);
+                CurrentStamina = data.GetUpgradedMaxStamina(_playerController.playerStats.playerMaxStamina);
+            }
+            else
+            {
+                CurrentHp = _playerController.playerStats.playerMaxHp;
+                CurrentStamina = _playerController.playerStats.playerMaxStamina;
+            }
             isDead = false;
 
             BroadcastUIUpdate();
         }
     }
+    #region Upgrade/Stats
+    public float MaxHp
+    {
+        get
+        {
+            float baseHp = _playerController.playerStats.playerMaxHp;
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            return data != null ? data.GetUpgradedMaxHp(baseHp) : baseHp;
+        }
+    }
+    public float MaxStamina
+    {
+        get
+        {
+            float baseStamina = _playerController.playerStats.playerMaxStamina;
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            return data != null ? data.GetUpgradedMaxStamina(baseStamina) : baseStamina;
+        }
+    }
+    #endregion
+
+
     private void HandleStaminaRegenerate()
     {
         if (!_playerController.IsSprint && CurrentStamina < _playerController.playerStats.playerMaxStamina)
         {
             CurrentStamina += _playerController.playerStats.staminaRegenerate * Time.deltaTime;
-
-            if (CurrentStamina > _playerController.playerStats.playerMaxStamina)
-                CurrentStamina = _playerController.playerStats.playerMaxStamina;
-
+            if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
             BroadcastUIUpdate();
         }
     }
@@ -106,7 +136,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
         isDead = true;
         _playerController.HandleDie();
     }
-    #region Broad UI
+    #region Broadcast UI
     private void BroadcastUIUpdate()
     {
         if (_playerUIChannel != null && _playerController.playerStats != null)
@@ -114,12 +144,26 @@ public class PlayerManager : MonoBehaviour, IDamageable
             PlayerUIPayload payload = new PlayerUIPayload
             {
                 currentHp = CurrentHp,
-                maxHp = _playerController.playerStats.playerMaxHp,
+                maxHp = MaxHp,
                 currentStamina = CurrentStamina,
-                maxStamina = _playerController.playerStats.playerMaxStamina
+                maxStamina = MaxStamina
             };
             _playerUIChannel.RaiseEvent(payload);
         }
+    }
+    public void ApplyUpgrades()
+    {
+        float newMaxHp = MaxHp;
+        float newMaxStamina = MaxStamina;
+
+        //현재 HP가 새 최대값보다 낮으면 최대값으로 회복
+        if (CurrentHp < newMaxHp)
+            CurrentHp = newMaxHp;
+
+        if (CurrentStamina < newMaxStamina)
+            CurrentStamina = newMaxStamina;
+
+        BroadcastUIUpdate();
     }
     #endregion
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
+using Core;
 
 public class QuestAnnouncerUI : MonoBehaviour
 {
@@ -9,8 +9,9 @@ public class QuestAnnouncerUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _announceTitleText;
     [SerializeField] private TextMeshProUGUI _announceSubText;
     [SerializeField] private QuestManager _questManager;
+    [SerializeField] private GameStateSO _gameState;
 
-    private const float _fadeOut = 3f;
+    private const float _fadeOut = 1.2f;
 
     private Coroutine _announceCoroutine;
 
@@ -46,6 +47,8 @@ public class QuestAnnouncerUI : MonoBehaviour
             _questManager.OnQuestStarted += ShowQuestStart;
             _questManager.OnQuestCompleted += ShowQuestComplete;
         }
+        if (_gameState != null)
+            _gameState.OnStateChange += HandleStateChange;
     }
 
     private void OnDisable()
@@ -55,6 +58,8 @@ public class QuestAnnouncerUI : MonoBehaviour
             _questManager.OnQuestStarted -= ShowQuestStart;
             _questManager.OnQuestCompleted -= ShowQuestComplete;
         }
+        if (_gameState != null)
+            _gameState.OnStateChange -= HandleStateChange;
     }
 
     private void ShowQuestStart(QuestSO quest)
@@ -73,7 +78,7 @@ public class QuestAnnouncerUI : MonoBehaviour
         if (quest == null) return;
 
         _announceTitleText.text = "퀘스트 완료";
-        _announceSubText.text = "보상지급 완료!";
+        _announceSubText.text = $"보상: {quest.RewardDataChips} DataChips 획득.";
 
         if (_announceCoroutine != null) StopCoroutine(_announceCoroutine);
         _announceCoroutine = StartCoroutine(ShowAndHideRoutine());
@@ -84,5 +89,15 @@ public class QuestAnnouncerUI : MonoBehaviour
         _announcerFader.FadeIn();
         yield return new WaitForSeconds(_fadeOut);
         _announcerFader.FadeOut();
+    }
+
+    //스토리 대화박스 중에 퀘스트알림 지우기.
+    private void HandleStateChange(GameState state)
+    {
+        if (state == GameState.Dialogue)
+        {
+            if (_announceCoroutine != null) StopCoroutine(_announceCoroutine);
+            _announcerFader.FadeOut();
+        }
     }
 }

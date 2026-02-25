@@ -13,6 +13,7 @@ public class PlayerCombatState : PlayerBaseState
     private float _lastActionStartTime;
     private float _lastClickTime;
     private float _lastExecutionTime = -10f;
+    private float _combatResumeTime; //타이밍 기록(스토리 대화도중 입력방지)
 
     private const float MaxComboDelay = 0.5f;
     private const float EvasionCooldown = 0.5f;
@@ -27,10 +28,10 @@ public class PlayerCombatState : PlayerBaseState
 
     public override void OnEnter()
     {
+        _combatResumeTime = Time.unscaledTime;
         player.CombatSystem.ResetCombo();
         _gotInput = false;
         _isAttacking = false;
-
         DisableRootMotion();
 
         player.Animator.SetBool(PlayerController.AnimIDCombat, true);
@@ -107,9 +108,16 @@ public class PlayerCombatState : PlayerBaseState
         if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1)) return;
         if (Time.time - _lastClickTime < MinInputInterval) return;
 
+        if (Time.unscaledTime - _combatResumeTime < 0.2f) return;
+
         _lastClickTime = Time.time;
 
         bool isRightClick = Input.GetMouseButtonDown(1);
+
+        if (isRightClick && !HasAnyHeavyUnlocked())
+        {
+            return;
+        }
         CombatCommand cmd = GetAttackCommand(isHeavy: isRightClick);
         ExecuteCommand(cmd);
     }
@@ -128,8 +136,10 @@ public class PlayerCombatState : PlayerBaseState
         {
             if(isEvasion)
             {
+                player.CombatSystem.ForceStopAttack();
+                DisableRootMotion();
+                player.playerManager.SetInvincible(false);
                 _isAttacking = false;
-                player.CombatSystem.ResetCombo();
             }
             else
             {
@@ -337,6 +347,24 @@ public class PlayerCombatState : PlayerBaseState
         Vector3 searchDir = GetSearchDirection();
         Vector3 attackDir = GetAttackDirection(player.CombatSystem.CurrentTarget, searchDir);
         player.HandleRotation(attackDir, isInstant: true);
+    }
+    #endregion
+    #region Unlock ComboAttack
+    private bool HasAnyHeavyUnlocked()
+    {
+        if (player.CombatSystem.currentStrategy == null) return false;
+
+        GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+
+        foreach (var action in player.CombatSystem.currentStrategy.actions)
+        {
+            if (action.attackName.Contains("Heavy"))
+            {
+                if (!action.requiresUnlock) return true;
+                if (data != null && data.IsAttackUnlocked(action.attackName)) return true;
+            }
+        }
+        return false;
     }
     #endregion
 }

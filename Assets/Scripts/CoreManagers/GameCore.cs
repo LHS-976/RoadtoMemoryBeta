@@ -77,7 +77,8 @@ namespace Core
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 if (_gameState != null &&
-                   (_gameState.CurrentState == GameState.Title || _gameState.CurrentState == GameState.Dialogue))
+                   (_gameState.CurrentState == GameState.Title || _gameState.CurrentState == GameState.Dialogue ||
+                   _gameState.CurrentState == GameState.StatShop || _gameState.CurrentState == GameState.PlayerInfo))
                 {
                     return;
                 }

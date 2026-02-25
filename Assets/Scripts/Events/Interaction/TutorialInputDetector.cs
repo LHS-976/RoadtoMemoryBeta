@@ -7,12 +7,13 @@ public class TutorialInputDetector : MonoBehaviour
     [SerializeField] private StringEventChannelSO _questEventChannel;
 
     private bool _hasTriggeredSprint = false;
-
+    private bool _hasTriggeredInfo = false;
     private void Update()
     {
         if (_questEventChannel == null) return;
         MoveTutorial();
         RunTutorial();
+        InfoTutorial();
     }
 
     private bool IsQuestActive(string targetEventID)
@@ -39,6 +40,16 @@ public class TutorialInputDetector : MonoBehaviour
         {
             _questEventChannel.RaiseEvent("Input_Sprint");
             _hasTriggeredSprint = true;
+        }
+    }
+    private void InfoTutorial()
+    {
+        if (_hasTriggeredInfo || !IsQuestActive("Input_Info")) return;
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            _questEventChannel.RaiseEvent("Input_Info");
+            _hasTriggeredInfo = true;
         }
     }
 }

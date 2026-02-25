@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
-  m_Name: TutorialQuest
+  m_Name: TutorialQuest1
   m_EditorClassIdentifier: 
   ID: 100
   Title: "\uAC15\uC81C \uBC30\uCD9C"
-  Description: "AI\uC758 \"\uACA9\uB9AC \uC2E4\uD328\" \uC74C\uC131\uC774 \uC6B8\uB824\uD37C\uC9C4\uB2E4.\n(W,
-    A, S, D\uD0A4\uB85C \uC6C0\uC9C1\uC5EC\uBCF4\uC138\uC694.)"
+  Description: "AI\uC758 \"\uACA9\uB9AC \uC2E4\uD328\" \uC74C\uC131\uC774 \uC6B8\uB824\uD37C\uC9C4\uB2E4.
+    \uCCA0\uCEE5\n(W, A, S, D\uD0A4\uB85C \uC6C0\uC9C1\uC5EC\uBCF4\uC138\uC694.)"
   IntroDialogues:
   - "\".....\uCC28\uAC11\uB2E4.\"\n\uC228\uC744 \uB4E4\uC774\uC26C\uB294 \uAC83\uC870\uCC28
     \uB0AF\uC124\uB2E4."
@@ -31,6 +31,6 @@ MonoBehaviour:
   TargetID: Input_Move
   TargetCount: 4
   TargetScene: StageOne
-  RewardDataChips: 20
+  RewardDataChips: 10
   NextQuestID: 101
   IsMainStory: 1

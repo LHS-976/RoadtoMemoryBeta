@@ -236,9 +236,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickNewGame
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3973,9 +3973,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickNewGame
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5559,6 +5559,8 @@ MonoBehaviour:
   _videoPanel: {fileID: 700076445}
   _videoPlayer: {fileID: 700076449}
   _sceneFader: {fileID: 723757642}
+  _allScenes:
+  - {fileID: 11400000, guid: 302d0faee0ccd114d88f44a84f3d139c, type: 2}
 --- !u!1 &1391844294
 GameObject:
   m_ObjectHideFlags: 0
@@ -6090,7 +6092,7 @@ MonoBehaviour:
   - {fileID: 1738922201}
   - {fileID: 24846529}
   - {fileID: 1600098975}
-  _confirmText: {fileID: 0}
+  _confirmText: {fileID: 2030331368}
   _confirmYesBtn: {fileID: 1893483785}
   _confirmNoBtn: {fileID: 2114230509}
   _titleUIManager: {fileID: 1285331700}
@@ -6283,9 +6285,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickLoad
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6910,9 +6912,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickContinue
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6997,8 +6999,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -200, y: -250}
-  m_SizeDelta: {x: -400, y: 500}
+  m_AnchoredPosition: {x: -180, y: -280}
+  m_SizeDelta: {x: -440, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1743002860
 MonoBehaviour:
@@ -7655,9 +7657,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickLoad
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8373,13 +8375,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1285331700}
-        m_TargetAssemblyTypeName: TitleUIManager, Assembly-CSharp
-        m_MethodName: OnClickContinue
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: 
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -8476,7 +8478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.66228753, b: 0.7207546, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8538,7 +8540,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -150, y: -250}
+  m_AnchoredPosition: {x: -170, y: -280}
   m_SizeDelta: {x: 300, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2105370645
@@ -8876,6 +8878,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Canv_Options
+      objectReference: {fileID: 0}
+    - target: {fileID: 3557982135186465049, guid: 52ae6495d271b654fb6f1516666a3e31,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8004610849009444751, guid: 52ae6495d271b654fb6f1516666a3e31,
         type: 3}

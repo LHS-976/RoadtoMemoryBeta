@@ -25,6 +25,7 @@ public class LevelSetup : MonoBehaviour
             }
         }
     }
+
     private void SpawnSetUp()
     {
         GameObject spawnedPlayer = GameCore.Instance.SpawnPlayer(_spawnPoint);
@@ -32,17 +33,33 @@ public class LevelSetup : MonoBehaviour
         GameData data = GameCore.Instance.DataManager?.CurrentData;
         string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-        if (data != null && data.LastSceneName == currentScene)
+        //Continue/Load: 저장된 씬과 현재 씬이 같고, 위치가 유효하면 세이브 포인트로 이동
+        if (data != null && !string.IsNullOrEmpty(data.LastSceneName) && data.LastSceneName == currentScene)
         {
             Vector3 savedPos = new Vector3(data.PlayerPosX, data.PlayerPosY, data.PlayerPosZ);
 
-            if (savedPos != Vector3.zero)
+            //위치가 (0,0,0)이 아닌 유효한 값일 때만 복구
+            if (savedPos.sqrMagnitude > 0.01f)
             {
+                CharacterController cc = spawnedPlayer.GetComponent<CharacterController>();
+
+                //CharacterController가 있으면 비활성화 후 위치 이동 (Move 충돌 방지)
+                if (cc != null) cc.enabled = false;
                 spawnedPlayer.transform.position = savedPos;
-                Debug.Log($"[Save] 플레이어 위치를 세이브 포인트({savedPos})로 복구했습니다!");
-                //UI이벤트 호출.
+                if (cc != null) cc.enabled = true;
+
+                Debug.Log($"[Save] 세이브 포인트({savedPos})로 복구 완료!");
+            }
+            else
+            {
+                Debug.Log("[Save] 저장된 위치가 (0,0,0)이므로 기본 스폰 포인트 사용.");
             }
         }
+        else
+        {
+            Debug.Log("[Save] 새 게임 또는 다른 씬이므로 기본 스폰 포인트 사용.");
+        }
+
         if (spawnedPlayer != null && _freeLookCamera != null)
         {
             SetupCamera(spawnedPlayer.transform);
@@ -54,15 +71,12 @@ public class LevelSetup : MonoBehaviour
         if (_freeLookCamera == null) return;
 
         Transform target = playerTransform.Find("PlayerRoot");
-
         if (target == null) target = playerTransform;
 
         _freeLookCamera.Follow = target;
         _freeLookCamera.LookAt = target;
         _freeLookCamera.m_XAxis.Value = playerTransform.eulerAngles.y + 180f;
-
         _freeLookCamera.m_YAxis.Value = 0.5f;
-
         _freeLookCamera.PreviousStateIsValid = false;
     }
 }

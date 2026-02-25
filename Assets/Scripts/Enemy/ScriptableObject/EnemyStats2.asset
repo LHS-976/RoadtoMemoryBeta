@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: Zombie
   moveSpeed: 1
-  chaseMoveSpeed: 2
+  chaseMoveSpeed: 2.5
   rotationSpeed: 100
-  viewRadius: 6
-  viewAngle: 100
-  closeDetectionRange: 1
+  viewRadius: 10
+  viewAngle: 120
+  closeDetectionRange: 3
   eyeHeight: 1.5
   targetChestHeight: 1.2
   targetHeadHeight: 1.8
   bodyOffset: 0.2
   maxHealth: 100
-  baseDamage: 15
-  attackCooldown: 6
+  baseDamage: 10
+  attackCooldown: 4
   attackRange: 1
   attackTriggerRange: 1.1
   damageMultiplier: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 72
-  patrolRadius: 5
+  patrolRadius: 3
   patrolidleTime: 2.5
   knockbackDuration: 0.3
   knockbackPower: 10

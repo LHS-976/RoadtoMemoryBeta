@@ -25,6 +25,7 @@ public class QuestEventInteractable : MonoBehaviour, IInteractable
 
     public void Interact(GameObject interactor)
     {
+
         if(_questEventChannel != null)
         {
             _questEventChannel.RaiseEvent(_eventID);
