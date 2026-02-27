@@ -10,6 +10,7 @@ public class GameData
     //public int Level;
     public float CurrentHealth;
     public float CurrentStamina;
+    public float PlayTime;
 
     [Header("Currency")]
     public int DataChips;

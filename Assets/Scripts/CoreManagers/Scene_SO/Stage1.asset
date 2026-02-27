@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneName: Stage01
   displayName: Stage01
-  backgroundMusic: {fileID: 0}
+  backgroundMusic: {fileID: 8300000, guid: 0b0c045dc43e03d44959af008f6510ec, type: 3}

@@ -20,7 +20,7 @@ public class PlayerCombatState : PlayerBaseState
     private const float MinInputInterval = 0.1f;
     private const float PreventDuplicateInput = 1.0f;
     private const float MinActionDuration = 0.15f;
-
+    [SerializeField] private AudioClip _DrawSheathSound;
     public bool UseRootMotion;
     public PlayerCombatState(PlayerController player, Animator animator) : base(player, animator)
     {
@@ -157,6 +157,10 @@ public class PlayerCombatState : PlayerBaseState
         FreezeMovementAnimation();
         if (isEvasion)
         {
+            if (player.dashSound != null && SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(player.dashSound, player.transform.position);
+            }
             RotateForEvasion();
             player.playerManager.SetInvincible(true);
         }

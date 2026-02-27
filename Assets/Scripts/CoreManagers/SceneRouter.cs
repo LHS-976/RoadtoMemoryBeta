@@ -19,5 +19,12 @@ public class SceneRouter : MonoBehaviour
     {
         LoadingSceneController.TargetScene = targetScene;
         SceneManager.LoadScene("LoadingScene");
+        if (targetScene != null && targetScene.backgroundMusic != null)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayBGM(targetScene.backgroundMusic);
+            }
+        }
     }
 }

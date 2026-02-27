@@ -15,7 +15,6 @@ public class TitleUIManager : MonoBehaviour
     [SerializeField] private PanelFader _pressAnyKeyPanel;
     [SerializeField] private PanelFader _mainMenuPanel;
     [SerializeField] private PanelFader _gameModePanel;
-    [SerializeField] private PanelFader _settingsPanel;
     [SerializeField] private PanelFader _quitConfirmPanel;
 
     [Header("Cinematic Video")]
@@ -24,6 +23,14 @@ public class TitleUIManager : MonoBehaviour
 
     [Header("Scene Transition")]
     [SerializeField] private PanelFader _sceneFader;
+
+    [Header("UI Sounds")]
+    [SerializeField] private AudioClip _clickSound;
+    [SerializeField] private AudioClip _cancelSound;
+    [SerializeField] private AudioClip _panelOpenSound;
+
+    [Header("Current Scene Data")]
+    [SerializeField] private GameSceneSO _titleSceneData;
 
     [Header("Available Scenes")]
     [SerializeField] private GameSceneSO[] _allScenes;
@@ -48,7 +55,6 @@ public class TitleUIManager : MonoBehaviour
     private void Start()
     {
         _gameModePanel?.SetImmediateClosed();
-        _settingsPanel?.SetImmediateClosed();
         _quitConfirmPanel?.SetImmediateClosed();
         _videoPanel?.SetImmediateClosed();
 
@@ -56,7 +62,6 @@ public class TitleUIManager : MonoBehaviour
         {
             if (_pressAnyKeyPanel != null) _pressAnyKeyPanel.SetImmediateOpened();
             if (_mainMenuPanel != null) _mainMenuPanel.SetImmediateClosed();
-            if (_settingsPanel != null) _settingsPanel.SetImmediateClosed();
         }
         else
         {
@@ -64,6 +69,14 @@ public class TitleUIManager : MonoBehaviour
             if (_mainMenuPanel != null) _mainMenuPanel.SetImmediateOpened();
             _currentPanel = _mainMenuPanel;
         }
+        if (_titleSceneData != null && _titleSceneData.backgroundMusic != null)
+        {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayBGM(_titleSceneData.backgroundMusic);
+            }
+        }
+
     }
     private void Update()
     {
@@ -73,7 +86,7 @@ public class TitleUIManager : MonoBehaviour
             if (_pressAnyKeyPanel != null) _pressAnyKeyPanel.FadeOut();
             if (_mainMenuPanel != null) _mainMenuPanel.FadeIn();
             _currentPanel = _mainMenuPanel;
-            //GameCore.Instance.SoundManager.PlaySFX(클릭효과음);
+            PlayClickSound();
         }
         if (_isPlayingVideo && Input.anyKeyDown)
         {
@@ -89,6 +102,7 @@ public class TitleUIManager : MonoBehaviour
     }
     private void BackToMainMenu()
     {
+        PlayCancelSound();
         SwitchPanel(_mainMenuPanel);
     }
     #endregion
@@ -97,11 +111,29 @@ public class TitleUIManager : MonoBehaviour
 
     public void OnClickStart()
     {
+        PlayPanelOpenSound();
         SwitchPanel(_gameModePanel);
     }
     public void OnClickOption()
     {
-        SwitchPanel(_settingsPanel);
+        if (OptionSettingsManager.Instance != null)
+        {
+            _currentPanel?.FadeOut();
+
+            OptionSettingsManager.Instance.OnOptionClosed -= RestoreTitleUI;
+            OptionSettingsManager.Instance.OnOptionClosed += RestoreTitleUI;
+
+            OptionSettingsManager.Instance.OpenOptions();
+        }
+    }
+    private void RestoreTitleUI()
+    {
+        _currentPanel?.FadeIn();
+
+        if (OptionSettingsManager.Instance != null)
+        {
+            OptionSettingsManager.Instance.OnOptionClosed -= RestoreTitleUI;
+        }
     }
     public void OnClickExit()
     {
@@ -161,14 +193,6 @@ public class TitleUIManager : MonoBehaviour
     }
     #endregion
 
-
-    //버튼 이벤트 추가예정
-    #region Settings Panel Buttons
-    public void OnClickCloseSettings()
-    {
-        BackToMainMenu();
-    }
-    #endregion
 
     #region Quit Confirm Panel Buttons
 
@@ -264,6 +288,23 @@ public class TitleUIManager : MonoBehaviour
             yield return new WaitForSeconds(_fadeWaitTime);
         }
         LoadTargetScene();
+    }
+    #endregion
+
+    #region PlaySound
+    public void PlayClickSound()
+    {
+        if (_clickSound != null) SoundManager.Instance.PlayUI(_clickSound);
+    }
+
+    public void PlayCancelSound()
+    {
+        if (_cancelSound != null) SoundManager.Instance.PlayUI(_cancelSound);
+    }
+
+    public void PlayPanelOpenSound()
+    {
+        if (_panelOpenSound != null) SoundManager.Instance.PlayUI(_panelOpenSound);
     }
     #endregion
 }

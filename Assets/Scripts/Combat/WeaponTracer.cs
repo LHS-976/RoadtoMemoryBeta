@@ -10,6 +10,7 @@ public class WeaponTracer : MonoBehaviour
     [Header("Setup")]
     [SerializeField] private Transform[] _tracePoints;
     [SerializeField] private LayerMask _hitLayer;
+    public float hitRadius = 0.4f;
 
     private bool _isTracing = false;
     private Vector3[] _prevPositions;
@@ -90,7 +91,35 @@ public class WeaponTracer : MonoBehaviour
     }
     private void PerformTrace()
     {
-        for(int i = 0; i < _tracePoints.Length; i++)
+        if (_tracePoints.Length == 1 && _tracePoints[0] != null)
+        {
+            Vector3 attackPos = _tracePoints[0].position;
+
+            Collider[] hits = Physics.OverlapSphere(attackPos, hitRadius, _hitLayer);
+            foreach (Collider hitCollider in hits)
+            {
+                if (hitCollider.transform.IsChildOf(transform.root)) continue;
+
+                IDamageable damageable = hitCollider.GetComponent<IDamageable>();
+                if (damageable != null)
+                {
+                    int rootID = damageable.GetTransform().root.GetInstanceID();
+                    if (_hitVictims.Contains(rootID)) continue;
+
+                    _hitVictims.Add(rootID);
+
+                    if (_weaponHitRange != null)
+                    {
+                        Vector3 hitDir = (attackPos - transform.position).normalized;
+                        hitDir.y = 0;
+                        _weaponHitRange.OnWeaponHit(damageable, attackPos, hitDir);
+                    }
+                }
+            }
+            return;
+        }
+
+        for (int i = 0; i < _tracePoints.Length; i++)
         {
             Vector3 startPos = _prevPositions[i];
             Vector3 endPos = _tracePoints[i].position;

@@ -165,6 +165,7 @@ public class EnemyManager : MonoBehaviour, IDamageable
             _enemyController.HandleDie();
         }
 
+
         if (_questKillChannel != null)
         {
             _questKillChannel.RaiseEvent(EnemyStats.enemyID);

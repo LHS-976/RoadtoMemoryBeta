@@ -13,8 +13,8 @@ namespace Core
         Option,
         PlayerInfo,
         StatShop,
-        Cutscene,
-        Dialogue
+        Dialogue,
+        EndingState
     }
     [CreateAssetMenu(fileName = "GameStateChannel", menuName = "Events/GameState Data")]
     public class GameStateSO : ScriptableObject
@@ -38,7 +38,6 @@ namespace Core
             CurrentState = newState;
 
             OnStateChange?.Invoke(CurrentState);
-            Debug.Log($"[Game State] Changed: {PreviousState} -> {CurrentState}");
         }
         public void RestorePreviousState()
         {

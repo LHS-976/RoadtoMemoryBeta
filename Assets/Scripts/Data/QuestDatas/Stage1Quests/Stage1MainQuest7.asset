@@ -15,8 +15,7 @@ MonoBehaviour:
   ID: 206
   Title: "\uD0C8\uCD9C (4/4)"
   Description: "\uAD6C\uC5ED\uB0B4 \uAC10\uC5FC\uCCB4\uB4E4\uC744 \uC18C\uD0D5\uD558\uC138\uC694."
-  IntroDialogues:
-  - "\uC774 \uC774\uC9C8\uC801\uC778 \uC18C\uB9AC.\n\uC810\uCC28 \uC775\uC219\uD574\uC838\uAC04\uB2E4."
+  IntroDialogues: []
   Type: 0
   TargetID: Zombie_Hpup
   TargetCount: 5

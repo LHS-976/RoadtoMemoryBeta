@@ -24,6 +24,12 @@ public class SaveSlotUIManager : MonoBehaviour
 
     [SerializeField] private TitleUIManager _titleUIManager;
 
+    [Header("UI Sounds")]
+    [SerializeField] private AudioClip _clickSound;
+    [SerializeField] private AudioClip _cancelSound;
+    [SerializeField] private AudioClip _panelOpenSound;
+    [SerializeField] private AudioClip _saveSFX;
+
     private SlotMenuMode _currentMode;
     private int _pendingSlotIndex = -1;
 
@@ -44,6 +50,7 @@ public class SaveSlotUIManager : MonoBehaviour
     }
     public void RetunrToMain()
     {
+        PlayCancelSound();
         _slotPanelFader?.FadeOut();
         _confirmPopupFader?.FadeOut();
         _titleUIManager.OnClickBackFromGameMode();
@@ -51,6 +58,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     public void OpenSlotMenu(SlotMenuMode mode)
     {
+        PlayPanelOpenSound();
         _currentMode = mode;
         RefreshSlots();
         _slotPanelFader.FadeIn();
@@ -58,6 +66,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     public void CloseSlotMenu()
     {
+        PlayCancelSound();
         _slotPanelFader.FadeOut();
         _confirmPopupFader.FadeOut();
     }
@@ -82,6 +91,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     private void OnSlotClicked(int slotIndex)
     {
+        PlayClickSound();
         if (_currentMode == SlotMenuMode.NewGame)
         {
             GameCore.Instance.DataManager.StartNewGame(slotIndex);
@@ -103,6 +113,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     private void OnDeleteClicked(int slotIndex)
     {
+        PlayClickSound();
         _pendingSlotIndex = slotIndex;
         _confirmText.text = $"정말 슬롯 {slotIndex + 1}번의 데이터를 삭제하시겠습니까?";
 
@@ -112,6 +123,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     private void OnConfirmYes()
     {
+        PlayClickSound();
         if (_pendingSlotIndex != -1)
         {
             GameCore.Instance.DataManager.DeleteSaveData(_pendingSlotIndex);
@@ -125,6 +137,7 @@ public class SaveSlotUIManager : MonoBehaviour
 
     private void OnConfirmNo()
     {
+        PlayCancelSound();
         _pendingSlotIndex = -1;
         _confirmPopupFader.FadeOut();
         _slotPanelFader.FadeIn();
@@ -145,4 +158,24 @@ public class SaveSlotUIManager : MonoBehaviour
             _titleUIManager.PlayCinematic(!isNewGame);
         }
     }
+    #region Play Sound
+    public void PlayClickSound()
+    {
+        if (_clickSound != null) SoundManager.Instance.PlayUI(_clickSound);
+    }
+
+    public void PlayCancelSound()
+    {
+        if (_cancelSound != null) SoundManager.Instance.PlayUI(_cancelSound);
+    }
+
+    public void PlayPanelOpenSound()
+    {
+        if (_panelOpenSound != null) SoundManager.Instance.PlayUI(_panelOpenSound);
+    }
+    public void PlaySaveSound()
+    {
+        if (_saveSFX != null) SoundManager.Instance.PlayUI(_saveSFX);
+    }
+    #endregion
 }

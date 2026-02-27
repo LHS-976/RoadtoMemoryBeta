@@ -7,6 +7,7 @@ public class PlayerAnimationEvents : MonoBehaviour
     [SerializeField] private PlayerCombatSystem _combatSystem;
     [SerializeField] private WeaponTracer _weaponTracer;
 
+
     public float AttackMoveSpeed;
 
     private void Awake()
@@ -49,11 +50,27 @@ public class PlayerAnimationEvents : MonoBehaviour
             _controller.OnSheathComplete();
         }
     }
-
-    /*
     public void AE_PlayFootstep()
     {
-        //발소리 추가 예정
+        if (_controller != null)
+        {
+            _controller.PlayFootstepSound();
+        }
     }
-    */
+
+    public void PlaySwordASwingSound()
+    {
+        if (_controller != null)
+        {
+            _controller.PlaySwordASwingSound();
+        }
+    }
+
+    public void PlaySwordBSwingSound()
+    {
+        if (_controller != null)
+        {
+            _controller.PlaySwordBSwingSound();
+        }
+    }
 }

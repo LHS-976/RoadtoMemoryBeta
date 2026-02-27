@@ -55,6 +55,9 @@ public class SavePointUIManager : MonoBehaviour
     [SerializeField] private AudioClip _buySFX;
     [SerializeField] private AudioClip _errorSFX;
     [SerializeField] private AudioClip _saveSFX;
+    [SerializeField] private AudioClip _clickSFX;
+    [SerializeField] private AudioClip _cancelSFX;
+    [SerializeField] private AudioClip _openSFX;
 
     [Header("GameState")]
     [SerializeField] private GameStateSO _gameState;
@@ -129,30 +132,20 @@ public class SavePointUIManager : MonoBehaviour
         }
     }
 
-    #region Cursor Control
-
-    private void ShowCursor()
-    {
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
-    }
-
-    private void HideCursor()
-    {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-    }
-
-    #endregion
-
     #region Shop Open / Close
 
     public void OpenShop()
     {
         if (_dataManager == null)
             _dataManager = GameCore.Instance?.DataManager;
+        if (_openSFX != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_openSFX);
 
-        ShowCursor();
+        if (_gameState != null)
+        {
+            _gameState.SetState(GameState.StatShop);
+        }
+
         ShowStatsTab();
         _shopPanel?.FadeIn();
     }
@@ -351,12 +344,17 @@ public class SavePointUIManager : MonoBehaviour
 
     private void OnSaveSlotClicked(int slotIndex)
     {
+        if (_clickSFX != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_clickSFX);
         bool hasData = _dataManager.HasSaveData(slotIndex);
 
         if (hasData)
         {
             _pendingSaveSlot = slotIndex;
             _confirmText.text = $"슬롯 {slotIndex + 1}번에 덮어쓰시겠습니까?";
+
+            if (_openSFX != null && SoundManager.Instance != null)
+                SoundManager.Instance.PlayUI(_openSFX);
 
             _saveSlotPanel?.FadeOut();
             _confirmPopupPanel?.FadeIn();
@@ -378,6 +376,9 @@ public class SavePointUIManager : MonoBehaviour
 
     private void OnConfirmSaveNo()
     {
+        if (_cancelSFX != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_cancelSFX);
+
         _pendingSaveSlot = -1;
         _confirmPopupPanel?.FadeOut();
         _saveSlotPanel?.FadeIn();
@@ -395,7 +396,6 @@ public class SavePointUIManager : MonoBehaviour
         _confirmPopupPanel?.FadeOut();
         _saveSlotPanel?.FadeOut();
 
-        HideCursor();
 
         if (GameCore.Instance != null)
             GameCore.Instance.ResumeGame();
@@ -403,10 +403,10 @@ public class SavePointUIManager : MonoBehaviour
 
     private void CloseSaveAndResume()
     {
+        if (_cancelSFX != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_cancelSFX);
         _saveSlotPanel?.FadeOut();
         _confirmPopupPanel?.FadeOut();
-
-        HideCursor();
 
         if (GameCore.Instance != null)
             GameCore.Instance.ResumeGame();

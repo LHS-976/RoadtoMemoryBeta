@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShopItem3
   m_EditorClassIdentifier: 
   ItemName: Attack_Upgrade
-  Description: 
+  Description: "\uAE30\uBCF8\uACF5\uACA9\uB825 \uC2E4\uC218\uCE58 20(+2)"
   BasePrice: 200
   PricePerLevel: 100
   Type: 2

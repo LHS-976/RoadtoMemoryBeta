@@ -180,5 +180,14 @@ public class DataManager : MonoBehaviour
         CurrentData.PlayerPosZ = position.z;
     }
 
+    //엔딩 후 삭제요청
+    public void DeleteCurrentSlot()
+    {
+        if(CurrentSlotIndex != -1)
+        {
+            DeleteSaveData(CurrentSlotIndex);
+        }
+    }
+
     #endregion
 }

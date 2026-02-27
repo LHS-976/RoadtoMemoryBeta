@@ -7,21 +7,17 @@ public class CinematicTrapController : MonoBehaviour
 {
     [Header("Camera Shake")]
     [SerializeField] private CinemachineImpulseSource _impulseSource;
-    [Tooltip("카메라가 흔들리고 대화가 뜨기 전까지의 짧은 대기 시간")]
     [SerializeField] private float _shakeDuration = 0.5f;
 
     [Header("Story Dialogue")]
     [SerializeField] private DialogueUIManager _dialogueUI;
-    [Tooltip("퀘스트 시작 알림 전 저장되어 있는 대화박스를 엽니다. ")]
     [SerializeField] private QuestSO _trapQuestSO;
 
     [Header("Quest Start")]
     [SerializeField] private StringEventChannelSO _questEventChannel;
-    [Tooltip("데미지를 받아도 강제로 퀘스트 완료")]
     [SerializeField] private string _startQuestIfFail = "Input_Dodge";
 
     [Header("Trap Drop")]
-    [Tooltip("도망 퀘스트의 Target ID (이 퀘스트가 깨지는 순간을 감지합니다)")]
     [SerializeField] private IntEventChannelSO _forceStartQuestChannel;
     [SerializeField] private int _escapeQuestTargetID;
     [SerializeField] private Rigidbody _obstacleRigidbody;
@@ -105,7 +101,7 @@ public class CinematicTrapController : MonoBehaviour
 
         if (!_isDodgeSuccessful)
         {
-            // 이벤트 구독 해제 (무한 감지 방지)
+            //이벤트 구독 해제 (무한 감지 방지)
             if (GameCore.Instance != null && GameCore.Instance.QuestManager != null)
             {
                 GameCore.Instance.QuestManager.OnQuestCompleted -= OnQuestClearedCheck;

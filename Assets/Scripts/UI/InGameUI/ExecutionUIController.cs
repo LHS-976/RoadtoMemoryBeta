@@ -33,7 +33,6 @@ public class ExecutionUIController : MonoBehaviour
         ui.transform.SetParent(target);
 
         ui.transform.localPosition = _offset;
-        ui.transform.localScale = Vector3.one;
 
         _activeIndicators.Add(target, ui);
     }

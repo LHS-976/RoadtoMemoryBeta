@@ -8,6 +8,7 @@ using Core;
 /// 현재 HP / 최대 HP
 /// 현재 스태미나 / 최대 스태미나
 /// 공격력 (Base + 업그레이드 보너스)
+/// 콤보 공격력 배수 (추가됨)
 /// 보유 DataChips
 /// </summary>
 public class PlayerInfoUIManager : MonoBehaviour
@@ -21,12 +22,16 @@ public class PlayerInfoUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _attackText;
     [SerializeField] private TextMeshProUGUI _dataChipsText;
 
+    [Tooltip("콤보 공격력 배수를 표시할 텍스트")]
+    [SerializeField] private TextMeshProUGUI _comboMultipliersText;
+
     [Header("Settings")]
     [SerializeField] private KeyCode _toggleKey = KeyCode.I;
 
     [Header("GameState")]
     [SerializeField] private GameStateSO _gameState;
 
+    [SerializeField] private AudioClip _openInfoSound;
     private bool _isOpen = false;
 
     private void Start()
@@ -57,6 +62,8 @@ public class PlayerInfoUIManager : MonoBehaviour
 
     private void OpenInfo()
     {
+        if (_openInfoSound != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_openInfoSound);
         _isOpen = true;
         RefreshInfo();
         _infoPanelFader?.FadeIn();
@@ -105,11 +112,11 @@ public class PlayerInfoUIManager : MonoBehaviour
             _staminaText.text = $"{currentStamina:F0} / {maxStamina:F0}";
         }
 
+        PlayerCombatSystem combatSystem = GameCore.Instance.CurrentPlayer.GetComponent<PlayerCombatSystem>();
+
         //공격력
         if (_attackText != null)
         {
-            //PlayerCombatSystem에서 현재 전략의 baseDamage 가져오기
-            PlayerCombatSystem combatSystem = GameCore.Instance.CurrentPlayer.GetComponent<PlayerCombatSystem>();
             float baseDamage = combatSystem != null && combatSystem.currentStrategy != null
                              ? combatSystem.currentStrategy.baseDamage
                              : 0f;
@@ -120,6 +127,31 @@ public class PlayerInfoUIManager : MonoBehaviour
                 _attackText.text = $"{baseDamage:F0} + {bonus:F0}";
             else
                 _attackText.text = $"{baseDamage:F0}";
+        }
+
+        //콤보 공격력 배수 표시
+        if (_comboMultipliersText != null && combatSystem != null && combatSystem.currentStrategy != null)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            foreach (var action in combatSystem.currentStrategy.actions)
+            {
+                //해금 조건이 있는 공격이면 데이터에서 해금 여부를 확인
+                bool isUnlocked = !action.requiresUnlock || (data != null && data.IsAttackUnlocked(action.attackName));
+
+                string displayName = action.attackName.Replace("Attack_", "");
+
+                if (isUnlocked)
+                {
+                    sb.AppendLine($"- {displayName} : x{action.damageMultiplier:F1}");
+                }
+                else
+                {
+                    sb.AppendLine($"- <color=#808080>{displayName} : (미해금)</color>");
+                }
+            }
+
+            _comboMultipliersText.text = sb.ToString();
         }
 
         //DataChips

@@ -30,7 +30,7 @@ MonoBehaviour:
   attackTriggerRange: 1.8
   damageMultiplier: 1
   stopChaseDistance: 15
-  defenseArmor: 50
+  defenseArmor: 100
   groggyDuration: 6
   damageReduce: 0.8
   groggyDamageMultiplier: 1.5

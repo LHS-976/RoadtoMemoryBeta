@@ -35,8 +35,6 @@ namespace EnemyControllerScripts
         private float TARGET_HEAD_HEIGHT;
         private float BODY_OFFSET;
 
-
-
         private void Awake()
         {
             if (Agent == null) Agent = GetComponent<NavMeshAgent>();
@@ -249,8 +247,14 @@ namespace EnemyControllerScripts
             Debug.Log($"적 공격 적중! 데미지: {finalDamage}");
         }
 
-        public void EnableWeaponTrace() => _weaponTracer.EnableTrace();
-        public void DisableWeaponTrace() => _weaponTracer.DisableTrace();
+        public void EnableWeaponTrace()
+        {
+            if (_weaponTracer != null) _weaponTracer.EnableTrace();
+        }
+        public void DisableWeaponTrace()
+        {
+            if (_weaponTracer != null) _weaponTracer.DisableTrace();
+        }
 
         #endregion
 
@@ -271,10 +275,6 @@ namespace EnemyControllerScripts
         public void HandleDie()
         {
             DisableWeaponTrace();
-            if(_questKillChannel != null)
-            {
-                _questKillChannel.RaiseEvent(EnemyManager.EnemyStats.enemyID);
-            }
 
             if (Agent != null)
             {
@@ -284,9 +284,19 @@ namespace EnemyControllerScripts
             }
 
             int deadLayer = LayerMask.NameToLayer("Dead");
-            if (deadLayer != -1) gameObject.layer = deadLayer;
+            if (deadLayer != -1)
+            {
+                gameObject.layer = deadLayer;
 
-            if(EnemyManager.EnemyStats.enemyID == "Zombie")
+                Collider[] colliders = GetComponentsInChildren<Collider>();
+                foreach (Collider col in colliders)
+                {
+                    col.gameObject.layer = deadLayer;
+                }
+            }
+
+
+            if (EnemyManager.EnemyStats.enemyID == "Zombie")
             {
                 EnemyAnim.OnlyPlayDie();
             }

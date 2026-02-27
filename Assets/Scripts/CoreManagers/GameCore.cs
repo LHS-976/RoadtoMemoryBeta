@@ -38,9 +38,9 @@ namespace Core
         {
             Application.targetFrameRate = 60;
             QualitySettings.vSyncCount = 0;
-
-            //SoundManager.InitializeVolume();
+            SoundManager.LoadVolumeSettings();
         }
+
         public void TogglePause()
         {
             if (_gameState == null) return;
@@ -74,11 +74,23 @@ namespace Core
         }
         private void Update()
         {
+            if(_gameState != null && _gameState.CurrentState == GameState.Gameplay)
+            {
+                if(DataManager != null && DataManager.CurrentData != null)
+                {
+                    DataManager.CurrentData.PlayTime += Time.deltaTime;
+                }
+            }
+            if(_gameState != null)
+            {
+                HandleCursorState(_gameState.CurrentState);
+            }
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 if (_gameState != null &&
                    (_gameState.CurrentState == GameState.Title || _gameState.CurrentState == GameState.Dialogue ||
-                   _gameState.CurrentState == GameState.StatShop || _gameState.CurrentState == GameState.PlayerInfo))
+                   _gameState.CurrentState == GameState.StatShop || _gameState.CurrentState == GameState.PlayerInfo || 
+                   _gameState.CurrentState == GameState.EndingState))
                 {
                     return;
                 }
@@ -94,6 +106,22 @@ namespace Core
 
             CurrentPlayer = Instantiate(_playerPrefab, spawnPoint.position, spawnPoint.rotation);
             return CurrentPlayer;
+        }
+        #endregion
+        #region Utility
+
+        private void HandleCursorState(GameState state)
+        {
+            if (state == GameState.Gameplay)
+            {
+                if (Cursor.lockState != CursorLockMode.Locked) Cursor.lockState = CursorLockMode.Locked;
+                if (Cursor.visible) Cursor.visible = false;
+            }
+            else
+            {
+                if (Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+                if (!Cursor.visible) Cursor.visible = true;
+            }
         }
         #endregion
     }

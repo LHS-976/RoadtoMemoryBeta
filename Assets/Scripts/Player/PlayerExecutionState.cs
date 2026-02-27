@@ -44,6 +44,16 @@ public class PlayerExecutionState : PlayerBaseState
         if(_executionSuccess)
         {
             duration = player.playerStats.executionStartupTime + player.playerStats.executionRecoveryTime;
+            if (_timer >= player.playerStats.executionStartupTime)
+            {
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Space))
+                {
+                    player.ChangeState(player.combatState);
+
+                    player.combatState.OnUpdate();
+                    return;
+                }
+            }
         }
         else
         {

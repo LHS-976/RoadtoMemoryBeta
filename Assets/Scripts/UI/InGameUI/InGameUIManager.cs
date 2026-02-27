@@ -8,7 +8,6 @@ public class InGameUIManager : MonoBehaviour
     [SerializeField] private GameStateSO _gameState;
 
     [Header("Panels")]
-    [SerializeField] private PanelFader _optionPanel;
     [SerializeField] private PanelFader _hudPanel;
 
     [Header("Listening Channel")]
@@ -62,19 +61,12 @@ public class InGameUIManager : MonoBehaviour
         {
             case GameState.Gameplay:
                 _hudPanel.FadeIn();
-                _optionPanel.FadeOut();
-                break;
-            case GameState.Option:
-                _hudPanel.FadeOut();
-                _optionPanel.FadeIn();
                 break;
             case GameState.Dialogue:
-                _hudPanel.FadeOut();
-                _optionPanel.FadeOut();
-                break;
             case GameState.StatShop:
+            case GameState.Option:      
+            case GameState.PlayerInfo:
                 _hudPanel.FadeOut();
-                _optionPanel.FadeOut();
                 break;
         }
     }

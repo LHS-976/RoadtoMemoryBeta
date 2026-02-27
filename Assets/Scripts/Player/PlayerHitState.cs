@@ -16,6 +16,11 @@ public class PlayerHitState : PlayerBaseState
         _knockBackDuration = player.playerStats.knockbackDuration;
         _knockBackForce = player.playerStats.knockbackPower;
 
+        if (player.hitSound != null && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySFX(player.hitSound, player.transform.position);
+        }
+
         player.Animator.SetTrigger(PlayerController.AnimIDHit);
         player.CombatSystem.ForceStopAttack();
         player.combatState.DisableRootMotion();

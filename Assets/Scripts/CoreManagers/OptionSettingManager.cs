@@ -1,4 +1,5 @@
 ﻿using Core;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,68 +10,62 @@ public class OptionSettingsManager : MonoBehaviour
     public static OptionSettingsManager Instance { get; private set; }
 
     #region Tab UI
-
     [Header("Tab Buttons")]
     [SerializeField] private Button _soundTabButton;
-    [SerializeField] private Button _keyBindTabButton;
+    [SerializeField] private Button _cameraTabButton;
     [SerializeField] private Button _displayTabButton;
     [SerializeField] private Button _closeButton;
 
-    [Header("Tab Panels (PanelFader + CanvasGroup)")]
+    [Header("Tab Panels")]
     [SerializeField] private PanelFader _soundContent;
-    [SerializeField] private PanelFader _keyBindContent;
+    [SerializeField] private PanelFader _cameraContent;
     [SerializeField] private PanelFader _displayContent;
-
     #endregion
 
     #region Sound UI
-
     [Header("Sound Sliders")]
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _bgmSlider;
     [SerializeField] private Slider _sfxSlider;
     [SerializeField] private Slider _uiSlider;
 
-    [Header("Sound Value Texts (Optional)")]
+    [Header("Sound Value Texts")]
     [SerializeField] private TextMeshProUGUI _masterValueText;
     [SerializeField] private TextMeshProUGUI _bgmValueText;
     [SerializeField] private TextMeshProUGUI _sfxValueText;
     [SerializeField] private TextMeshProUGUI _uiValueText;
-
     #endregion
 
-    #region KeyBind UI
+    #region Camera UI
+    [Header("Camera Settings - Horizontal (X)")]
+    [SerializeField] private Slider _horizontalSensitivitySlider;
+    [SerializeField] private TextMeshProUGUI _horizontalSensitivityText;
 
-    [Header("KeyBind Buttons (텍스트가 현재 키를 표시)")]
-    [SerializeField] private Button _keyCombatToggle;
-    [SerializeField] private Button _keyExecution;
-    [SerializeField] private Button _keyInteract;
-    [SerializeField] private Button _keyDodge;
-    [SerializeField] private Button _keySprint;
-    [SerializeField] private Button _keyPlayerInfo;
-    [SerializeField] private Button _keyQuestToggle;
+    [Header("Camera Settings - Vertical (Y)")]
+    [SerializeField] private Slider _verticalSensitivitySlider;
+    [SerializeField] private TextMeshProUGUI _verticalSensitivityText;
 
-    [Header("KeyBind Waiting Overlay (Optional)")]
-    [SerializeField] private PanelFader _keyWaitOverlay;
-    [SerializeField] private TextMeshProUGUI _keyWaitText;
+    [Header("System Buttons")]
+    [SerializeField] private Button _quitGameButton;
 
+    public static float HorizontalSensitivity { get; private set; } = 1.0f;
+    public static float VerticalSensitivity { get; private set; } = 1.0f;
+
+    public event Action OnOptionClosed;
     #endregion
 
     #region Display UI
-
     [Header("Display")]
     [SerializeField] private TMP_Dropdown _resolutionDropdown;
     [SerializeField] private Toggle _fullscreenToggle;
     [SerializeField] private Button _applyDisplayButton;
-
     #endregion
 
-    //키 바인딩 데이터
-    private static Dictionary<string, KeyCode> _keyBindings = new Dictionary<string, KeyCode>();
-    private string _waitingForAction = null;
-    private bool _isWaitingForKey = false;
+    [Header("UI Sounds")]
+    [SerializeField] private AudioClip _clickSound;
+    [SerializeField] private AudioClip _cancelSound;
+    [SerializeField] private AudioClip _panelOpenSound;
 
-    //해상도 데이터
     private readonly Vector2Int[] _resolutions = new Vector2Int[]
     {
         new Vector2Int(1280, 720),
@@ -79,19 +74,10 @@ public class OptionSettingsManager : MonoBehaviour
     };
     private int _selectedResolutionIndex;
 
-    //기본 키 설정
-    private static readonly Dictionary<string, KeyCode> DEFAULT_KEYS = new Dictionary<string, KeyCode>()
-    {
-        { "CombatToggle", KeyCode.X },
-        { "Execution",    KeyCode.Q },
-        { "Interact",     KeyCode.F },
-        { "Dodge",        KeyCode.Space },
-        { "Sprint",       KeyCode.LeftShift },
-        { "PlayerInfo",   KeyCode.I },
-        { "QuestToggle",  KeyCode.F1 },
-    };
     [SerializeField] private GameStateSO _gameState;
     [SerializeField] private PanelFader _optionPanel;
+
+    private bool _isOpen = false;
 
     #region Lifecycle
 
@@ -109,414 +95,211 @@ public class OptionSettingsManager : MonoBehaviour
 
     private void Start()
     {
-        //탭 패널 초기 상태
         _soundContent?.SetImmediateClosed();
-        _keyBindContent?.SetImmediateClosed();
+        _cameraContent?.SetImmediateClosed();
         _displayContent?.SetImmediateClosed();
-        _keyWaitOverlay?.SetImmediateClosed();
 
-        //탭 버튼
         _soundTabButton?.onClick.AddListener(ShowSoundTab);
-        _keyBindTabButton?.onClick.AddListener(ShowKeyBindTab);
+        _cameraTabButton?.onClick.AddListener(ShowCameraTab);
         _displayTabButton?.onClick.AddListener(ShowDisplayTab);
+
+        //닫기 버튼 연동
         _closeButton?.onClick.AddListener(OnClickClose);
 
-        //사운드 슬라이더
         InitializeSoundSliders();
-
-        //키 바인딩 버튼
-        InitializeKeyBindButtons();
-
-        //해상도
+        InitializeCameraUI();
         InitializeDisplayUI();
+
+        if (_quitGameButton != null)
+            _quitGameButton.onClick.AddListener(OnClickQuitGame);
     }
 
-    private void Update()
+    //GameState 변화 구독 (InGameUIManager와 동일한 원리)
+    private void OnEnable()
     {
-        if (_isWaitingForKey)
+        if (_gameState != null) _gameState.OnStateChange += HandleStateChange;
+    }
+
+    private void OnDisable()
+    {
+        if (_gameState != null) _gameState.OnStateChange -= HandleStateChange;
+    }
+
+    private void HandleStateChange(GameState state)
+    {
+        //GameCore가 ESC를 눌러 State를 Option으로 바꾸면 UI를 켭니다.
+        if (state == GameState.Option)
         {
-            DetectKeyInput();
+            ShowUI();
         }
+        //GameCore가 ResumeGame()을 호출해 State를 Gameplay로 바꾸면 UI를 끕니다.
+        else if (state == GameState.Gameplay)
+        {
+            HideUI();
+        }
+    }
+
+    #endregion
+
+    #region Open & Close Logic
+
+    //외부(타이틀 화면 등)에서 옵션창을 열고 싶을 때 호출
+    public void OpenOptions()
+    {
+        if (_panelOpenSound != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_panelOpenSound);
+
+        if (_gameState != null && _gameState.CurrentState == GameState.Title)
+        {
+            // 타이틀 씬에서는 State 변경 없이 UI만 켭니다.
+            ShowUI();
+        }
+        else if (Core.GameCore.Instance != null)
+        {
+            //인게임에서는 GameCore에게 일시정지 요청
+            //GameCore가 State를 Option으로 바꾸면 HandleStateChange가 작동해 창이 열림
+            Core.GameCore.Instance.TogglePause();
+        }
+    }
+
+    private void OnClickClose()
+    {
+        if (_panelOpenSound != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlayUI(_cancelSound);
+
+        if (_gameState != null && _gameState.CurrentState == GameState.Title)
+        {
+            //타이틀 씬에서 UI닫기.
+            HideUI();
+        }
+        else if (Core.GameCore.Instance != null)
+        {
+            Core.GameCore.Instance.ResumeGame();
+        }
+    }
+
+    //실제 패널을 켜는 로직
+    private void ShowUI()
+    {
+        if (_isOpen) return;
+        _isOpen = true;
+        _optionPanel?.FadeIn();
+        ShowSoundTab();
+    }
+
+    //실제 패널을 끄는 로직
+    private void HideUI()
+    {
+        if (!_isOpen) return;
+        _isOpen = false;
+
+        SaveAllSettings(); //닫을 때 저장
+
+        _soundContent?.SetImmediateClosed();
+        _cameraContent?.SetImmediateClosed();
+        _displayContent?.SetImmediateClosed();
+        _optionPanel?.FadeOut();
+
+        OnOptionClosed?.Invoke();
     }
 
     #endregion
 
     #region Tab Switch
-
     public void ShowSoundTab()
     {
+        PlayClickSound();
         _soundContent?.SetImmediateOpened();
-        _keyBindContent?.SetImmediateClosed();
+        _cameraContent?.SetImmediateClosed();
         _displayContent?.SetImmediateClosed();
     }
-
-    public void ShowKeyBindTab()
+    public void ShowCameraTab()
     {
+        PlayClickSound();
         _soundContent?.SetImmediateClosed();
-        _keyBindContent?.SetImmediateOpened();
+        _cameraContent?.SetImmediateOpened();
         _displayContent?.SetImmediateClosed();
-        RefreshKeyBindUI();
     }
-
     public void ShowDisplayTab()
     {
+        PlayClickSound();
         _soundContent?.SetImmediateClosed();
-        _keyBindContent?.SetImmediateClosed();
+        _cameraContent?.SetImmediateClosed();
         _displayContent?.SetImmediateOpened();
     }
-
-    /// <summary>
-    /// 외부에서 옵션 패널을 열 때 호출.
-    /// </summary>
-    public void OpenOptions()
-    {
-        _optionPanel?.FadeIn();
-        ShowSoundTab();
-    }
-
-    private void OnClickClose()
-    {
-        SaveAllSettings();
-
-        _soundContent?.SetImmediateClosed();
-        _keyBindContent?.SetImmediateClosed();
-        _displayContent?.SetImmediateClosed();
-        _optionPanel?.FadeOut();
-
-        if (_gameState != null && _gameState.CurrentState == GameState.Title) return;
-
-        //GameCore에서 ResumeGame 호출하도록 연결
-        if (Core.GameCore.Instance != null)
-            Core.GameCore.Instance.ResumeGame();
-    }
-
     #endregion
 
-    #region Sound
 
+    #region Sound
     private void InitializeSoundSliders()
     {
         if (SoundManager.Instance == null) return;
-
-        //초기값
-        if (_masterSlider != null)
-        {
-            _masterSlider.value = SoundManager.Instance.GetMasterVolume();
-            _masterSlider.onValueChanged.AddListener(OnMasterChanged);
-            UpdateVolumeText(_masterValueText, _masterSlider.value);
-        }
-        if (_bgmSlider != null)
-        {
-            _bgmSlider.value = SoundManager.Instance.GetBGMVolume();
-            _bgmSlider.onValueChanged.AddListener(OnBGMChanged);
-            UpdateVolumeText(_bgmValueText, _bgmSlider.value);
-        }
-        if (_sfxSlider != null)
-        {
-            _sfxSlider.value = SoundManager.Instance.GetSFXVolume();
-            _sfxSlider.onValueChanged.AddListener(OnSFXChanged);
-            UpdateVolumeText(_sfxValueText, _sfxSlider.value);
-        }
-        if (_uiSlider != null)
-        {
-            _uiSlider.value = SoundManager.Instance.GetUIVolume();
-            _uiSlider.onValueChanged.AddListener(OnUIChanged);
-            UpdateVolumeText(_uiValueText, _uiSlider.value);
-        }
+        if (_masterSlider != null) { _masterSlider.value = SoundManager.Instance.GetMasterVolume(); _masterSlider.onValueChanged.AddListener(OnMasterChanged); UpdateVolumeText(_masterValueText, _masterSlider.value); }
+        if (_bgmSlider != null) { _bgmSlider.value = SoundManager.Instance.GetBGMVolume(); _bgmSlider.onValueChanged.AddListener(OnBGMChanged); UpdateVolumeText(_bgmValueText, _bgmSlider.value); }
+        if (_sfxSlider != null) { _sfxSlider.value = SoundManager.Instance.GetSFXVolume(); _sfxSlider.onValueChanged.AddListener(OnSFXChanged); UpdateVolumeText(_sfxValueText, _sfxSlider.value); }
+        if (_uiSlider != null) { _uiSlider.value = SoundManager.Instance.GetUIVolume(); _uiSlider.onValueChanged.AddListener(OnUIChanged); UpdateVolumeText(_uiValueText, _uiSlider.value); }
     }
-
-    private void OnMasterChanged(float value)
-    {
-        SoundManager.Instance?.SetMasterVolume(value);
-        UpdateVolumeText(_masterValueText, value);
-    }
-
-    private void OnBGMChanged(float value)
-    {
-        SoundManager.Instance?.SetBGMVolume(value);
-        UpdateVolumeText(_bgmValueText, value);
-    }
-
-    private void OnSFXChanged(float value)
-    {
-        SoundManager.Instance?.SetSFXVolume(value);
-        UpdateVolumeText(_sfxValueText, value);
-    }
-
-    private void OnUIChanged(float value)
-    {
-        SoundManager.Instance?.SetUIVolume(value);
-        UpdateVolumeText(_uiValueText, value);
-    }
-
-    private void UpdateVolumeText(TextMeshProUGUI text, float value)
-    {
-        if (text != null)
-            text.text = $"{Mathf.RoundToInt(value * 100)}";
-    }
-
+    private void OnMasterChanged(float value) { SoundManager.Instance?.SetMasterVolume(value); UpdateVolumeText(_masterValueText, value); }
+    private void OnBGMChanged(float value) { SoundManager.Instance?.SetBGMVolume(value); UpdateVolumeText(_bgmValueText, value); }
+    private void OnSFXChanged(float value) { SoundManager.Instance?.SetSFXVolume(value); UpdateVolumeText(_sfxValueText, value); }
+    private void OnUIChanged(float value) { SoundManager.Instance?.SetUIVolume(value); UpdateVolumeText(_uiValueText, value); }
+    private void UpdateVolumeText(TextMeshProUGUI text, float value) { if (text != null) text.text = $"{Mathf.RoundToInt(value * 100)}"; }
     #endregion
 
-    #region Key Binding
-
-    private void InitializeKeyBindButtons()
+    #region Camera (Mouse Sensitivity)
+    private void InitializeCameraUI()
     {
-        BindKeyButton(_keyCombatToggle, "CombatToggle");
-        BindKeyButton(_keyExecution, "Execution");
-        BindKeyButton(_keyInteract, "Interact");
-        BindKeyButton(_keyDodge, "Dodge");
-        BindKeyButton(_keySprint, "Sprint");
-        BindKeyButton(_keyPlayerInfo, "PlayerInfo");
-        BindKeyButton(_keyQuestToggle, "QuestToggle");
-
-        RefreshKeyBindUI();
+        if (_horizontalSensitivitySlider != null) { _horizontalSensitivitySlider.minValue = 0.1f; _horizontalSensitivitySlider.maxValue = 3.0f; _horizontalSensitivitySlider.value = HorizontalSensitivity; _horizontalSensitivitySlider.onValueChanged.AddListener(OnHorizontalSensitivityChanged); UpdateSensitivityText(_horizontalSensitivityText, HorizontalSensitivity); }
+        if (_verticalSensitivitySlider != null) { _verticalSensitivitySlider.minValue = 0.1f; _verticalSensitivitySlider.maxValue = 3.0f; _verticalSensitivitySlider.value = VerticalSensitivity; _verticalSensitivitySlider.onValueChanged.AddListener(OnVerticalSensitivityChanged); UpdateSensitivityText(_verticalSensitivityText, VerticalSensitivity); }
     }
-
-    private void BindKeyButton(Button button, string actionName)
-    {
-        if (button == null) return;
-        button.onClick.AddListener(() => StartWaitForKey(actionName));
-    }
-
-    private void StartWaitForKey(string actionName)
-    {
-        _waitingForAction = actionName;
-        _isWaitingForKey = true;
-
-        if (_keyWaitOverlay != null)
-        {
-            if (_keyWaitText != null)
-                _keyWaitText.text = "키를 입력하세요...\n(ESC: 취소)";
-            _keyWaitOverlay.SetImmediateOpened();
-        }
-    }
-
-    private void DetectKeyInput()
-    {
-        //ESC로 취소
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CancelWaitForKey();
-            return;
-        }
-
-        //마우스 버튼 제외 (UI 클릭과 충돌 방지)
-        //키보드 + 일부 특수키만 허용
-        foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
-        {
-            //마우스 버튼, 조이스틱은 제외
-            if (key == KeyCode.None) continue;
-            if (key == KeyCode.Escape) continue;
-            if (key >= KeyCode.Mouse0 && key <= KeyCode.Mouse6) continue;
-            if (key >= KeyCode.JoystickButton0) continue;
-
-            if (Input.GetKeyDown(key))
-            {
-                //중복 체크: 다른 액션에 이미 사용 중인 키인지
-                string conflictAction = FindActionByKey(key);
-                if (conflictAction != null && conflictAction != _waitingForAction)
-                {
-                    //기존 바인딩 해제(스왑)
-                    KeyCode oldKey = _keyBindings[_waitingForAction];
-                    _keyBindings[conflictAction] = oldKey;
-                }
-
-                _keyBindings[_waitingForAction] = key;
-                FinishWaitForKey();
-                return;
-            }
-        }
-    }
-
-    private void FinishWaitForKey()
-    {
-        _isWaitingForKey = false;
-        _waitingForAction = null;
-        _keyWaitOverlay?.SetImmediateClosed();
-        RefreshKeyBindUI();
-    }
-
-    private void CancelWaitForKey()
-    {
-        _isWaitingForKey = false;
-        _waitingForAction = null;
-        _keyWaitOverlay?.SetImmediateClosed();
-    }
-
-    private string FindActionByKey(KeyCode key)
-    {
-        foreach (var pair in _keyBindings)
-        {
-            if (pair.Value == key)
-                return pair.Key;
-        }
-        return null;
-    }
-
-    private void RefreshKeyBindUI()
-    {
-        UpdateKeyButtonText(_keyCombatToggle, "CombatToggle");
-        UpdateKeyButtonText(_keyExecution, "Execution");
-        UpdateKeyButtonText(_keyInteract, "Interact");
-        UpdateKeyButtonText(_keyDodge, "Dodge");
-        UpdateKeyButtonText(_keySprint, "Sprint");
-        UpdateKeyButtonText(_keyPlayerInfo, "PlayerInfo");
-        UpdateKeyButtonText(_keyQuestToggle, "QuestToggle");
-    }
-
-    private void UpdateKeyButtonText(Button button, string actionName)
-    {
-        if (button == null) return;
-
-        TextMeshProUGUI text = button.GetComponentInChildren<TextMeshProUGUI>();
-        if (text != null && _keyBindings.ContainsKey(actionName))
-        {
-            text.text = GetKeyDisplayName(_keyBindings[actionName]);
-        }
-    }
-
-    /// <summary>
-    /// KeyCode를 사용자 친화적 이름으로 변환.
-    /// </summary>
-    private string GetKeyDisplayName(KeyCode key)
-    {
-        switch (key)
-        {
-            case KeyCode.Space: return "Space";
-            case KeyCode.LeftShift: return "L-Shift";
-            case KeyCode.RightShift: return "R-Shift";
-            case KeyCode.LeftControl: return "L-Ctrl";
-            case KeyCode.RightControl: return "R-Ctrl";
-            case KeyCode.LeftAlt: return "L-Alt";
-            case KeyCode.RightAlt: return "R-Alt";
-            case KeyCode.Return: return "Enter";
-            case KeyCode.BackQuote: return "`";
-            case KeyCode.Tab: return "Tab";
-            default: return key.ToString();
-        }
-    }
-
-    /// <summary>
-    /// 다른 스크립트에서 바인딩된 키를 가져올 때 사용.
-    /// Input.GetKeyDown(OptionSettingsManager.GetKey("CombatToggle"))
-    /// </summary>
-    public static KeyCode GetKey(string actionName)
-    {
-        if (_keyBindings.TryGetValue(actionName, out KeyCode key))
-            return key;
-
-        //바인딩이 없으면 기본값 반환
-        if (DEFAULT_KEYS.TryGetValue(actionName, out KeyCode defaultKey))
-            return defaultKey;
-
-        Debug.LogWarning($"[Option] 알 수 없는 액션: {actionName}");
-        return KeyCode.None;
-    }
-
-    /// <summary>
-    /// 기본 키 설정으로 초기화.
-    /// </summary>
-    public void ResetKeyBindings()
-    {
-        _keyBindings.Clear();
-        foreach (var pair in DEFAULT_KEYS)
-        {
-            _keyBindings[pair.Key] = pair.Value;
-        }
-        RefreshKeyBindUI();
-    }
-
+    private void OnHorizontalSensitivityChanged(float value) { HorizontalSensitivity = value; UpdateSensitivityText(_horizontalSensitivityText, value); }
+    private void OnVerticalSensitivityChanged(float value) { VerticalSensitivity = value; UpdateSensitivityText(_verticalSensitivityText, value); }
+    private void UpdateSensitivityText(TextMeshProUGUI text, float value) { if (text != null) text.text = value.ToString("F1"); }
     #endregion
 
     #region Display
-
     private void InitializeDisplayUI()
     {
         if (_resolutionDropdown != null)
         {
             _resolutionDropdown.ClearOptions();
             List<string> options = new List<string>();
-
             int currentIndex = 0;
-            for (int i = 0; i < _resolutions.Length; i++)
-            {
-                options.Add($"{_resolutions[i].x} x {_resolutions[i].y}");
-
-                if (Screen.width == _resolutions[i].x && Screen.height == _resolutions[i].y)
-                    currentIndex = i;
-            }
-
-            _resolutionDropdown.AddOptions(options);
-            _resolutionDropdown.value = currentIndex;
-            _selectedResolutionIndex = currentIndex;
-
+            for (int i = 0; i < _resolutions.Length; i++) { options.Add($"{_resolutions[i].x} x {_resolutions[i].y}"); if (Screen.width == _resolutions[i].x && Screen.height == _resolutions[i].y) currentIndex = i; }
+            _resolutionDropdown.AddOptions(options); _resolutionDropdown.value = currentIndex; _selectedResolutionIndex = currentIndex;
             _resolutionDropdown.onValueChanged.AddListener((index) => _selectedResolutionIndex = index);
         }
-
-        if (_fullscreenToggle != null)
-        {
-            _fullscreenToggle.isOn = Screen.fullScreen;
-        }
-
-        if (_applyDisplayButton != null)
-        {
-            _applyDisplayButton.onClick.AddListener(ApplyDisplaySettings);
-        }
+        if (_fullscreenToggle != null) _fullscreenToggle.isOn = Screen.fullScreen;
+        if (_applyDisplayButton != null) _applyDisplayButton.onClick.AddListener(ApplyDisplaySettings);
     }
-
     private void ApplyDisplaySettings()
     {
         Vector2Int res = _resolutions[_selectedResolutionIndex];
         bool fullscreen = _fullscreenToggle != null ? _fullscreenToggle.isOn : Screen.fullScreen;
-
         Screen.SetResolution(res.x, res.y, fullscreen);
-
-        //저장
         PlayerPrefs.SetInt("ResolutionIndex", _selectedResolutionIndex);
         PlayerPrefs.SetInt("Fullscreen", fullscreen ? 1 : 0);
-
-        Debug.Log($"[Option] 해상도 변경: {res.x}x{res.y} / 전체화면: {fullscreen}");
     }
-
     #endregion
 
-    #region Save / Load (PlayerPrefs)
-
+    #region Save / Load
     private void SaveAllSettings()
     {
-        //사운드
         SoundManager.Instance?.SaveVolumeSettings();
-
-        //키 바인딩
-        foreach (var pair in _keyBindings)
-        {
-            PlayerPrefs.SetInt($"Key_{pair.Key}", (int)pair.Value);
-        }
-
-        //해상도
+        PlayerPrefs.SetFloat("MouseSensitivityX", HorizontalSensitivity);
+        PlayerPrefs.SetFloat("MouseSensitivityY", VerticalSensitivity);
         PlayerPrefs.SetInt("ResolutionIndex", _selectedResolutionIndex);
         PlayerPrefs.SetInt("Fullscreen", Screen.fullScreen ? 1 : 0);
-
         PlayerPrefs.Save();
-        Debug.Log("[Option] 설정 저장 완료.");
     }
-
     private void LoadAllSettings()
     {
-        //키 바인딩 로드
-        _keyBindings.Clear();
-        foreach (var pair in DEFAULT_KEYS)
-        {
-            int savedKey = PlayerPrefs.GetInt($"Key_{pair.Key}", (int)pair.Value);
-            _keyBindings[pair.Key] = (KeyCode)savedKey;
-        }
-
-        //해상도 로드
+        HorizontalSensitivity = PlayerPrefs.GetFloat("MouseSensitivityX", 1.0f);
+        VerticalSensitivity = PlayerPrefs.GetFloat("MouseSensitivityY", 1.0f);
         if (PlayerPrefs.HasKey("ResolutionIndex"))
         {
             int resIndex = PlayerPrefs.GetInt("ResolutionIndex", 2);
             bool fullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
-
             if (resIndex >= 0 && resIndex < _resolutions.Length)
             {
                 Vector2Int res = _resolutions[resIndex];
@@ -525,5 +308,19 @@ public class OptionSettingsManager : MonoBehaviour
             }
         }
     }
+    private void OnClickQuitGame()
+    {
+        PlayClickSound();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
     #endregion
+    public void PlayClickSound()
+    {
+        if (_clickSound != null) SoundManager.Instance.PlayUI(_clickSound);
+    }
 }

@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 308
   Title: "\uC9C4\uC2E4"
-  Description: "\uB538\uAE4D. \uC9C0\uB098\uC628 \uAE38\uB85C \uB3CC\uC544\uAC00\uC138\uC694.\n(\uC67C\uCABD\uC73C\uB85C
+  Description: "\uB450\uBC88\uC9F8 \uC2A4\uC704\uCE58 \uC7A0\uAE08\uD574\uC81C\n(\uC67C\uCABD\uC73C\uB85C
     \uAEBD\uC778 \uD070 \uBCF5\uB3C4\uB97C \uC9C0\uB098\uAC00\uC138\uC694)"
-  IntroDialogues: []
+  IntroDialogues:
+  - "\uAE30\uB85D\uC774 \uC774\uC5B4\uC9C4\uB2E4.\n\uD504\uB85C\uC81D\uD2B8 EVE"
+  - "3\uCC28 \uBAA8\uCCB4 \uC735\uD569\uC2E4\uD5D8 ... \uC2E4\uD328\n4\uCC28 \uC735\uD569\uC2E4\uD5D8...\uC2E4\uD328\n"
+  - 
   Type: 2
   TargetID: StartSearch7
   TargetCount: 1

@@ -50,7 +50,6 @@ namespace PlayerControllerScripts
 
         [SerializeField]private bool _canUseCombatMode = false;
 
-
         private Vector3 _velocity;
         private Vector3 _pendingMovement;
         private bool _isSheathing = false;
@@ -59,6 +58,15 @@ namespace PlayerControllerScripts
         private const float _gravity = -9.81f;
         private const float _groundCheckDistance = 0.2f;
         private const float _slopeCheckDistance = 2.0f;
+
+        [Header("Audio Clips")]
+        public AudioClip drawSwordSound;
+        public AudioClip dashSound;
+        public AudioClip hitSound;
+        public AudioClip walkStepSound;
+        public AudioClip runStepSound;
+        public AudioClip swordSwingASound;
+        public AudioClip swordSwingBSound;
 
         private void Awake()
         {
@@ -168,12 +176,20 @@ namespace PlayerControllerScripts
             {
                 _isSheathing = true;
                 Animator.SetTrigger(AnimIDTriggerSheath);
+                if (drawSwordSound != null && SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlaySFXAttached(drawSwordSound, transform);
+                }
             }
             else
             {
                 isCombatMode = true;
                 Animator.SetBool(AnimIDCombat, true);
                 Animator.SetTrigger(AnimIDTriggerDraw);
+                if (drawSwordSound != null && SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlaySFXAttached(drawSwordSound, transform);
+                }
                 ChangeState(combatState);
             }
         }
@@ -271,6 +287,35 @@ namespace PlayerControllerScripts
 
         #region Animation Callbacks
 
+
+        public void PlayFootstepSound()
+        {
+            if (SoundManager.Instance == null) return;
+
+            AudioClip clipToPlay = IsSprint ? runStepSound : walkStepSound;
+
+            if (clipToPlay != null)
+            {
+                SoundManager.Instance.PlaySFXAttached(clipToPlay, transform, 0.2f, 1.0f);
+            }
+        }
+
+        public void PlaySwordASwingSound()
+        {
+            if (swordSwingASound != null && SoundManager.Instance != null)
+            {
+                float randomPitch = UnityEngine.Random.Range(0.9f, 1.15f);
+                SoundManager.Instance.PlaySFXAttached(swordSwingASound, transform, 1.0f, randomPitch);
+            }
+        }
+        public void PlaySwordBSwingSound()
+        {
+            if (swordSwingBSound != null && SoundManager.Instance != null)
+            {
+                float randomPitch = UnityEngine.Random.Range(0.9f, 1.15f);
+                SoundManager.Instance.PlaySFXAttached(swordSwingBSound, transform, 1.0f, randomPitch);
+            }
+        }
         public void CheckCombo()
         {
             if (CurrentState is PlayerCombatState combatState)

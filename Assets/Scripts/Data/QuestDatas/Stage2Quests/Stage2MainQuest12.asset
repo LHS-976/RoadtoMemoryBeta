@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 311
   Title: EVE-1
-  Description: 
-  IntroDialogues: []
+  Description: "\uC624\uB978\uCABD \uBC29\uC73C\uB85C \uAC00\uC138\uC694."
+  IntroDialogues:
+  - 
+  - 
+  - 
   Type: 2
   TargetID: EVE1
   TargetCount: 1

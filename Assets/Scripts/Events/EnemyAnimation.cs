@@ -7,6 +7,7 @@ public class EnemyAnimation : MonoBehaviour
     [Header("Reference")]
     [SerializeField] private EnemyController _enemyController;
 
+
     private static readonly int AnimIDEnemySpeed = Animator.StringToHash("Speed");
     public static int AnimIDEnemyAttack = Animator.StringToHash("Attack");
     private static readonly int AnimIDEnemyGroggy = Animator.StringToHash("Groggy");

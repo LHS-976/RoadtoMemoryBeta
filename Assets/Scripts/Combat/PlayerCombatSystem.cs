@@ -332,6 +332,9 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             Collider col = _enemyBuffer[i];
             if (!col.gameObject.activeSelf) continue;
 
+            EnemyManager enemy = col.GetComponent<EnemyManager>();
+            if (enemy != null && enemy.isDead) continue;
+
             Vector3 toEnemy = col.transform.position - playerPos;
             toEnemy.y = 0;
 
