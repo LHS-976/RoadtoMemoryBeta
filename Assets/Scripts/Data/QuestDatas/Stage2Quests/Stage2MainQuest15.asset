@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
-  m_Name: MainQuest
+  m_Name: Stage2MainQuest15
   m_EditorClassIdentifier: 
-  ID: 0
-  Title: "\uCCAB\uBC88\uC9F8 \uAE30\uC5B5"
-  Description: "\uC2A4\uC704\uCE58 \uC0C1\uD638\uC791\uC6A9\uD0A4\uB294 F\uC785\uB2C8\uB2E4."
+  ID: 314
+  Title: EVE-3
+  Description: 
   IntroDialogues: []
   Type: 2
-  TargetID: 
+  TargetID: EVE3
   TargetCount: 1
-  TargetScene: 
-  RewardDataChips: 0
-  NextQuestID: 0
+  TargetScene: Stage02
+  RewardDataChips: 30
+  NextQuestID: 315
   IsMainStory: 1

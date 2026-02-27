@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: Stage2MainQuest8
+  m_EditorClassIdentifier: 
+  ID: 307
+  Title: "\uC9C4\uC2E4"
+  Description: "\uAC10\uC5FC\uCCB4\uC640\uC758 \uC804\uD22C\uC5D0\uC11C \uC0B4\uC544\uB0A8\uC73C\uC138\uC694.\n(\uB0B4\uBD80
+    \uC801\uB4E4\uC744 \uC0AC\uC0B4\uD558\uACE0 \uC870\uC0AC\uD558\uC138\uC694.)"
+  IntroDialogues: []
+  Type: 0
+  TargetID: Heavy_Zombie
+  TargetCount: 5
+  TargetScene: Stage02
+  RewardDataChips: 150
+  NextQuestID: 308
+  IsMainStory: 1

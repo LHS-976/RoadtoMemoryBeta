@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sword_Basic_Combo
   m_EditorClassIdentifier: 
   comboName: BaseCombo
-  baseDamage: 10
+  baseDamage: 100
   attackSpeed: 1.3
   combos:
   - commandType: 0
@@ -310,15 +310,7 @@ MonoBehaviour:
     requiresUnlock: 0
     startFrameHit: 0
     endFrameHit: 0
-    nextCombos:
-    - commandType: 0
-      nextComboIndex: 10
-    - commandType: 1
-      nextComboIndex: 10
-    - commandType: 3
-      nextComboIndex: 10
-    - commandType: 2
-      nextComboIndex: 10
+    nextCombos: []
     hitVFX: {fileID: 0}
     slashVFX: {fileID: 0}
     slashRotationOffset: {x: 0, y: 0, z: 0}
@@ -330,15 +322,7 @@ MonoBehaviour:
     requiresUnlock: 0
     startFrameHit: 0
     endFrameHit: 0
-    nextCombos:
-    - commandType: 0
-      nextComboIndex: 10
-    - commandType: 1
-      nextComboIndex: 10
-    - commandType: 3
-      nextComboIndex: 10
-    - commandType: 2
-      nextComboIndex: 10
+    nextCombos: []
     hitVFX: {fileID: 0}
     slashVFX: {fileID: 0}
     slashRotationOffset: {x: 0, y: 0, z: 0}

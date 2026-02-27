@@ -261,7 +261,6 @@ public class PlayerCombatState : PlayerBaseState
         else
         {
             _gotInput = false;
-            DisableRootMotion();
         }
     }
     public void OnAnimationEnd()
@@ -358,7 +357,7 @@ public class PlayerCombatState : PlayerBaseState
 
         foreach (var action in player.CombatSystem.currentStrategy.actions)
         {
-            if (action.attackName.Contains("Heavy"))
+            if (action.attackName.Contains("Attack_H"))
             {
                 if (!action.requiresUnlock) return true;
                 if (data != null && data.IsAttackUnlocked(action.attackName)) return true;

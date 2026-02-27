@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f1e67376e291f444a5b09a653b68141, type: 3}
   m_Name: Stage2
   m_EditorClassIdentifier: 
-  sceneName: 
-  displayName: 
+  sceneName: Stage02
+  displayName: Stage02
   backgroundMusic: {fileID: 0}

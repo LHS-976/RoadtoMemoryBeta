@@ -33,7 +33,7 @@ public class DialogueUIManager : MonoBehaviour
     }
     private void Update()
     {
-        if (_showDialogue && (Input.GetKeyDown(KeyCode.T) || Input.GetMouseButtonDown(0)))
+        if (_showDialogue && (Input.GetKeyDown(KeyCode.Z)))
         {
             if (_isTyping)
             {

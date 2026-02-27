@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Combo_Attack_H1
   m_EditorClassIdentifier: 
   ItemName: Combo_Attack_H1
-  Description: 
+  Description: "\uAC15 \uACF5\uACA9\uC740 \uB9C8\uC6B0\uC2A4 \uC6B0\uD074\uB9AD\uC785\uB2C8\uB2E4."
   BasePrice: 120
   PricePerLevel: 0
   Type: 3

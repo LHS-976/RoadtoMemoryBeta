@@ -23,7 +23,7 @@ MonoBehaviour:
   Type: 2
   TargetID: InteractSwitch
   TargetCount: 1
-  TargetScene: StageOne
+  TargetScene: Stage01
   RewardDataChips: 10
   NextQuestID: 104
   IsMainStory: 1

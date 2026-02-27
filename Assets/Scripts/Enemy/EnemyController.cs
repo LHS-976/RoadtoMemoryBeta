@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace EnemyControllerScripts
@@ -56,7 +57,30 @@ namespace EnemyControllerScripts
 
         private void Start()
         {
+            GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+            if (data != null && !string.IsNullOrEmpty(EnemyManager.EnemyUID)
+                && data.DefeatedEnemyIDs.Contains(EnemyManager.EnemyUID))
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+            StartCoroutine(WaitForPlayerSpawnRoutine());
             ChangeState(patrolState);
+        }
+
+        private IEnumerator WaitForPlayerSpawnRoutine()
+        {
+            while (targetTransform == null)
+            {
+
+                if (Core.GameCore.Instance?.CurrentPlayer != null)
+                {
+                    targetTransform = Core.GameCore.Instance.CurrentPlayer.transform;
+                    break;
+                }
+
+                yield return new WaitForSeconds(0.5f);
+            }
         }
 
         private void Update()

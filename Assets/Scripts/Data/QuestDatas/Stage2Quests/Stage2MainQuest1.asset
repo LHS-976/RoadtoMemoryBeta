@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: Stage2MainQuest1
+  m_EditorClassIdentifier: 
+  ID: 300
+  Title: "\uB2E8\uC11C(1/3)"
+  Description: "\uBB38\uC744 \uC9C0\uB098\uC11C \uB0B4\uBD80\uB97C \uC870\uC0AC\uD558\uC138\uC694."
+  IntroDialogues:
+  - "2\uCE35\uC73C\uB85C \uD5A5\uD558\uB294 \uACC4\uB2E8\uC740 \uBB18\uD558\uAC8C
+    \uACE0\uC694\uD588\uB2E4.\n\uAE08\uC18D \uBC1C\uD310\uC744 \uBC1F\uC744 \uB54C\uB9C8\uB2E4\n\uC9E7\uC740
+    \uC6B8\uB9BC\uC774 \uB0B4\uBD80 \uAE4A\uC219\uC774 \uBC88\uC84C\uB2E4."
+  - "\uD14C\uC2A4\uD2B8\n\uC2E4\uD5D8\uCCB4.\n\uADF8 \uB2E8\uC5B4\uB294 \uC5EC\uC804\uD788
+    \uB0AF\uC124\uB2E4. "
+  - "\uD558\uC9C0\uB9CC \uADF8 \uAE30\uC5B5\uC744 \uBD80\uC815\uD560 \uC218\uB294
+    \uC5C6\uB2E4.\n\uCE7C\uC744 \uC954 \uC190\uC5D0\uC11C \uBBF8\uC57D\uD55C \uB5A8\uB9BC\uC774
+    \uB290\uAEF4\uC9C4\uB2E4.\n...........\uD6C4\uC6B0....\n"
+  - "\uD638\uD761\uC744 \uC815\uB3C8\uD55C\uB2E4.\n\uB5A8\uB9BC\uC744 \uC548\uC73C\uB85C
+    \uB20C\uB7EC \uB2F4\uB294\uB2E4."
+  - "\uCC28\uAC00\uC6B4 \uAE08\uC18D\uC73C\uB85C \uC774\uB8E8\uC5B4\uC9C4 \uBB38\uC744
+    \uD5A5\uD574\n\uACE0\uAC1C\uB97C \uBC14\uB85C \uC7A1\uB294\uB2E4."
+  Type: 2
+  TargetID: StartSearch1
+  TargetCount: 1
+  TargetScene: Stage02
+  RewardDataChips: 10
+  NextQuestID: 301
+  IsMainStory: 1

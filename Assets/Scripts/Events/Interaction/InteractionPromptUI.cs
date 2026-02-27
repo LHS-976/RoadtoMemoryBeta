@@ -7,7 +7,6 @@ public class InteractionPromptUI : MonoBehaviour
     [SerializeField] private CanvasGroup _canvasGroup;
 
     [Header("Listening Channel (SO)")]
-    [Tooltip("문자열을 수신할 채널을 연결하세요.")]
     [SerializeField] private StringEventChannelSO _promptChannel;
 
     private void OnEnable()

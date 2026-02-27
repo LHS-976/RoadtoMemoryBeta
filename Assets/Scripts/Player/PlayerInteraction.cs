@@ -1,4 +1,5 @@
-﻿using PlayerControllerScripts;
+﻿using Core;
+using PlayerControllerScripts;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,9 @@ public class PlayerInteraction : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private LayerMask _interactableLayer;
     [SerializeField] private KeyCode _interactKey = KeyCode.F;
+
+    [Header("Game State")]
+    [SerializeField] private GameStateSO _gameState;
 
     [Header("Broadcasting Channels (S0)")]
     [Tooltip("UI에 상호작용 텍스트를 띄우거나 숨길 때 사용채널")]
@@ -19,6 +23,8 @@ public class PlayerInteraction : MonoBehaviour
     private List<IInteractable> _nearbyTargets = new List<IInteractable>();
     private IInteractable _closestTarget;
 
+    private string _currentPromptText;
+
     private void Awake()
     {
         if(_playerController == null) _playerController = GetComponent<PlayerController>();
@@ -30,6 +36,7 @@ public class PlayerInteraction : MonoBehaviour
             if(_closestTarget != null)
             {
                 _closestTarget = null;
+                _currentPromptText = null;
                 _promptChannel?.RaiseEvent(null);
             }
             return;
@@ -106,8 +113,18 @@ public class PlayerInteraction : MonoBehaviour
         if (best != _closestTarget)
         {
             _closestTarget = best;
-
+            _currentPromptText = _closestTarget?.InteractionPrompt;
             _promptChannel?.RaiseEvent(_closestTarget?.InteractionPrompt);
+        }
+        else if (_closestTarget != null)
+        {
+            //타겟은 그대로지만 스위치의 상태 텍스트가 바뀌었는지 매 프레임 확인
+            string newPromptText = _closestTarget.InteractionPrompt;
+            if (_currentPromptText != newPromptText)
+            {
+                _currentPromptText = newPromptText;
+                _promptChannel?.RaiseEvent(_currentPromptText);
+            }
         }
     }
     #endregion
@@ -117,6 +134,10 @@ public class PlayerInteraction : MonoBehaviour
     private bool CanPlayerInteract()
     {
         if (_playerController == null) return false;
+        if (_gameState != null && _gameState.CurrentState == GameState.Dialogue)
+        {
+            return false;
+        }
 
         PlayerBaseState state = _playerController.CurrentState;
 

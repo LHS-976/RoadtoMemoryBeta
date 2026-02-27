@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+public class MouseCursorLockOn : MonoBehaviour
 {
     void Start()
     {

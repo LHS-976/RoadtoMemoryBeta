@@ -540,6 +540,12 @@ PrefabInstance:
         type: 2}
     - target: {fileID: 9049197803234657682, guid: b94b6892ab9d4204daa5f08760f72966,
         type: 3}
+      propertyPath: _forceStartQuestChannel
+      value: 
+      objectReference: {fileID: 11400000, guid: ef314d7bfbee76f4b879c8b144d64daa,
+        type: 2}
+    - target: {fileID: 9049197803234657682, guid: b94b6892ab9d4204daa5f08760f72966,
+        type: 3}
       propertyPath: _questCompletedBroadCastChannel
       value: 
       objectReference: {fileID: 11400000, guid: a324a3f806331da4b81eb9dde362785f,

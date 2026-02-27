@@ -14,6 +14,8 @@ public class EnemyManager : MonoBehaviour, IDamageable
     [SerializeField] private StringEventChannelSO _questKillChannel;
     [SerializeField] private EnemyDamageUIEventChannelSO _damageUIChannel;
 
+    [field: SerializeField] public string EnemyUID { get; private set; }
+
     private const float _corpseObstacle = 1.5f;
 
     public float CurrentHealth { get; private set; }
@@ -169,6 +171,14 @@ public class EnemyManager : MonoBehaviour, IDamageable
         }
         StartCoroutine(ObstacleRoutine());
         Destroy(gameObject, DestroyDelay);
+
+        GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
+        if (data != null && !string.IsNullOrEmpty(EnemyUID))
+        {
+            if (!data.DefeatedEnemyIDs.Contains(EnemyUID))
+                data.DefeatedEnemyIDs.Add(EnemyUID);
+        }
+
     }
 
     public Transform GetTransform()

@@ -5561,6 +5561,7 @@ MonoBehaviour:
   _sceneFader: {fileID: 723757642}
   _allScenes:
   - {fileID: 11400000, guid: 302d0faee0ccd114d88f44a84f3d139c, type: 2}
+  - {fileID: 11400000, guid: 08a6e04ada81ad846bfbf6ddf091b124, type: 2}
 --- !u!1 &1391844294
 GameObject:
   m_ObjectHideFlags: 0

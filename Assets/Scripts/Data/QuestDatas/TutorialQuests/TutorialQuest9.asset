@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: TutorialQuest9
+  m_EditorClassIdentifier: 
+  ID: 108
+  Title: "\uC801\uC751"
+  Description: "3\uCD08\uC548\uC5D0 \uC7A5\uC560\uBB3C\uC744 \uD68C\uD53C\uD558\uB77C.\n(\uD68C\uD53C\uAE30\uB3D9\uC744
+    \uC0AC\uC6A9\uD558\uC138\uC694.\n\uAE30\uBCF8\uAC12 Space + W)"
+  IntroDialogues:
+  - "\uC758\uC2DD\uD558\uC790 \uBCF4\uD3ED\uC774 \uB2EC\uB77C\uC9C4\uB2E4.\n\uBB34\uAC8C
+    \uBD84\uC0B0.\n\uCDA9\uACA9 \uC644\uD654."
+  - "\uB2E4\uB9AC\uAC00 \uC9C0\uBA74\uC744 \uAC15\uD558\uAC8C \uBC00\uC5B4\uB0B8\uB2E4."
+  Type: 2
+  TargetID: Input_Dodge
+  TargetCount: 1
+  TargetScene: Stage01
+  RewardDataChips: 30
+  NextQuestID: 109
+  IsMainStory: 1

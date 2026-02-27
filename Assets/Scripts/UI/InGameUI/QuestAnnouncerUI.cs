@@ -87,7 +87,7 @@ public class QuestAnnouncerUI : MonoBehaviour
     private IEnumerator ShowAndHideRoutine()
     {
         _announcerFader.FadeIn();
-        yield return new WaitForSeconds(_fadeOut);
+        yield return new WaitForSecondsRealtime(_fadeOut);
         _announcerFader.FadeOut();
     }
 

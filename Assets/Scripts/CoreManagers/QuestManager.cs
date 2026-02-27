@@ -20,6 +20,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private StringEventChannelSO _questKillChannel;
     [SerializeField] private StringEventChannelSO _questArriveChannel;
     [SerializeField] private StringEventChannelSO _questEventChannel;
+    [SerializeField] private IntEventChannelSO _forceStartQuestChannel;
 
     [Header("Broadcasting Channels")]
     [SerializeField] private IntEventChannelSO _questCompletedChannel;
@@ -38,6 +39,9 @@ public class QuestManager : MonoBehaviour
 
         if (_questEventChannel != null)
             _questEventChannel.OnEventRaised += ReportEvent;
+
+        if (_forceStartQuestChannel != null)
+            _forceStartQuestChannel.OnEventRaised += StartQuest;
     }
     private void OnDisable()
     {
@@ -49,6 +53,8 @@ public class QuestManager : MonoBehaviour
 
         if (_questEventChannel != null)
             _questEventChannel.OnEventRaised -= ReportEvent;
+        if(_forceStartQuestChannel != null)
+            _forceStartQuestChannel.OnEventRaised -= StartQuest;
     }
     #endregion
     #region Report API
@@ -82,11 +88,30 @@ public class QuestManager : MonoBehaviour
 
     public void StartQuest(int questID)
     {
+        if (_dataManager != null && _dataManager.CurrentData != null)
+        {
+            if (_dataManager.CurrentData.ClearedQuestIDs != null &&
+                _dataManager.CurrentData.ClearedQuestIDs.Contains(questID))
+            {
+                Debug.Log($"[QuestManager] {questID}번 퀘스트는 이미 클리어했습니다. 강제 시작 요청을 차단합니다.");
+                return;
+            }
+        }
+        if (CurrentQuest != null && CurrentQuest.ID == questID)
+        {
+            return;
+        }
+
         QuestSO quest = _database.GetQuest(questID);
         if (quest == null)
         {
             Debug.LogWarning($"[Quest] ID {questID}을 찾을 수 없습니다.");
             return;
+        }
+        if(_isChangingQuest)
+        {
+            StopAllCoroutines();
+            _isChangingQuest = false;
         }
 
         TryStartQuest(quest);
@@ -198,7 +223,7 @@ public class QuestManager : MonoBehaviour
     {
         _questCompletedChannel?.RaiseEvent(completedQuestID);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSecondsRealtime(1.5f);
         if(nextQuestID >0)
         {
             StartQuest(nextQuestID);

@@ -35,16 +35,23 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private int _initialPoolSize = 10;
     [SerializeField] private int _maxPoolSize = 20;
 
-    // BGM - 크로스페이드용 AudioSource 2개
+    [Header("Mixer Parameter Names")]
+    [SerializeField] private string _masterParam = "MasterVolume";
+    [SerializeField] private string _bgmParam = "BGMVolume";
+    [SerializeField] private string _sfxParam = "SFXVolume";
+    [SerializeField] private string _uiParam = "UIVolume";
+
+    [Header("Audio Mixer")]
+    [SerializeField] private AudioMixer _audioMixer;
+
+
     private AudioSource _bgmSourceA;
     private AudioSource _bgmSourceB;
     private bool _isBgmA = true;
     private Coroutine _crossFadeCoroutine;
 
-    // UI SFX - 2D 전용 AudioSource
     private AudioSource _uiSource;
 
-    // 3D SFX - 오브젝트 풀
     private Queue<AudioSource> _sfxPool = new Queue<AudioSource>();
     private List<AudioSource> _activeSfxSources = new List<AudioSource>();
     private Transform _poolParent;
@@ -162,14 +169,6 @@ public class SoundManager : MonoBehaviour
         StartCoroutine(FadeOutRoutine(_isBgmA ? _bgmSourceA : _bgmSourceB));
     }
 
-    public void SetBGMVolume(float volume)
-    {
-        _bgmVolume = Mathf.Clamp01(volume);
-
-        AudioSource current = _isBgmA ? _bgmSourceA : _bgmSourceB;
-        if (current.isPlaying) current.volume = _bgmVolume;
-    }
-
     private IEnumerator CrossFadeRoutine(AudioSource fadeOut, AudioSource fadeIn)
     {
         float t = 0f;
@@ -274,7 +273,7 @@ public class SoundManager : MonoBehaviour
             return _sfxPool.Dequeue();
         }
 
-        // 풀이 비었으면 최대치 내에서 새로 생성
+        //풀이 비었으면 최대치 내에서 새로 생성
         if (_activeSfxSources.Count < _maxPoolSize)
         {
             return CreatePooledSource();
@@ -310,6 +309,77 @@ public class SoundManager : MonoBehaviour
             }
         }
     }
+    #endregion
+    #region Vol Regulate
+    public void SetMasterVolume(float value)
+    {
+        _audioMixer.SetFloat(_masterParam, ConvertToDecibel(value));
+    }
 
+    public void SetBGMVolume(float value)
+    {
+        _audioMixer.SetFloat(_bgmParam, ConvertToDecibel(value));
+    }
+
+    public void SetSFXVolume(float value)
+    {
+        _audioMixer.SetFloat(_sfxParam, ConvertToDecibel(value));
+    }
+
+    public void SetUIVolume(float value)
+    {
+        _audioMixer.SetFloat(_uiParam, ConvertToDecibel(value));
+    }
+    private float ConvertToDecibel(float value)
+    {
+        if (value <= 0.0001f) return -80f;
+        return Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f;
+    }
+    #endregion
+    #region Vol Save/Restore
+    public float GetMasterVolume()
+    {
+        _audioMixer.GetFloat(_masterParam, out float db);
+        return ConvertFromDecibel(db);
+    }
+
+    public float GetBGMVolume()
+    {
+        _audioMixer.GetFloat(_bgmParam, out float db);
+        return ConvertFromDecibel(db);
+    }
+
+    public float GetSFXVolume()
+    {
+        _audioMixer.GetFloat(_sfxParam, out float db);
+        return ConvertFromDecibel(db);
+    }
+
+    public float GetUIVolume()
+    {
+        _audioMixer.GetFloat(_uiParam, out float db);
+        return ConvertFromDecibel(db);
+    }
+
+    private float ConvertFromDecibel(float db)
+    {
+        return Mathf.Pow(10f, db / 20f);
+    }
+    public void SaveVolumeSettings()
+    {
+        PlayerPrefs.SetFloat("MasterVol", GetMasterVolume());
+        PlayerPrefs.SetFloat("BGMVol", GetBGMVolume());
+        PlayerPrefs.SetFloat("SFXVol", GetSFXVolume());
+        PlayerPrefs.SetFloat("UIVol", GetUIVolume());
+        PlayerPrefs.Save();
+    }
+
+    public void LoadVolumeSettings()
+    {
+        SetMasterVolume(PlayerPrefs.GetFloat("MasterVol", 1f));
+        SetBGMVolume(PlayerPrefs.GetFloat("BGMVol", 1f));
+        SetSFXVolume(PlayerPrefs.GetFloat("SFXVol", 1f));
+        SetUIVolume(PlayerPrefs.GetFloat("UIVol", 1f));
+    }
     #endregion
 }

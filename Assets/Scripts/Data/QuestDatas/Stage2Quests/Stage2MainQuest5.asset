@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: Stage2MainQuest5
+  m_EditorClassIdentifier: 
+  ID: 304
+  Title: "\uC9C4\uC2E4"
+  Description: "\uC67C\uCABD \uBB38\uC744 \uC9C0\uB098 2\uBC88\uC9F8 \uC2E4\uD5D8\uC2E4\uB85C
+    \uD5A5\uD558\uC138\uC694."
+  IntroDialogues: []
+  Type: 2
+  TargetID: StartSearch4
+  TargetCount: 1
+  TargetScene: Stage02
+  RewardDataChips: 50
+  NextQuestID: 305
+  IsMainStory: 1

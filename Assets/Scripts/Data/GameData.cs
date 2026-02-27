@@ -38,6 +38,9 @@ public class GameData
     [Header("Combat")]
     public bool IsCombatUnlocked;
 
+    [Header("Defeated Enemies")]
+    public List<string> DefeatedEnemyIDs = new List<string>();
+
     public GameData()
     {
         PlayerName = "Test subject_01";

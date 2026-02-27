@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2712c613a602abb47a78e74649b161a7, type: 3}
+  m_Name: Stage2MainQuest14
+  m_EditorClassIdentifier: 
+  ID: 313
+  Title: EVE-2
+  Description: "\uB0B4\uBD80 \uCF58\uC194\uC744 \uCC3E\uACE0 \uC0C1\uD638\uC791\uC6A9
+    \uD558\uC138\uC694.\n(\uBC29 \uC624\uB978\uD3B8 \uBB38\uC7A0\uAE08 \uD574\uC81C)"
+  IntroDialogues: []
+  Type: 2
+  TargetID: EVE2
+  TargetCount: 1
+  TargetScene: Stage02
+  RewardDataChips: 20
+  NextQuestID: 314
+  IsMainStory: 1

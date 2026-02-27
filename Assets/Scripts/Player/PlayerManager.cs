@@ -70,7 +70,7 @@ public class PlayerManager : MonoBehaviour, IDamageable
 
     private void HandleStaminaRegenerate()
     {
-        if (!_playerController.IsSprint && CurrentStamina < _playerController.playerStats.playerMaxStamina)
+        if (!_playerController.IsSprint && CurrentStamina < MaxStamina)
         {
             CurrentStamina += _playerController.playerStats.staminaRegenerate * Time.deltaTime;
             if (CurrentStamina > MaxStamina) CurrentStamina = MaxStamina;
@@ -97,9 +97,9 @@ public class PlayerManager : MonoBehaviour, IDamageable
     {
         CurrentStamina += amount;
 
-        if(CurrentStamina > _playerController.playerStats.playerMaxStamina)
+        if(CurrentStamina > MaxStamina)
         {
-            CurrentStamina = _playerController.playerStats.playerMaxStamina;
+            CurrentStamina = MaxStamina;
         }
         BroadcastUIUpdate();
     }
@@ -114,6 +114,11 @@ public class PlayerManager : MonoBehaviour, IDamageable
         BroadcastUIUpdate();
         if (_playerController != null)
         {
+            if(!_playerController.isCombatMode)
+            {
+                _playerController.ToggleCombatMode();
+            }
+
             _playerController.OnHit(knockBackDir);
         }
 

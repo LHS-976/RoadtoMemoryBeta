@@ -37,7 +37,6 @@ public class SavePointInteractable : MonoBehaviour, IInteractable
             data.PlayerPosY = transform.position.y;
             data.PlayerPosZ = transform.position.z;
         }
-
         //게임 일시정지
         if (_gameState != null)
             _gameState.SetState(GameState.StatShop);

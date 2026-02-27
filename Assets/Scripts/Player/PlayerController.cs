@@ -13,7 +13,7 @@ namespace PlayerControllerScripts
 
         public CharacterController Controller { get; private set; }
         public Animator Animator { get; private set; }
-        public Transform MainCameraTransform { get; private set; }
+        public Transform MainCameraTransform { get; set; }
         public PlayerCombatSystem CombatSystem { get; private set; }
         public WeaponTracer WeaponTracer { get; private set; }
 
@@ -113,10 +113,6 @@ namespace PlayerControllerScripts
             if (data != null && data.IsCombatUnlocked)
             {
                 _canUseCombatMode = true;
-                if (!isCombatMode)
-                {
-                    ToggleCombatMode();
-                }
             }
         }
 
@@ -412,11 +408,6 @@ namespace PlayerControllerScripts
             GameData data = Core.GameCore.Instance?.DataManager?.CurrentData;
             if (data != null) data.IsCombatUnlocked = true;
 
-            if (!isCombatMode)
-            {
-                ToggleCombatMode();
-                Debug.Log("[Player] 전투 모드 권한 획득! 무기를 빼듭니다.");
-            }
         }
 
         #endregion
