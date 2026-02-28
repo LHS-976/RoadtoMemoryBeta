@@ -15,7 +15,8 @@ MonoBehaviour:
   ID: 319
   Title: EVE-8
   Description: "\uAC00\uB4DC\uB85C\uBD07 \uD65C\uC131\uD654"
-  IntroDialogues: []
+  IntroDialogues:
+  - "\uCF54\uB4DC\uBA85 : M-01 \uC2DD\uBCC4 \uD655\uC778."
   Type: 2
   TargetID: EVE8
   TargetCount: 1

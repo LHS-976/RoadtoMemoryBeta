@@ -241,6 +241,12 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
             Quaternion vfxRotation = Quaternion.LookRotation(-hitDirection);
             VFXManager.Instance.PlayVFX(_activeAttackAction.hitVFX, hitPoint, vfxRotation);
         }
+        if(action.hitSound != null && SoundManager.Instance != null)
+        {
+            float randomPitch = UnityEngine.Random.Range(0.95f, 1.05f);
+
+            SoundManager.Instance.PlaySFXAttached(action.hitSound, target.GetTransform(), action.hitVolume, randomPitch);
+        }
         if(action.attackName.Contains("Heavy"))
         {
             _heavyHitEffectChannel?.RaiseEvent();
@@ -291,6 +297,12 @@ public class PlayerCombatSystem : MonoBehaviour, IWeaponHitRange
         Quaternion finalRot = swingRot * offsetRot;
 
         VFXManager.Instance.PlayVFX(action.slashVFX, spawnPos, finalRot);
+
+        if (action.swingSound != null && SoundManager.Instance != null)
+        {
+            float randomPitch = UnityEngine.Random.Range(0.9f, 1.1f);
+            SoundManager.Instance.PlaySFXAttached(action.swingSound, this.transform, action.swingVolume, randomPitch);
+        }
     }
 
     #endregion

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 315
   Title: EVE-4
-  Description: 
-  IntroDialogues: []
+  Description: "4\uBC88\uC9F8 \uC5F0\uAD6C\uC2E4\uC744 \uC870\uC0AC\uD558\uC138\uC694."
+  IntroDialogues:
+  - "\uCF54\uB4DC\uBA85 : M-01 \uC2DD\uBCC4 \uD655\uC778\nDelta Bio protocol \uC2E4\uD589.\nM-01
+    \uC6B0\uC120\uD655\uBCF4"
   Type: 2
   TargetID: EVE4
   TargetCount: 1

@@ -15,8 +15,7 @@ MonoBehaviour:
   ID: 309
   Title: "\uC9C4\uC2E4"
   Description: "\uAC10\uC5FC\uCCB4\uC640\uC758 \uC804\uD22C\uC5D0\uC11C \uC0B4\uC544\uB0A8\uC73C\uC138\uC694."
-  IntroDialogues:
-  - "3\uBC88 \uC2E4\uD5D8\uC2E4\uC744 \uB098\uC120 \uB4A4\uC5D0\uB3C4\n"
+  IntroDialogues: []
   Type: 0
   TargetID: Zombie_Hpup
   TargetCount: 3

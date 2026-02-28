@@ -13,6 +13,10 @@ public class AttackAction
     public string attackName;
     public float damageMultiplier;
     public float staminaCost = 0f;
+    public AudioClip hitSound;
+    [Range(0f, 1f)] public float hitVolume = 0.5f;
+    public AudioClip swingSound;
+    [Range(0f, 1f)] public float swingVolume = 1.0f;
 
     [Header("Unlock Settings")]
     public bool requiresUnlock = false;

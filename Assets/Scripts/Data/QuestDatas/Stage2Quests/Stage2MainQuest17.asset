@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 316
   Title: EVE-5
-  Description: 
+  Description: "\uAC00\uB4DC\uB85C\uBD07\uC744 \uD30C\uAD34\uD558\uC138\uC694."
   IntroDialogues: []
   Type: 0
   TargetID: GuardRobot

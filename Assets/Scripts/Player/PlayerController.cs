@@ -65,8 +65,6 @@ namespace PlayerControllerScripts
         public AudioClip hitSound;
         public AudioClip walkStepSound;
         public AudioClip runStepSound;
-        public AudioClip swordSwingASound;
-        public AudioClip swordSwingBSound;
 
         private void Awake()
         {
@@ -300,22 +298,6 @@ namespace PlayerControllerScripts
             }
         }
 
-        public void PlaySwordASwingSound()
-        {
-            if (swordSwingASound != null && SoundManager.Instance != null)
-            {
-                float randomPitch = UnityEngine.Random.Range(0.9f, 1.15f);
-                SoundManager.Instance.PlaySFXAttached(swordSwingASound, transform, 1.0f, randomPitch);
-            }
-        }
-        public void PlaySwordBSwingSound()
-        {
-            if (swordSwingBSound != null && SoundManager.Instance != null)
-            {
-                float randomPitch = UnityEngine.Random.Range(0.9f, 1.15f);
-                SoundManager.Instance.PlaySFXAttached(swordSwingBSound, transform, 1.0f, randomPitch);
-            }
-        }
         public void CheckCombo()
         {
             if (CurrentState is PlayerCombatState combatState)

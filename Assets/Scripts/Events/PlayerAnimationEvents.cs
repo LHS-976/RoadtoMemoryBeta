@@ -57,20 +57,4 @@ public class PlayerAnimationEvents : MonoBehaviour
             _controller.PlayFootstepSound();
         }
     }
-
-    public void PlaySwordASwingSound()
-    {
-        if (_controller != null)
-        {
-            _controller.PlaySwordASwingSound();
-        }
-    }
-
-    public void PlaySwordBSwingSound()
-    {
-        if (_controller != null)
-        {
-            _controller.PlaySwordBSwingSound();
-        }
-    }
 }

@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 314
   Title: EVE-3
-  Description: 
-  IntroDialogues: []
+  Description: "\uBC29\uC785\uAD6C \uC624\uB978\uD3B8 5\uBC88\uC9F8 \uC2E4\uD5D8\uC2E4\uB85C
+    \uD5A5\uD558\uC138\uC694."
+  IntroDialogues:
+  - "\uACF5\uAE30 \uC911\uC5D0 \uB0AE\uC740 \uB3D9\uAE30\uC74C\uC774 \uD37C\uC9C4\uB2E4.\n\uAC00\uB4DC\uB85C\uBD07\uC774
+    \uD558\uB098 \uB458 \uAE68\uC5B4\uB09C\uB2E4."
   Type: 2
   TargetID: EVE3
   TargetCount: 1

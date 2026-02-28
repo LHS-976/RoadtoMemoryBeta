@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.Audio;
 
 /// <summary>
-/// 게임 내 모든 사운드를 총괄하는 매니저.
-/// GameCore 하위에 배치.
 ///
 /// BGM:
 ///   SoundManager.Instance.PlayBGM(audioClip);

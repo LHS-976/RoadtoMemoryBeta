@@ -15,7 +15,9 @@ MonoBehaviour:
   ID: 322
   Title: "\uD558\uBD80\uACA9\uB9AC\uCE35\uC73C\uB85C"
   Description: "\uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uD5A5\uD558\uC138\uC694."
-  IntroDialogues: []
+  IntroDialogues:
+  - "\uC774\uD6C4 \uC2A4\uD14C\uC774\uC9C0\uB294 \uD604\uC7AC \uC900\uBE44 \uC911\uC774\uBA70,
+    \n\uCD94\uD6C4\uC5D0 \uCD94\uAC00\uB420 \uC608\uC815\uC785\uB2C8\uB2E4."
   Type: 2
   TargetID: EVE11
   TargetCount: 1
