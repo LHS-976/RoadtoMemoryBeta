@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: 303
   Title: "\uC9C4\uC2E4"
-  Description: "2\uBC88\uC9F8 \uC5F0\uAD6C\uC2E4\uB85C \uD5A5\uD558\uC138\uC694.\n(\uB450\uBC88\uC9F8
-    \uC5F0\uAD6C\uC2E4\uC740 \uC67C\uD3B8\uC5D0 \uC788\uC2B5\uB2C8\uB2E4.)"
+  Description: "2\uBC88\uC9F8 \uC5F0\uAD6C\uC2E4\uB85C \uD5A5\uD558\uC138\uC694.\n(\uB2E4\uC74C
+    \uD018\uC2A4\uD2B8\uAE4C\uC9C0 \uC9C1\uC9C4)"
   IntroDialogues: []
   Type: 2
   TargetID: StartSearch3

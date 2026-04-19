@@ -50,11 +50,4 @@ public class PlayerAnimationEvents : MonoBehaviour
             _controller.OnSheathComplete();
         }
     }
-    public void AE_PlayFootstep()
-    {
-        if (_controller != null)
-        {
-            _controller.PlayFootstepSound();
-        }
-    }
 }

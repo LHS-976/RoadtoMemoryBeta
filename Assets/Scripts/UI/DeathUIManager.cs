@@ -66,7 +66,9 @@ public class DeathUIManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(_fadeWait);
         }
 
-        //커서 표시
+        if (_gameState != null)
+            _gameState.SetState(GameState.Dialogue);
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 

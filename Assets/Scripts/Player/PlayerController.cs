@@ -63,8 +63,7 @@ namespace PlayerControllerScripts
         public AudioClip drawSwordSound;
         public AudioClip dashSound;
         public AudioClip hitSound;
-        public AudioClip walkStepSound;
-        public AudioClip runStepSound;
+        public AudioClip executeSound;
 
         private void Awake()
         {
@@ -284,19 +283,6 @@ namespace PlayerControllerScripts
         #endregion
 
         #region Animation Callbacks
-
-
-        public void PlayFootstepSound()
-        {
-            if (SoundManager.Instance == null) return;
-
-            AudioClip clipToPlay = IsSprint ? runStepSound : walkStepSound;
-
-            if (clipToPlay != null)
-            {
-                SoundManager.Instance.PlaySFXAttached(clipToPlay, transform, 0.2f, 1.0f);
-            }
-        }
 
         public void CheckCombo()
         {

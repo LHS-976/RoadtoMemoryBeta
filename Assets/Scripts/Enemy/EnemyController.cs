@@ -28,6 +28,10 @@ namespace EnemyControllerScripts
         [Header("Broad Channel")]
         [SerializeField] private StringEventChannelSO _questKillChannel;
 
+        [Header("Sounds")]
+        [SerializeField] private AudioClip _dieSound;
+        [Range(0f, 1f)][SerializeField] private float _dieVolume = 1.0f;
+
         [Header("Caching Enemy EyeSight")]
         private float CLOSE_DETECTION_RANGE;
         private float EYE_HEIGHT;
@@ -294,7 +298,10 @@ namespace EnemyControllerScripts
                     col.gameObject.layer = deadLayer;
                 }
             }
-
+            if (_dieSound != null && SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFX(_dieSound, transform.position, _dieVolume);
+            }
 
             if (EnemyManager.EnemyStats.enemyID == "Zombie")
             {

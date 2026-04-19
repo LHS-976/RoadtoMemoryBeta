@@ -8,6 +8,7 @@ public class PlayerExecutionState : PlayerBaseState
     private bool _executionSuccess;
     private LayerMask _enemyLayer;
 
+
     private float _missRecoveryTime = 0.5f;
 
     public PlayerExecutionState(PlayerController player, Animator animator) : base(player, animator)
@@ -28,6 +29,10 @@ public class PlayerExecutionState : PlayerBaseState
             _executionSuccess = true;
             player.playerManager.UseStamina(player.playerStats.executionStaminaCost);
             player.Animator.SetTrigger(PlayerController.AnimIDExecution);
+            if (player.executeSound != null && SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlaySFXAttached(player.executeSound, player.transform, 1f, 1);
+            }
         }
         else
         {
